@@ -1,3 +1,9 @@
-# Repository Template
+# Wolfgang.Extensions.ICollection
 
-This repository is intended to be used as a template for creating other repositories.
+A collection of extension methods for the `Collection<T>` interface in C#.
+
+## Methods
+
+- `AddRange<T>(this ICollection<T> source, IEnumerable<T> range)` - Adds the specified items in `range` to `source`
+
+
