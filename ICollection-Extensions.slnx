@@ -29,7 +29,6 @@
   <Folder Name="/source/">
     <Project Path="source/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
   </Folder>
-  <Folder Name="/tests/">
-    <Project Path="Wolfgang.Extensions.Icollection.Tests.Unit/Wolfgang.Extensions.ICollection.Tests.Unit.csproj" />
-  </Folder>
+  <Folder Name="/tests/" />
+  <Project Path="../IComparable-Extensions/tests/Wolfgang.Extensions.IComparable.Tests.Unit/Wolfgang.Extensions.IComparable.Tests.Unit.csproj" />
 </Solution>
