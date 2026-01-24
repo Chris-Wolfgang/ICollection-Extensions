@@ -147,14 +147,14 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddRange_can_add_collection_to_itself()
+    public void AddRange_with_snapshot_of_collection_contents()
     {
         // Arrange
         var source = new List<string> { "item1", "item2" };
-        var originalItems = new List<string>(source); // Create a snapshot
+        var snapshot = new List<string>(source); // Create a snapshot of current items
 
         // Act
-        source.AddRange(originalItems);
+        source.AddRange(snapshot);
 
         // Assert
         Assert.Equal(4, source.Count);
@@ -202,7 +202,7 @@ public class ICollectionExtensionTests
     public void AddRange_with_large_collection()
     {
         // Arrange
-        ICollection<int> source = new List<int>();
+        var source = new List<int>();
         var items = Enumerable.Range(1, 10000);
 
         // Act
@@ -210,9 +210,9 @@ public class ICollectionExtensionTests
 
         // Assert
         Assert.Equal(10000, source.Count);
-        Assert.Contains(1, source);
-        Assert.Contains(5000, source);
-        Assert.Contains(10000, source);
+        Assert.Equal(1, source[0]); // First element
+        Assert.Equal(5000, source[4999]); // Middle element
+        Assert.Equal(10000, source[9999]); // Last element
     }
 
 
