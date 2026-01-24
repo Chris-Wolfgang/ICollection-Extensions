@@ -50,7 +50,7 @@ dotnet add package Wolfgang.Extensions.ICollection
 ### Key Features
 
 - ✅ **AddRange** - Add multiple items to any ICollection&lt;T&gt; in one call
-- ✅ **Multi-framework support** - .NET Framework 4.6.2, .NET Standard 2.0, .NET 8.0
+- ✅ **Multi-framework support** - .NET Framework 4.6.2, .NET Standard 2.0, .NET 8.0, .NET 10.0
 - ✅ **Zero dependencies** - No external dependencies
 - ✅ **Well documented** - Comprehensive XML documentation and examples
 - ✅ **Tested** - Full unit test coverage
