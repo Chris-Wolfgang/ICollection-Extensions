@@ -30,7 +30,7 @@ Add this to your `.csproj` file:
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="Wolfgang.Extensions.ICollection" Version="0.1.0" />
+  <PackageReference Include="Wolfgang.Extensions.ICollection" Version="x.x.x" />
 </ItemGroup>
 ```
 
