@@ -150,7 +150,7 @@ public class ICollectionExtensionTests
     public void AddRange_with_snapshot_of_collection_contents()
     {
         // Arrange
-        var source = new List<string> { "item1", "item2" };
+        ICollection<string> source = new List<string> { "item1", "item2" };
         var snapshot = new List<string>(source); // Create a snapshot of current items
 
         // Act
