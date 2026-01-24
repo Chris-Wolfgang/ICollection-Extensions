@@ -33,7 +33,7 @@ dotnet add package Wolfgang.Extensions.ICollection
 ### Package Reference
 
 ```xml
-<PackageReference Include="Wolfgang.Extensions.ICollection" Version="0.1.0" />
+<PackageReference Include="Wolfgang.Extensions.ICollection" />
 ```
 
 ## 🚀 Usage
