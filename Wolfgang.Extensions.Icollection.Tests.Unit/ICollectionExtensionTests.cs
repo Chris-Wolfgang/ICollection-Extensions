@@ -183,7 +183,7 @@ public class ICollectionExtensionTests
     }
 
     [Fact]
-    public void AddRange_with_Collection_of_different_types()
+    public void AddRange_works_with_heterogeneous_object_collection()
     {
         // Arrange - using base type collection
         ICollection<object> source = new List<object> { "string", 123 };

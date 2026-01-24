@@ -125,12 +125,13 @@ Adds all items from the specified enumerable to the source collection.
 - Not thread-safe; external synchronization required for concurrent access
 - Preserves the collection's native constraints and behaviors
 
-## 🔧 Requirements
+## 🔧 Target Frameworks
 
-- **.NET Framework 4.6.2** or higher
-- **.NET Standard 2.0** or higher
-- **.NET 8.0** or higher
-- **.NET 10.0** or higher
+This package targets the following frameworks:
+
+- **.NET Framework 4.6.2**
+- **.NET Standard 2.0** (provides compatibility with .NET Core 2.0+, .NET 5+, and newer .NET Framework versions)
+- **.NET 8.0**
 
 ## 🤝 Contributing
 
