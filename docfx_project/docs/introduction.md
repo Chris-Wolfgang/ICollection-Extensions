@@ -38,10 +38,9 @@ The extension methods work with any type implementing `ICollection<T>`, includin
 
 Wolfgang.Extensions.ICollection supports multiple .NET platforms:
 
-- **.NET Framework 4.6.2** and higher
-- **.NET Standard 2.0** and higher
-- **.NET 8.0** and higher
-- **.NET 10.0** and higher
+- **.NET Framework 4.6.2**
+- **.NET Standard 2.0** (provides compatibility with .NET Core 2.0+, .NET 5+, and newer .NET Framework versions)
+- **.NET 8.0**
 
 This broad compatibility ensures the library can be used in virtually any .NET project, from legacy applications to cutting-edge solutions.
 
