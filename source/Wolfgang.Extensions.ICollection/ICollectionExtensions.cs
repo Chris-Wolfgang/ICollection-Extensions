@@ -25,6 +25,9 @@ public static class ICollectionExtensions
     /// <exception cref="ArgumentNullException">
     /// Thrown if source or items is null.
     /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if the collection is read-only.
+    /// </exception>
     /// <remarks>
     /// <para>
     /// This extension method provides a convenient way to add multiple items to any collection

@@ -132,6 +132,7 @@ This package targets the following frameworks:
 - **.NET Framework 4.6.2**
 - **.NET Standard 2.0** (provides compatibility with .NET Core 2.0+, .NET 5+, and newer .NET Framework versions)
 - **.NET 8.0**
+- **.NET 10.0**
 
 ## 🤝 Contributing
 
