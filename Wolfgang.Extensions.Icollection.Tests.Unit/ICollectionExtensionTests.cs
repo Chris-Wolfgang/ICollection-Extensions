@@ -187,7 +187,7 @@ public class ICollectionExtensionTests
     {
         // Arrange - using base type collection
         ICollection<object> source = new List<object> { "string", 123 };
-        var items = new object[] { 45.6, DateTime.Now, true };
+        var items = new object[] { 45.6, new DateTime(2000, 1, 1), true };
 
         // Act
         source.AddRange(items);
