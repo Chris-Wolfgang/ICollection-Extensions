@@ -53,7 +53,7 @@ dotnet add package Wolfgang.Extensions.ICollection
 - ✅ **Multi-framework support** - .NET Framework 4.6.2, .NET Standard 2.0, .NET 8.0, .NET 10.0
 - ✅ **Zero dependencies** - No external dependencies
 - ✅ **Well documented** - Comprehensive XML documentation and examples
-- ✅ **Tested** - Full unit test coverage
+- ✅ **Unit tested** - CI enforces at least 80% line coverage
 
 ### License
 
