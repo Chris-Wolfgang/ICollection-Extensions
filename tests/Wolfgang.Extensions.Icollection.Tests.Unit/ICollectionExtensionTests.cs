@@ -80,7 +80,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddRange_throws_NotSupportedException_for_readonly_collection()
+    public void AddRange_throws_NotSupportedException_for_ReadOnlyCollection()
     {
         // Arrange
         var items = new List<string> { "item1", "item2" };
