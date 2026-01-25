@@ -12,7 +12,7 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
-		<Copyright>Copyright 2026 Chris Wolfgang</Copyright>
+		<Copyright>Copyright 2024 Chris Wolfgang</Copyright>
 
 	</PropertyGroup>
 
