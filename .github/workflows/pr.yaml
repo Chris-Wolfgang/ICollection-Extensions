@@ -32,7 +32,7 @@ jobs:
       # Fix for .NET 5.0 on Ubuntu 22.04+ - install libssl1.1
       - name: Install OpenSSL 1.1 for .NET 5.0
         run: |
-          wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
           sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 
       - name: Setup .NET
@@ -147,18 +147,28 @@ jobs:
           cat CoverageReport/Summary.txt
           echo ""
           
+          # Validate that the report contains expected content
+          if ! grep -q "Summary" CoverageReport/Summary.txt; then
+            echo "❌ Coverage report format is invalid!"
+            exit 1
+          fi
+          
           failed_projects=""
           threshold=90
           
-          while read -r line; do
-            # Match lines with module names and percentages
-            if echo "$line" | grep -qE '^[^ ].*[0-9]+%$' && ! echo "$line" | grep -q '^Summary'; then
+          while IFS= read -r line; do
+            # Match lines with module names and percentages (skip Summary and empty lines)
+            if echo "$line" | grep -qE '^[^ ].*[0-9]+(\.[0-9]+)?%$' && ! echo "$line" | grep -q '^Summary'; then
               module=$(echo "$line" | awk '{print $1}')
-              percent=$(echo "$line" | awk '{print $NF}' | tr -d '%')
+              # Extract percentage more robustly - handle decimal percentages
+              percent=$(echo "$line" | grep -oE '[0-9]+(\.[0-9]+)?%' | tail -1 | tr -d '%')
+              
+              # Convert to integer for comparison (round down)
+              percent_int=$(printf "%.0f" "$percent" 2>/dev/null || echo "0")
               
               echo "Checking module: '$module' - Coverage: ${percent}%"
               
-              if [ "$percent" -lt "$threshold" ]; then
+              if [ "$percent_int" -lt "$threshold" ]; then
                 echo "  ❌ FAIL: Below ${threshold}% threshold"
                 failed_projects="$failed_projects $module (${percent}%)"
               else

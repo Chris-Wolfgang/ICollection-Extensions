@@ -6,7 +6,6 @@
     <File Path="CONTRIBUTING.md" />
     <File Path="LICENSE" />
     <File Path="README.md" />
-    <File Path="SETUP.md" />
   </Folder>
   <Folder Name="/.root/.github/">
     <File Path=".github/CODEOWNERS" />
@@ -29,6 +28,7 @@
   <Folder Name="/source/">
     <Project Path="source/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
   </Folder>
-  <Folder Name="/tests/" />
-  <Project Path="../IComparable-Extensions/tests/Wolfgang.Extensions.IComparable.Tests.Unit/Wolfgang.Extensions.IComparable.Tests.Unit.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Unit/Wolfgang.Extensions.ICollection.Tests.Unit.csproj" />
+  </Folder>
 </Solution>

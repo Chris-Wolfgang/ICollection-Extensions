@@ -154,5 +154,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [NuGet Package](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/)
 - [Source Code](https://github.com/Chris-Wolfgang/ICollection-Extensions)
 - [Report Issues](https://github.com/Chris-Wolfgang/ICollection-Extensions/issues)
-
-
