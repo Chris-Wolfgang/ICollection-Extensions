@@ -13,6 +13,8 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <Copyright>Copyright 2026 Chris Wolfgang</Copyright>
+        <!-- Suppress NU1701 warning for xunit.runner.visualstudio 2.8.2 false positives on modern .NET targets -->
+        <NoWarn>$(NoWarn);NU1701</NoWarn>
     </PropertyGroup>
 
     <!-- Common packages for all frameworks -->
