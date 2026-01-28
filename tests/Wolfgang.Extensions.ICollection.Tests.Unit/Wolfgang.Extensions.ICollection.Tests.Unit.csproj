@@ -24,8 +24,13 @@
 	</ItemGroup>
 
 	<!-- .NET Framework 4.6.2 - 4.8.1 specific packages -->
-	<ItemGroup Condition="'$(TargetFramework)' == 'net462' or '$(TargetFramework)' == 'net472' or '$(TargetFramework)' == 'net48' or '$(TargetFramework)' == 'net481'">
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+	<ItemGroup Condition="
+			'$(TargetFramework)' == 'net462' 
+			or '$(TargetFramework)' == 'net472' 
+			or '$(TargetFramework)' == 'net48' 
+			or '$(TargetFramework)' == 'net481'
+			">
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -42,7 +47,7 @@
 
 	<!-- .NET Core 3.1 specific packages -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -59,7 +64,7 @@
 
 	<!-- .NET 5.0 specific packages -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0' ">
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
