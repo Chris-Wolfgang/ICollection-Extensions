@@ -98,10 +98,10 @@ ICollection-Extensions/
 │       ├── ICollectionExtensions.cs # Main extension methods
 │       └── Wolfgang.Extensions.ICollection.csproj
 ├── tests/                           # Test projects
-│   └── Wolfgang.Extensions.ICollection.Tests/
-│       ├── ICollectionExtensionsTests.cs
-│       └── Wolfgang.Extensions.ICollection.Tests.csproj
-├── benchmarks/                      # Performance benchmarks (optional)
+│   └── Wolfgang.Extensions.ICollection.Tests.Unit/
+│       ├── ICollectionExtensionTests.cs
+│       └── Wolfgang.Extensions.ICollection.Tests.Unit.csproj
+├── benchmarks/                      # Reserved for optional performance benchmarks (currently empty)
 ├── examples/                        # Example projects
 ├── docs/                            # Documentation
 ├── docfx_project/                   # DocFX documentation source
@@ -131,7 +131,7 @@ git checkout -b feature/your-feature-name
 # Run tests
 dotnet test --configuration Release
 
-# Check code coverage (should be above 80%)
+# Check code coverage (should be above 90%)
 dotnet test --configuration Release --collect:"XPlat Code Coverage"
 ```
 
@@ -171,7 +171,7 @@ Then visit GitHub to create a pull request.
 
 ### Testing Requirements
 
-- **Minimum 80% code coverage** is required
+- **Minimum 90% code coverage** is required
 - Write unit tests for all new functionality
 - Follow existing test patterns in the project
 - Test edge cases and error conditions
@@ -188,17 +188,19 @@ The project uses GitHub Actions for CI/CD. The workflow runs:
 
 1. **Build** - Compiles the solution
 2. **Test** - Runs all unit tests
-3. **Coverage** - Generates code coverage reports (minimum 80%)
+3. **Coverage** - Generates code coverage reports (minimum 90%)
 4. **Security** - Runs DevSkim security analysis
 
 All checks must pass before a pull request can be merged.
 
 ## Common Tasks
 
-### Running Benchmarks
+### Running Benchmarks (Optional - Not Currently Available)
+
+The `benchmarks/` folder is currently empty and reserved for future performance benchmarks. If a benchmarks project is added in the future, you can run it with:
 
 ```bash
-cd benchmarks/Wolfgang.Extensions.ICollection.Benchmarks
+cd benchmarks/YourBenchmarksProject
 dotnet run -c Release
 ```
 
@@ -247,7 +249,7 @@ dotnet build
 
 ### Coverage Too Low
 
-**Problem**: Code coverage below 80%
+**Problem**: Code coverage below 90%
 
 **Solution**: Add more test cases to cover untested code paths. Review the coverage report to identify gaps:
 ```bash
