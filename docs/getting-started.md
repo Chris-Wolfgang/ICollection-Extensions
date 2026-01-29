@@ -44,7 +44,7 @@ First, add the namespace to your C# file:
 using Wolfgang.Extensions.ICollection;
 ```
 
-### 2. Use AddRange on Any ICollection&lt;T&gt;
+### 2. Use AddRange on Any ICollection<T>
 
 Now you can use `AddRange()` on any collection implementing `ICollection<T>`:
 

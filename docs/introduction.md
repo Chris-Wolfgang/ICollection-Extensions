@@ -27,20 +27,21 @@ This library provides well-tested, documented extension methods that work with a
 
 The extension methods work with any type implementing `ICollection<T>`, including:
 
-- **List&lt;T&gt;** - Standard generic list
-- **HashSet&lt;T&gt;** - Unordered set of unique elements
-- **LinkedList&lt;T&gt;** - Doubly-linked list
-- **Collection&lt;T&gt;** - Base class for generic collections
-- **ObservableCollection&lt;T&gt;** - Collection with change notifications
-- **Custom implementations** - Any class implementing ICollection&lt;T&gt;
+- **List<T>** - Standard generic list
+- **HashSet<T>** - Unordered set of unique elements
+- **LinkedList<T>** - Doubly-linked list
+- **Collection<T>** - Base class for generic collections
+- **ObservableCollection<T>** - Collection with change notifications
+- **Custom implementations** - Any class implementing ICollection<T>
 
 ## Target Frameworks
 
-Wolfgang.Extensions.ICollection supports multiple .NET platforms:
+Wolfgang.Extensions.ICollection supports multiple .NET platforms from .NET Framework 4.6.2 through .NET 10:
 
-- **.NET Framework 4.6.2**
+- **.NET Framework 4.6.2** and newer
 - **.NET Standard 2.0** (provides compatibility with .NET Core 2.0+, .NET 5+, and newer .NET Framework versions)
 - **.NET 8.0**
+- **.NET 9.0**
 - **.NET 10.0**
 
 This broad compatibility ensures the library can be used in virtually any .NET project, from legacy applications to cutting-edge solutions.
@@ -53,7 +54,7 @@ The primary extension method provided by this library is `AddRange<T>()`, which 
 
 **Features:**
 - Null-safe (throws ArgumentNullException for null parameters)
-- Works with any IEnumerable&lt;T&gt; source
+- Works with any IEnumerable<T> source
 - Preserves collection-specific behaviors (e.g., HashSet deduplication)
 - Handles empty enumerables gracefully
 - Fully documented with XML comments and examples
