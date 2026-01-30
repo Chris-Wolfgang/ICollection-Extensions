@@ -16,6 +16,8 @@ on:
     paths-ignore:
       - '**.md'
       - 'docs/**'
+      - '.github/workflows/**'
+
 jobs:
   # ============================================================================
   # STAGE 1: Linux - .NET Core/5+ Tests with Coverage Gate
@@ -168,7 +170,7 @@ jobs:
               
               echo "Checking module: '$module' - Coverage: ${percent}%"
               
-              if [ "$percent_int" -lt "$threshold" ]; then
+              if [ "$percent" -lt "$threshold" ]; then
                 echo "  ❌ FAIL: Below ${threshold}% threshold"
                 failed_projects="$failed_projects $module (${percent}%)"
               else

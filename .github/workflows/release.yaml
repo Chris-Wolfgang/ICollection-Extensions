@@ -83,7 +83,7 @@ jobs:
           $packagesPath = Join-Path $PWD 'nuget-packages'
           New-Item -ItemType Directory -Force -Path $packagesPath | Out-Null
 
-          Get-ChildItem -Path 'source' -Recurse -Filter '*.csproj' | ForEach-Object {
+          Get-ChildItem -Path 'src' -Recurse -Filter '*.csproj' | ForEach-Object {
             Write-Host "Packing $($_.FullName)"
             dotnet pack $_.FullName --no-build --configuration Release --output $packagesPath
             if ($LASTEXITCODE -ne 0) {
