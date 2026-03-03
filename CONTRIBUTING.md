@@ -181,8 +181,8 @@ dotnet format
 # Check formatting without changes (CI mode)
 dotnet format --verify-no-changes
 
-# PowerShell formatting script
-pwsh ./format.ps1
+# PowerShell formatting script (from repo root)
+pwsh ./scripts/format.ps1
 ```
 
 See [README-FORMATTING.md](README-FORMATTING.md) for detailed formatting rules.
