@@ -78,7 +78,11 @@
   </Folder>
   <Folder Name="/benchmarks/" />
   <Folder Name="/examples/" />
-  <Folder Name="/src/" />
-  <Folder Name="/tests/" />
+  <Folder Name="/src/">
+    <Project Path="src/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Unit/Wolfgang.Extensions.ICollection.Tests.Unit.csproj" />
+  </Folder>
 </Solution>
 
