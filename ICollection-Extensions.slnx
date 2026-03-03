@@ -30,12 +30,7 @@
     <File Path="assets/icon.png" />
   </Folder>
   <Folder Name="/.root/docs/">
-    <File Path="docs/LICENSE-SELECTION.md" />
-    <File Path="docs/README-FORMATTING.md" />
     <File Path="docs/RELEASE-WORKFLOW-SETUP.md" />
-    <File Path="docs/SECURITY.md" />
-    <File Path="docs/TEMPLATE-PLACEHOLDERS.md" />
-    <File Path="docs/WORKFLOW_SECURITY.md" />
   </Folder>
   <Folder Name="/.root/scripts/">
     <File Path="scripts/format.ps1" />
