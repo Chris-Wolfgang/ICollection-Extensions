@@ -17,7 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\source\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
+        <ProjectReference Include="..\..\src\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
     </ItemGroup>
 
 
