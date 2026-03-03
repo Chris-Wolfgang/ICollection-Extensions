@@ -33,8 +33,6 @@ After merging this PR, complete the following setup step:
 
 **Location:** Settings → Branches → main
 
-> **Note:** By default, the template is configured for single developer repositories. The branch protection setup script (`scripts/Setup-BranchRuleset.ps1`) includes interactive prompts that allow you to choose between single-developer or multi-developer settings during execution. Simply run the script and select option [1] for single-developer mode (0 approvals) or option [2] for multi-developer mode (1+ approvals and code owner review required).
-
 Ensure the following settings are enabled:
 
 - ✅ **Require a pull request before merging**
