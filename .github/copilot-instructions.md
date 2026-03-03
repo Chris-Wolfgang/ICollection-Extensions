@@ -106,7 +106,7 @@ The workflow runs on pull requests to `main` branch and includes:
 4. **Branch Protection**: Configured to require this workflow to pass before merging
 
 ### Branch Protection Configuration
-Branch protection rules are configured by running the local PowerShell script `scripts/Setup-BranchRuleset.ps1`. The script prompts you to choose repository settings during setup.
+Configure branch protection rules directly in the GitHub UI under **Settings → Branches → Branch protection rules** for your default branch (typically `main`). Choose one of the recommended profiles below.
 
 **Single-Developer Configuration (Default):**
 - No PR approvals required (you can merge your own PRs)
@@ -122,15 +122,6 @@ Branch protection rules are configured by running the local PowerShell script `s
 - Require conversation resolution before merging
 - Restrict deletions and block force pushes
 - Require code scanning (CodeQL High+ severity)
-
-**Branch Protection Setup Instructions:**
-1. Install GitHub CLI (gh) from https://cli.github.com/
-2. Authenticate: `gh auth login`
-3. From PowerShell 7+ (for example, using `pwsh`), run the branch protection setup script:
-   ```powershell
-   pwsh -File ./scripts/Setup-BranchRuleset.ps1
-   ```
-4. When prompted by the script, choose single-developer or multi-developer settings
 
 ## Key Files and Locations
 
