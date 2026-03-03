@@ -1,34 +1,84 @@
 <Solution>
   <Folder Name="/.root/">
-    <File Path=".editorconfig" />
-    <File Path=".gitignore" />
+    <File Path="BannedSymbols.txt" />
     <File Path="CODE_OF_CONDUCT.md" />
     <File Path="CONTRIBUTING.md" />
+    <File Path="Directory.Build.props" />
     <File Path="LICENSE" />
     <File Path="README.md" />
+    <File Path="REPO-INSTRUCTIONS.md" />
   </Folder>
   <Folder Name="/.root/.github/">
     <File Path=".github/CODEOWNERS" />
     <File Path=".github/copilot-instructions.md" />
     <File Path=".github/dependabot.yml" />
     <File Path=".github/pull_request_template.md" />
+    <File Path=".github/version-picker-template.html" />
   </Folder>
   <Folder Name="/.root/.github/ISSUE_TEMPLATE/">
     <File Path=".github/ISSUE_TEMPLATE/BUG_REPORT.yaml" />
-    <File Path=".github/ISSUE_TEMPLATE/feature_request.md" />
+    <File Path=".github/ISSUE_TEMPLATE/feature_request.yaml" />
   </Folder>
   <Folder Name="/.root/.github/workflows/">
-    <File Path=".github/workflows/create-labels.yaml" />
+    <File Path=".github/workflows/build-all-versions.yaml" />
+    <File Path=".github/workflows/codeql.yml" />
     <File Path=".github/workflows/docfx.yaml" />
     <File Path=".github/workflows/pr.yaml" />
     <File Path=".github/workflows/release.yaml" />
   </Folder>
+  <Folder Name="/.root/.vs/ICollection-Extensions.slnx/copilot-chat/a6c8aa87/sessions/">
+    <File Path=".vs/ICollection-Extensions.slnx/copilot-chat/a6c8aa87/sessions/1f175263-8977-4a7f-ae31-91538080bf0d" />
+  </Folder>
+  <Folder Name="/.root/.vs/ICollection-Extensions.slnx/FileContentIndex/">
+    <File Path=".vs/ICollection-Extensions.slnx/FileContentIndex/05d7b418-1a4e-4b5e-802c-f23873ca2a08.vsidx" />
+    <File Path=".vs/ICollection-Extensions.slnx/FileContentIndex/4a634d44-15fc-4407-bc75-60f888741744.vsidx" />
+    <File Path=".vs/ICollection-Extensions.slnx/FileContentIndex/9c93d45e-3d1f-45ec-8ebe-b30c52395b03.vsidx" />
+    <File Path=".vs/ICollection-Extensions.slnx/FileContentIndex/ae757f08-792c-4b94-b6e6-b1fb0e41dc26.vsidx" />
+    <File Path=".vs/ICollection-Extensions.slnx/FileContentIndex/fae142c5-d1e6-49d3-99b8-08beb9e84a80.vsidx" />
+  </Folder>
+  <Folder Name="/.root/.vs/ICollection-Extensions.slnx/v18/">
+    <File Path=".vs/ICollection-Extensions.slnx/v18/DocumentLayout.backup.json" />
+    <File Path=".vs/ICollection-Extensions.slnx/v18/DocumentLayout.json" />
+  </Folder>
+  <Folder Name="/.root/.vs/ICollection-Extensions.slnx/v18/TestStore/0/">
+    <File Path=".vs/ICollection-Extensions.slnx/v18/TestStore/0/000.testlog" />
+    <File Path=".vs/ICollection-Extensions.slnx/v18/TestStore/0/testlog.manifest" />
+  </Folder>
+  <Folder Name="/.root/.vs/ICollection-Extensions/CopilotIndices/18.0.981.45449/">
+    <File Path=".vs/ICollection-Extensions/CopilotIndices/18.0.981.45449/CodeChunks.db" />
+    <File Path=".vs/ICollection-Extensions/CopilotIndices/18.0.981.45449/SemanticSymbols.db" />
+  </Folder>
+  <Folder Name="/.root/.vs/ProjectEvaluation/">
+    <File Path=".vs/ProjectEvaluation/icollection-extensions.metadata.v10.bin" />
+    <File Path=".vs/ProjectEvaluation/icollection-extensions.projects.v10.bin" />
+    <File Path=".vs/ProjectEvaluation/icollection-extensions.strings.v10.bin" />
+  </Folder>
+  <Folder Name="/.root/assets/">
+    <File Path="assets/icon.ico" />
+    <File Path="assets/icon.png" />
+  </Folder>
+  <Folder Name="/.root/docs/">
+    <File Path="docs/LICENSE-SELECTION.md" />
+    <File Path="docs/README-FORMATTING.md" />
+    <File Path="docs/RELEASE-WORKFLOW-SETUP.md" />
+    <File Path="docs/SECURITY.md" />
+    <File Path="docs/TEMPLATE-PLACEHOLDERS.md" />
+    <File Path="docs/WORKFLOW_SECURITY.md" />
+  </Folder>
+  <Folder Name="/.root/scripts/">
+    <File Path="scripts/format.ps1" />
+    <File Path="scripts/Setup-BranchRuleset.ps1" />
+    <File Path="scripts/Setup-GitHubPages.ps1" />
+    <File Path="scripts/Setup-Labels.ps1" />
+    <File Path="scripts/setup.ps1" />
+    <File Path="scripts/Validate-DocsDeploy.sh" />
+  </Folder>
+  <Folder Name="/.root/Wolfgang.Extensions.Icollection.Tests.Unit/">
+    <File Path="Wolfgang.Extensions.Icollection.Tests.Unit/Wolfgang.Extensions.ICollection.Tests.Unit.csproj" />
+  </Folder>
   <Folder Name="/benchmarks/" />
   <Folder Name="/examples/" />
-  <Folder Name="/source/">
-    <Project Path="source/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Unit/Wolfgang.Extensions.ICollection.Tests.Unit.csproj" />
-  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/tests/" />
 </Solution>
+
