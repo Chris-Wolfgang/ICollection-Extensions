@@ -33,6 +33,8 @@ After merging this PR, complete the following setup step:
 
 **Location:** Settings → Branches → main
 
+> **Note:** By default, the template is configured for single developer repositories. Configure branch protection rules directly in the GitHub UI under **Settings → Branches → Branch protection rules** for your default branch (`main`). Choose single-developer mode (0 approvals) or multi-developer mode (1+ approvals and code owner review required).
+
 Ensure the following settings are enabled:
 
 - ✅ **Require a pull request before merging**
