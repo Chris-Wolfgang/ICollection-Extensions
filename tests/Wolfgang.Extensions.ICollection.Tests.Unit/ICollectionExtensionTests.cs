@@ -158,8 +158,8 @@ public class ICollectionExtensionTests
 
         // Assert
         Assert.Equal(4, source.Count);
-        Assert.Equal(2, source.Count(s => s == "item1"));
-        Assert.Equal(2, source.Count(s => s == "item2"));
+        Assert.Equal(2, source.Count(s => s.Equals("item1")));
+        Assert.Equal(2, source.Count(s => s.Equals("item2")));
     }
 
 
