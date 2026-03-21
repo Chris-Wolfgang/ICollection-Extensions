@@ -61,7 +61,7 @@ public static class ICollectionExtensions
     /// numbers.AddRange(new[] { 3, 4, 5 });
     /// // numbers now contains: 1, 2, 3, 4, 5
     /// 
-    /// // Add items from LINQ query results
+    /// // Add items from LINQ query results (requires using System.Linq)
     /// var evenNumbers = Enumerable.Range(1, 10).Where(n => n % 2 == 0);
     /// ICollection&lt;int&gt; myCollection = new List&lt;int&gt;();
     /// myCollection.AddRange(evenNumbers);
@@ -70,12 +70,12 @@ public static class ICollectionExtensions
     /// </example>
     public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> items)
     {
-        if (source == null)
+        if (source is null)
         {
             throw new ArgumentNullException(nameof(source));
         }
 
-        if (items == null)
+        if (items is null)
         {
             throw new ArgumentNullException(nameof(items));
         }
