@@ -241,9 +241,16 @@ $needsDocFxConfig = $false
 
 if (Test-Path $docfxJsonPath) {
     $docfxContent = Get-Content $docfxJsonPath -Raw
-    if ($docfxContent -match '{{[^}]+}}') {
+    # Detect template placeholders: {{...}} style or empty/default metadata fields
+    $docfxJson = $docfxContent | ConvertFrom-Json -ErrorAction SilentlyContinue
+    $hasPlaceholders = $docfxContent -match '{{[^}]+}}'
+    $hasEmptyMetadata = $docfxJson -and $docfxJson.build.globalMetadata -and (
+        [string]::IsNullOrWhiteSpace($docfxJson.build.globalMetadata._appName) -or
+        [string]::IsNullOrWhiteSpace($docfxJson.build.globalMetadata._appTitle)
+    )
+    if ($hasPlaceholders -or $hasEmptyMetadata) {
         $needsDocFxConfig = $true
-        Write-Info "DocFX configuration files contain placeholders that need to be replaced"
+        Write-Info "DocFX configuration needs updating (placeholders or empty metadata fields detected)"
     } else {
         Write-Success "DocFX configuration files are already configured"
     }
@@ -380,11 +387,18 @@ if ($needsDocFxConfig) {
 # Check if gh-pages branch exists
 Write-Step "Checking for gh-pages branch..."
 try {
-    $branches = git ls-remote --heads origin gh-pages 2>&1
-    
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error-Custom "Error checking for gh-pages branch. Git exited with code $LASTEXITCODE.`nOutput:`n$branches"
-        exit 1
+    # Validate that 'origin' remote exists before using it
+    $originUrl = git remote get-url origin 2>&1
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($originUrl)) {
+        Write-Warning-Custom "No usable 'origin' remote was found. The script will create a local gh-pages branch, but you must configure a remote and push it manually."
+        $branches = ""
+    } else {
+        $branches = git ls-remote --heads origin gh-pages 2>&1
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error-Custom "Error checking for gh-pages branch. Git exited with code $LASTEXITCODE.`nOutput:`n$branches"
+            exit 1
+        }
     }
     
     $ghPagesBranchExists = -not [string]::IsNullOrWhiteSpace($branches)
@@ -519,6 +533,8 @@ try {
         }
         
         # Check if it's configured to use gh-pages branch
+        # NOTE: If the repo's DocFX workflow uses actions/deploy-pages (GitHub Actions deployment),
+        # this gh-pages branch configuration may not be needed. Verify the deployment model matches.
         if ($pagesConfig.source.branch -ne "gh-pages") {
             Write-Warning-Custom "GitHub Pages is not configured to use the gh-pages branch"
             if (-not $EnablePages) {
