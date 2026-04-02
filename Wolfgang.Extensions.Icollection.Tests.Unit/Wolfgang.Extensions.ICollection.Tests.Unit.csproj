@@ -8,8 +8,6 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
-		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-		<SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
 		<Copyright>Copyright 2026 Chris Wolfgang</Copyright>
 
 	</PropertyGroup>
