@@ -253,7 +253,17 @@ jobs:
         run: |
           # Find all test projects (C#, VB.NET, F#)
           # Search both ./tests and root-level *.Tests.* directories for backwards compat
-          mapfile -d '' -t test_projects < <(find . -maxdepth 1 -type d -name "*.Tests.*" -print0 -o -type d -name "tests" -print0 | xargs -0 -r -I{} find {} -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          test_dirs=()
+          while IFS= read -r -d '' d; do
+            test_dirs+=("$d")
+          done < <(find . -maxdepth 1 -type d \( -name "*.Tests.*" -o -name "tests" \) -print0)
+
+          test_projects=()
+          for d in "${test_dirs[@]}"; do
+            while IFS= read -r -d '' f; do
+              test_projects+=("$f")
+            done < <(find "$d" -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          done
 
           if [ ${#test_projects[@]} -eq 0 ]; then
             echo "❌ No test projects found!"
@@ -798,10 +808,17 @@ jobs:
         run: |
           # Find all test projects (C#, VB.NET, F#)
           # Search both ./tests and root-level *.Tests.* directories for backwards compat
+          test_dirs=()
+          while IFS= read -r -d '' d; do
+            test_dirs+=("$d")
+          done < <(find . -maxdepth 1 -type d \( -name "*.Tests.*" -o -name "tests" \) -print0)
+
           test_projects=()
-          while IFS= read -r -d '' file; do
-          test_projects+=("$file")
-          done < <(find . -maxdepth 1 -type d -name "*.Tests.*" -print0 -o -type d -name "tests" -print0 | xargs -0 -r -I{} find {} -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          for d in "${test_dirs[@]}"; do
+            while IFS= read -r -d '' f; do
+              test_projects+=("$f")
+            done < <(find "$d" -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          done
 
           if [ ${#test_projects[@]} -eq 0 ]; then
             echo "❌ No test projects found!"
