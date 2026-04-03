@@ -252,10 +252,11 @@ jobs:
       - name: Run tests with coverage (.NET Core 5.0 - 10.0)
         run: |
           # Find all test projects (C#, VB.NET, F#)
-          mapfile -d '' -t test_projects < <(find ./tests -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          # Search both ./tests and root-level *.Tests.* directories for backwards compat
+          mapfile -d '' -t test_projects < <(find . -maxdepth 1 -type d -name "*.Tests.*" -print0 -o -type d -name "tests" -print0 | xargs -0 -r -I{} find {} -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
 
           if [ ${#test_projects[@]} -eq 0 ]; then
-            echo "❌ No test projects found in ./tests directory!"
+            echo "❌ No test projects found!"
             exit 1
           fi
 
@@ -472,10 +473,20 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
 
-          $testProjects = @(Get-ChildItem -Path './tests/*' -Recurse -File -Include '*.csproj','*.vbproj','*.fsproj')
+          # Search both ./tests and root-level *.Tests.* directories for backwards compat
+          $searchPaths = @('./tests', '.') | Where-Object { Test-Path $_ }
+          $testProjects = @($searchPaths | ForEach-Object {
+            if ($_ -eq '.') {
+              Get-ChildItem -Path '.' -Directory -Filter '*.Tests.*' | ForEach-Object {
+                Get-ChildItem -Path $_.FullName -Recurse -File -Include '*.csproj','*.vbproj','*.fsproj'
+              }
+            } else {
+              Get-ChildItem -Path "$_/*" -Recurse -File -Include '*.csproj','*.vbproj','*.fsproj'
+            }
+          } | Sort-Object -Property FullName -Unique)
 
           if (@($testProjects).Count -eq 0) {
-            Write-Error "❌ No test projects found in ./tests directory!"
+            Write-Error "❌ No test projects found!"
             exit 1
           }
 
@@ -786,13 +797,14 @@ jobs:
       - name:  Run tests (.NET 6.0 - 10.0 only - ARM64 compatible)
         run: |
           # Find all test projects (C#, VB.NET, F#)
+          # Search both ./tests and root-level *.Tests.* directories for backwards compat
           test_projects=()
           while IFS= read -r -d '' file; do
           test_projects+=("$file")
-          done < <(find ./tests -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          done < <(find . -maxdepth 1 -type d -name "*.Tests.*" -print0 -o -type d -name "tests" -print0 | xargs -0 -r -I{} find {} -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
 
           if [ ${#test_projects[@]} -eq 0 ]; then
-            echo "❌ No test projects found in ./tests directory!"
+            echo "❌ No test projects found!"
             exit 1
           fi
 
