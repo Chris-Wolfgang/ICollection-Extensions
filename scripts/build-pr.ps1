@@ -1,11 +1,12 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-    Runs the same checks as the Windows section of pr.yaml locally.
+    Runs the same checks as pr.yaml locally.
 
 .DESCRIPTION
-    Replicates the PR workflow's Windows stage locally so you can verify
-    your changes will pass before pushing. Runs in order:
+    Replicates the PR workflow locally so you can verify your changes will
+    pass before pushing. Runs the Windows test stage plus the security
+    scans (DevSkim and gitleaks, which are separate jobs in CI). Runs in order:
       1. Restore and build (Release)
       2. Run all tests across all target frameworks
       3. Generate coverage report and enforce threshold
@@ -81,10 +82,22 @@ else {
 if (-not $SkipTests -and $failed.Count -eq 0) {
     Write-Step "Step 2: Run Tests (all target frameworks)"
 
-    $testProjects = @(Get-ChildItem -Path './tests' -Recurse -File -Include '*.csproj', '*.vbproj', '*.fsproj' -ErrorAction SilentlyContinue)
+    # Search both ./tests and root-level *.Tests.* directories to match pr.yaml
+    $testProjects = @()
+
+    if (Test-Path './tests') {
+        $testProjects += @(Get-ChildItem -Path './tests' -Recurse -File -Include '*.csproj', '*.vbproj', '*.fsproj' -ErrorAction SilentlyContinue)
+    }
+
+    $rootLevelTestDirs = @(Get-ChildItem -Path '.' -Directory -Filter '*.Tests.*' -ErrorAction SilentlyContinue)
+    foreach ($testDir in $rootLevelTestDirs) {
+        $testProjects += @(Get-ChildItem -Path $testDir.FullName -Recurse -File -Include '*.csproj', '*.vbproj', '*.fsproj' -ErrorAction SilentlyContinue)
+    }
+
+    $testProjects = @($testProjects | Sort-Object -Property FullName -Unique)
 
     if ($testProjects.Count -eq 0) {
-        Write-Host "No test projects found in ./tests — skipping"
+        Write-Host "No test projects found in ./tests or root-level *.Tests.* directories — skipping"
     }
     else {
         foreach ($testProj in $testProjects) {
@@ -121,7 +134,8 @@ if (-not $SkipTests -and $failed.Count -eq 0) {
                 )
 
                 if ($fw -match '^net([5-9]|[1-9][0-9]+)\.') {
-                    $testArgs += '--collect:XPlat Code Coverage'
+                    $testArgs += '--collect'
+                    $testArgs += 'XPlat Code Coverage'
                     $testArgs += '--results-directory'
                     $testArgs += './TestResults'
                     if (Test-Path 'coverlet.runsettings') {
@@ -202,7 +216,8 @@ if (-not $SkipTests -and -not $SkipCoverage -and $failed.Count -eq 0) {
             }
         }
         else {
-            Write-Host "Coverage report not generated — skipping threshold check"
+            Write-Fail "Coverage report not generated — failing coverage check to match CI behavior"
+            $failed += "Coverage"
         }
     }
 }
@@ -210,7 +225,7 @@ if (-not $SkipTests -and -not $SkipCoverage -and $failed.Count -eq 0) {
 # ============================================================================
 # STEP 4: DevSkim Security Scan
 # ============================================================================
-if (-not $SkipSecurity) {
+if (-not $SkipSecurity -and $failed.Count -eq 0) {
     Write-Step "Step 4: DevSkim Security Scan"
 
     $devskim = Get-Command devskim -ErrorAction SilentlyContinue
@@ -246,7 +261,7 @@ if (-not $SkipSecurity) {
 # ============================================================================
 # STEP 5: Gitleaks Secrets Scan
 # ============================================================================
-if (-not $SkipSecurity) {
+if (-not $SkipSecurity -and $failed.Count -eq 0) {
     Write-Step "Step 5: Gitleaks Secrets Scan"
 
     $gitleaks = Get-Command gitleaks -ErrorAction SilentlyContinue
@@ -259,7 +274,7 @@ if (-not $SkipSecurity) {
             $dest = Join-Path $env:LOCALAPPDATA "gitleaks"
             New-Item -ItemType Directory -Force -Path $dest | Out-Null
             $zip = Join-Path $env:TEMP $archive
-            Invoke-WebRequest -Uri $url -OutFile $zip -UseBasicParsing
+            Invoke-WebRequest -Uri $url -OutFile $zip
             Expand-Archive -Path $zip -DestinationPath $dest -Force
             Remove-Item $zip -ErrorAction SilentlyContinue
             $env:PATH = "$dest;$env:PATH"
@@ -267,7 +282,13 @@ if (-not $SkipSecurity) {
         else {
             $archive = "gitleaks_${version}_linux_x64.tar.gz"
             $url = "https://github.com/gitleaks/gitleaks/releases/download/v${version}/$archive"
-            curl -sSfL $url | tar xz -C /usr/local/bin gitleaks
+            $dest = Join-Path $HOME ".local/bin"
+            New-Item -ItemType Directory -Force -Path $dest | Out-Null
+            $tarball = Join-Path ([System.IO.Path]::GetTempPath()) $archive
+            Invoke-WebRequest -Uri $url -OutFile $tarball
+            tar xzf $tarball -C $dest gitleaks
+            Remove-Item $tarball -ErrorAction SilentlyContinue
+            $env:PATH = "$dest$([System.IO.Path]::PathSeparator)$env:PATH"
         }
     }
 
