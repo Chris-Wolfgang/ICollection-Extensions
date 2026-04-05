@@ -42,7 +42,8 @@ jobs:
             10.0.x
 
       - name: Install DocFX
-        run: dotnet tool update docfx --global
+        run: |
+          dotnet tool update docfx --global || dotnet tool install docfx --global
         shell: pwsh
 
       - name: Build docs for each version
@@ -75,6 +76,8 @@ jobs:
           )
           Write-Host "Discovered $($versions.Count) version tag(s): $($versions -join ', ')"
 
+          $failedVersions = @()
+
           foreach ($version in $versions) {
             Write-Host "========================================" -ForegroundColor Cyan
             Write-Host "Building docs for $version" -ForegroundColor Cyan
@@ -93,6 +96,7 @@ jobs:
             git worktree add $workDir $version
             if ($LASTEXITCODE -ne 0) {
               Write-Warning "⚠️  Failed to create worktree for $version – skipping."
+              $failedVersions += $version
               continue
             }
 
@@ -140,6 +144,7 @@ jobs:
                 Write-Host "✅ Docs built for $version" -ForegroundColor Green
               } else {
                 Write-Warning "⚠️  No _site output produced for $version."
+                $failedVersions += $version
               }
             } finally {
               Pop-Location
@@ -148,6 +153,12 @@ jobs:
                 Write-Warning "⚠️  git worktree remove failed for $version (exit $LASTEXITCODE): $removeOutput"
               }
             }
+          }
+
+          if ($failedVersions.Count -gt 0) {
+            Write-Warning "⚠️  Failed to build docs for: $($failedVersions -join ', ')"
+            Write-Error "❌ $($failedVersions.Count) version(s) failed — aborting to avoid deploying incomplete docs."
+            exit 1
           }
 
           # Build 'latest' from the most recent stable v*.*.* tag so that the
@@ -284,9 +295,17 @@ jobs:
             Sort-Object -Property Major, Minor, Patch, Stable -Descending |
             Select-Object -ExpandProperty Tag
 
-          [array]$versions = @([PSCustomObject]@{ version = 'latest'; url = "${base}versions/latest/" })
+          # Derive versions list from actually built output directories (not all tags)
+          # to avoid linking to versions that failed to build
+          $builtDirs = Get-ChildItem -Path (Join-Path $outDir 'versions') -Directory | Select-Object -ExpandProperty Name
+          [array]$versions = @()
+          if ($builtDirs -contains 'latest') {
+            $versions += [PSCustomObject]@{ version = 'latest'; url = "${base}versions/latest/" }
+          }
           foreach ($t in $orderedTags) {
-            $versions += [PSCustomObject]@{ version = $t; url = "${base}versions/$t/" }
+            if ($builtDirs -contains $t) {
+              $versions += [PSCustomObject]@{ version = $t; url = "${base}versions/$t/" }
+            }
           }
 
           $versionsJson = ConvertTo-Json -InputObject $versions -Depth 3

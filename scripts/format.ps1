@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env pwsh
+#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Formats all C# code in the repository using dotnet format.
@@ -37,11 +37,11 @@ if ($LASTEXITCODE -ne 0)
     Write-Host ""
     Write-Host "❌ dotnet format is not available!" -ForegroundColor Red
     Write-Host ""
-    Write-Host "The 'dotnet format' command is built into the .NET SDK starting with .NET 6." -ForegroundColor Yellow
-    Write-Host "This project requires .NET 8.0 SDK or later." -ForegroundColor Yellow
+    Write-Host "The 'dotnet format' command is typically included in the .NET SDK (.NET 6+)," -ForegroundColor Yellow
+    Write-Host "but may also be installed as a global tool." -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "Please install the .NET 8.0 SDK or later from:" -ForegroundColor Yellow
-    Write-Host "https://dotnet.microsoft.com/download" -ForegroundColor Cyan
+    Write-Host "To install globally:  dotnet tool install -g dotnet-format" -ForegroundColor Cyan
+    Write-Host "Or install the .NET 8.0+ SDK from: https://dotnet.microsoft.com/download" -ForegroundColor Cyan
     Write-Host ""
     exit 1
 }
