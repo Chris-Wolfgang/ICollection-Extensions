@@ -31,6 +31,11 @@
 [CmdletBinding()]
 param(
     [Parameter()]
+    [ValidateScript({
+        if ([string]::IsNullOrWhiteSpace($_)) { return $true }
+        if ($_ -match '^[^/\s]+/[^/\s]+$') { return $true }
+        throw "Repository must be in 'owner/repo' format, for example 'Chris-Wolfgang/my-repo'. Do not pass a full URL."
+    })]
     [string]$Repository
 )
 
@@ -98,8 +103,24 @@ foreach ($label in $labels) {
         Write-Host "   ✅ Created label: $($label.name)" -ForegroundColor Green
         $created++
     } elseif ($response -like "*already_exists*") {
-        Write-Host "   ⏭️  Label already exists, skipping: $($label.name)" -ForegroundColor Gray
-        $skipped++
+        # Update existing label to enforce standard color and description
+        $encodedName = [uri]::EscapeDataString($label.name)
+        $updateResponse = gh api `
+            --method PATCH `
+            -H "Accept: application/vnd.github+json" `
+            -H "X-GitHub-Api-Version: 2022-11-28" `
+            "/repos/$Repository/labels/$encodedName" `
+            -f "color=$($label.color)" `
+            -f "description=$($label.description)" 2>&1
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "   🔄 Updated existing label: $($label.name)" -ForegroundColor Cyan
+            $skipped++
+        } else {
+            Write-Host "   ⚠️  Label exists but update failed: $($label.name)" -ForegroundColor Yellow
+            Write-Host "      $updateResponse" -ForegroundColor Yellow
+            $skipped++
+        }
     } else {
         Write-Host "   ❌ Failed to create label: $($label.name)" -ForegroundColor Red
         Write-Host "      $response" -ForegroundColor Red
