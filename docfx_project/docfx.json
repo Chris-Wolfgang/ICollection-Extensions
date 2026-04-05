@@ -5,20 +5,25 @@
       "src": [
         {
           "files": [
-			"src/<path>/<project>.csproj"
+            "src/**/*.csproj"
           ],
           "src": "../"
         }
       ],
-      "dest": "api"
+      "dest": "api",
+      "properties": {
+        "TargetFramework": "net8.0"
+      },
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false
     }
   ],
   "build": {
     "content": [
       {
-		"files": [
-			"**/*.{md,yml}"
-		],
+        "files": [
+          "**/*.{md,yml}"
+        ],
         "exclude": [
           "_site/**"
         ]
@@ -27,20 +32,30 @@
     "resource": [
       {
         "files": [
+          "logo.svg",
           "images/**"
         ]
       }
     ],
+
     "output": "_site",
     "template": [
-      "modern",
-      "default"
+      "default",
+      "modern"
     ],
     "globalMetadata": {
-      "_appName": "",
-      "_appTitle": "<title>",
+      "_appName": "Wolfgang.Extensions.ICollection",
+      "_appTitle": "Wolfgang.Extensions.ICollection Documentation",
+      "_appLogoPath": "logo.svg",
       "_enableSearch": true,
+      "_appFooter": "Made with DocFX",
+      "_disableSidebar": false,
+      "_disableTocFilter": false,
+      "_enableDarkMode": true,
+      "colorMode": "dark",
+      "_baseUrl": "https://Chris-Wolfgang.github.io/ICollection-Extensions/",
       "pdf": true
     }
   }
 }
+

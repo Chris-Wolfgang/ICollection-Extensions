@@ -420,3 +420,17 @@ FodyWeavers.xsd
 # Test results and coverage
 TestResults/
 CoverageReport/
+
+# Release workflow temporary directories
+package-smoke-test/
+nuget-packages/
+
+# DocFX generated files
+docfx_project/_site/
+docfx_project/obj/
+
+# Generated documentation (built by CI/CD)
+docs/*
+!docs/.gitkeep
+!docs/RELEASE-WORKFLOW-SETUP.md
+!docs/README-FORMATTING.md

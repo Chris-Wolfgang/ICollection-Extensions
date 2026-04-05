@@ -20,42 +20,42 @@ This is a **repository template** for creating new .NET repositories. It provide
 **IMPORTANT**: This template has no buildable projects. These commands apply to repositories created FROM this template.
 
 1. **Restore Dependencies** (always run first):
-   ```bash
+   ```powershell
    dotnet restore
    ```
 
 2. **Build Solution**:
-   ```bash
+   ```powershell
    dotnet build --no-restore --configuration Release
    ```
 
 3. **Run Tests with Coverage**:
-   ```bash
+   ```powershell
    # Find and test all test projects
-   find ./tests -type f -name '*Test*.csproj' | while read proj; do
-     dotnet test "$proj" --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory "./TestResults"
-   done
+   Get-ChildItem -Path ./tests -Filter '*Test*.csproj' -Recurse | ForEach-Object {
+     dotnet test $_.FullName --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory "./TestResults"
+   }
    ```
 
 4. **Generate Coverage Reports**:
-   ```bash
+   ```powershell
    reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"CoverageReport" -reporttypes:"Html;TextSummary;MarkdownSummaryGithub;CsvSummary"
    ```
 
 5. **Security Scanning**:
-   ```bash
+   ```powershell
    devskim analyze --source-code . -f text --output-file devskim-results.txt -E
    ```
 
 ### Critical Build Requirements
-- **Code Coverage**: Minimum 80% line coverage required for all projects
+- **Code Coverage**: Minimum 90% line coverage required for all projects
 - **Security Scanning**: DevSkim must pass with no errors
 - **Build Configuration**: Always use Release configuration for CI
 - **Test Pattern**: Test projects must match `*Test*.csproj` pattern in `/tests` folder
 
 ### Common Issues and Workarounds
 - **Timeout Issues**: Coverage and security scans can take 5-10 minutes for larger projects
-- **Coverage Threshold Failures**: If below 80%, the build will fail - this is by design
+- **Coverage Threshold Failures**: If below 90%, the build will fail - this is by design
 - **Missing Test Projects**: The workflow expects at least one test project in `/tests` folder
 - **DevSkim False Positives**: Review `devskim-results.txt` for any security findings
 
@@ -86,8 +86,7 @@ root/
 ### Key Configuration Files
 - **`.editorconfig`**: Code style rules (C# file-scoped namespaces, var preferences, analyzer severity)
 - **`.gitignore`**: Comprehensive .NET gitignore (Visual Studio, build artifacts, packages)
-- **`SETUP.md`**: Detailed repository setup instructions (delete after setup)
-- **`CONTRIBUTING.md`**: Empty - populate with contribution guidelines
+- **`CONTRIBUTING.md`**: Contribution guidelines
 - **`CODE_OF_CONDUCT.md`**: Standard Contributor Covenant v2.0
 
 ### GitHub Integration
@@ -105,22 +104,29 @@ The workflow runs on pull requests to `main` branch and includes:
 3. **Artifacts**: Coverage reports and DevSkim results uploaded
 4. **Branch Protection**: Configured to require this workflow to pass before merging
 
-**Security Note**: Workflow includes safeguard `if: github.repository != 'Chris-Wolfgang/repo-template'` to prevent running on the template itself.
-
 ### Branch Protection Configuration
-When using this template, configure these settings in GitHub (detailed in `SETUP.md`):
+Configure branch protection rules directly in the GitHub UI under **Settings → Branches → Branch protection rules** for your default branch (typically `main`). Choose one of the recommended profiles below.
+
+**Single-Developer Configuration (Default):**
+- No PR approvals required (you can merge your own PRs)
+- Allows solo developers to merge their own PRs while still enforcing CI/CD checks
+
+**Multi-Developer Configuration:**
+- Requires 1+ approval before merging
+- Requires code owner review
+
+**All Configurations Include:**
 - Require status checks to pass before merging
 - Require branches to be up to date
-- Require pull request reviews (including Copilot reviews)
+- Require conversation resolution before merging
 - Restrict deletions and block force pushes
-- Require code scanning
+- Require code scanning (CodeQL High+ severity)
 
 ## Key Files and Locations
 
 ### Root Directory Files
 - `README.md` - Basic template description (update for your project)
-- `LICENSE` - Mozilla Public License 2.0
-- `SETUP.md` - Template setup instructions (delete after setup)
+- `LICENSE` - MIT License
 - `.editorconfig` - Code style configuration
 - `.gitignore` - .NET-specific gitignore
 
@@ -144,18 +150,18 @@ When using this template, configure these settings in GitHub (detailed in `SETUP
 This information has been validated against the template structure and GitHub workflows. **Only search for additional information if these instructions are incomplete or found to be incorrect.**
 
 ### When Working with This Template
-1. **Creating New Projects**: Follow the structure outlined in `SETUP.md`
+1. **Creating New Projects**: Follow the standard directory structure outlined in the Project Layout section above
 2. **Adding Dependencies**: Use `dotnet add package` commands
 3. **Code Style**: Follow `.editorconfig` rules (file-scoped namespaces, explicit typing)
 4. **Testing**: Ensure test projects follow `*Test*.csproj` naming convention
-5. **Coverage**: Aim for >80% code coverage to pass CI
+5. **Coverage**: Aim for >90% code coverage to pass CI
 6. **Security**: Review DevSkim findings and address security concerns
 
 ### Validation Steps
 Before submitting changes:
 1. Run `dotnet restore && dotnet build --configuration Release`
 2. Run tests with coverage collection
-3. Verify coverage meets 80% threshold
+3. Verify coverage meets 90% threshold
 4. Run DevSkim security scan
 5. Ensure all GitHub Actions checks pass
 
