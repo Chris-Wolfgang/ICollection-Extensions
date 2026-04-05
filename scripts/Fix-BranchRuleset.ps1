@@ -12,9 +12,16 @@
 .PARAMETER Repository
     The repository in owner/repo format. If not provided, uses the current repository.
 
+.PARAMETER Force
+    Skip the confirmation prompt and proceed automatically. Alias: -y
+
 .EXAMPLE
     .\Fix-BranchRuleset.ps1
-    Inspects and fixes rulesets for the current repository
+    Inspects and fixes rulesets for the current repository with interactive confirmation
+
+.EXAMPLE
+    .\Fix-BranchRuleset.ps1 -Force
+    Inspects and fixes rulesets without prompting for confirmation
 
 .EXAMPLE
     .\Fix-BranchRuleset.ps1 -Repository "Chris-Wolfgang/my-repo"
@@ -28,7 +35,11 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [string]$Repository = "{{GITHUB_USERNAME}}/{{REPO_NAME}}"
+    [string]$Repository = "Chris-Wolfgang/ICollection-Extensions",
+
+    [Parameter()]
+    [Alias("y")]
+    [switch]$Force
 )
 
 # Check if gh CLI is installed
@@ -54,15 +65,15 @@ try {
 }
 
 # Determine repository
-if ($Repository -eq "{{GITHUB_USERNAME}}/{{REPO_NAME}}" -or -not $Repository) {
+if ($Repository -eq "Chris-Wolfgang/ICollection-Extensions" -or -not $Repository) {
     Write-Host "Detecting current repository..." -ForegroundColor Cyan
     try {
         $repoInfo = gh repo view --json nameWithOwner | ConvertFrom-Json
         $Repository = $repoInfo.nameWithOwner
         Write-Host "Using repository: $Repository" -ForegroundColor Green
     } catch {
-        if ($Repository -eq "{{GITHUB_USERNAME}}/{{REPO_NAME}}") {
-            Write-Error "Could not detect repository. Please run the setup script first to replace placeholders, or specify -Repository parameter."
+        if ($Repository -eq "Chris-Wolfgang/ICollection-Extensions") {
+            Write-Error "Could not detect repository. Please run from within a git repository so the repository can be auto-detected, or specify the -Repository parameter."
         } else {
             Write-Error "Could not detect repository. Please run from within a git repository or specify -Repository parameter."
         }
@@ -158,10 +169,14 @@ foreach ($item in $plan) {
 Write-Host ""
 
 # Prompt for confirmation
-$response = Read-Host "Proceed with these changes? (y/N)"
-if ($response -ne 'y' -and $response -ne 'Y') {
-    Write-Host "Cancelled. No changes were made." -ForegroundColor Yellow
-    exit 0
+if ($Force) {
+    Write-Host "Auto-confirmed via -Force flag." -ForegroundColor Green
+} else {
+    $response = Read-Host "Proceed with these changes? (y/N)"
+    if ($response -ne 'y' -and $response -ne 'Y') {
+        Write-Host "Cancelled. No changes were made." -ForegroundColor Yellow
+        exit 0
+    }
 }
 
 Write-Host ""
@@ -228,6 +243,28 @@ if ($errors -gt 0) {
 } else {
     Write-Host "All changes applied successfully." -ForegroundColor Green
     Write-Host ""
-    Write-Host "Next step: Run .\Setup-BranchRuleset.ps1 to create a fresh ruleset." -ForegroundColor Cyan
-    Write-Host "View rulesets at: https://github.com/$Repository/settings/rules" -ForegroundColor Cyan
+
+    # Offer to run Setup-BranchRuleset.ps1 to create a fresh ruleset
+    $setupScript = Join-Path $PSScriptRoot "Setup-BranchRuleset.ps1"
+    if (Test-Path $setupScript) {
+        $runSetup = $false
+        if ($Force) {
+            $runSetup = $true
+        } else {
+            $response = Read-Host "Run Setup-BranchRuleset.ps1 to create a fresh ruleset? (y/N)"
+            $runSetup = ($response -eq 'y' -or $response -eq 'Y')
+        }
+
+        if ($runSetup) {
+            Write-Host "Running Setup-BranchRuleset.ps1 in a subprocess..." -ForegroundColor Cyan
+            Write-Host ""
+            # Run in a separate process so Setup's exit statements don't terminate this session
+            pwsh -File $setupScript -Repository $Repository
+        } else {
+            Write-Host "Skipped. Run manually:  .\scripts\Setup-BranchRuleset.ps1 -Repository $Repository" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "Setup-BranchRuleset.ps1 not found. Run it manually to create a fresh ruleset." -ForegroundColor Yellow
+        Write-Host "View rulesets at: https://github.com/$Repository/settings/rules" -ForegroundColor Cyan
+    }
 }
