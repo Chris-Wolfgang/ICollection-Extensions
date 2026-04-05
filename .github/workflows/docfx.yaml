@@ -218,8 +218,10 @@ jobs:
             if (Test-Path $WORK_DIR) { Remove-Item $WORK_DIR -Recurse -Force }
             git worktree add $WORK_DIR gh-pages
           } else {
-            Write-Host "ℹ️ gh-pages does not exist yet — starting fresh."
+            Write-Host "ℹ️ gh-pages does not exist yet — creating orphan branch."
             New-Item -ItemType Directory -Force -Path $WORK_DIR | Out-Null
+            git init $WORK_DIR
+            git -C $WORK_DIR checkout --orphan gh-pages
           }
 
           # Remove stale root files; preserve versions/, .git, .nojekyll, CNAME
@@ -231,14 +233,18 @@ jobs:
           New-Item -ItemType File -Path (Join-Path $WORK_DIR '.nojekyll') -Force | Out-Null
 
           # Deploy versioned docs (real DocFX index.html — before version picker overwrites it)
+          # Clear existing contents to remove stale files from previous builds
           $versionedDir = Join-Path $WORK_DIR "versions/$($env:VERSION_DIR)"
+          if (Test-Path $versionedDir) { Get-ChildItem -Path $versionedDir -Force | Remove-Item -Recurse -Force }
           New-Item -ItemType Directory -Force -Path $versionedDir | Out-Null
           Copy-Item -Path "$siteDir/*" -Destination $versionedDir -Recurse -Force
           Write-Host "✅ Copied docs to versions/$($env:VERSION_DIR)/"
 
           if ($env:DEPLOY_AS_LATEST -eq 'true') {
             # Deploy to versions/latest/ (real DocFX index.html)
+            # Clear existing contents to remove stale files from previous builds
             $latestDir = Join-Path $WORK_DIR 'versions/latest'
+            if (Test-Path $latestDir) { Get-ChildItem -Path $latestDir -Force | Remove-Item -Recurse -Force }
             New-Item -ItemType Directory -Force -Path $latestDir | Out-Null
             Copy-Item -Path "$siteDir/*" -Destination $latestDir -Recurse -Force
             Write-Host "✅ Copied docs to versions/latest/"
