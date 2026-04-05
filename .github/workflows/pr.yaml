@@ -31,7 +31,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ============================================================================
   # SECRETS SCAN: Detect leaked credentials before merge
   # ============================================================================
   secrets-scan:
@@ -46,12 +45,26 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      - name: Fetch trusted gitleaks config from main
+        # Prevent PR from modifying .gitleaks.toml to bypass the scan
+        run: |
+          git fetch origin main --depth=1
+          git checkout origin/main -- .gitleaks.toml 2>/dev/null || true
+        shell: bash
+
       - name: Run gitleaks
         # gitleaks-action@v2 does not support pull_request_target, so invoke the CLI directly
+        # Pinned to a specific version with SHA256 checksum verification for supply-chain safety
         run: |
           GITLEAKS_VERSION="8.24.0"
-          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
-            | tar xz -C /usr/local/bin gitleaks
+          GITLEAKS_SHA256="cb49b7de5ee986510fe8666ca0273a6cc15eb82571f2f14832c9e8920751f3a4"
+          mkdir -p "$HOME/.local/bin"
+          TARBALL="$(mktemp)"
+          curl -sSfL -o "$TARBALL" "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  ${TARBALL}" | sha256sum -c - || { echo "Checksum verification failed!"; exit 1; }
+          tar xzf "$TARBALL" -C "$HOME/.local/bin" gitleaks
+          rm -f "$TARBALL"
+          export PATH="$HOME/.local/bin:$PATH"
           gitleaks detect --source . --verbose --redact
         shell: bash
 
@@ -252,10 +265,21 @@ jobs:
       - name: Run tests with coverage (.NET Core 5.0 - 10.0)
         run: |
           # Find all test projects (C#, VB.NET, F#)
-          mapfile -d '' -t test_projects < <(find ./tests -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          # Search both ./tests and root-level *.Tests.* directories for backwards compat
+          test_dirs=()
+          while IFS= read -r -d '' d; do
+            test_dirs+=("$d")
+          done < <(find . -maxdepth 1 -type d \( -name "*.Tests.*" -o -name "tests" \) -print0)
+
+          test_projects=()
+          for d in "${test_dirs[@]}"; do
+            while IFS= read -r -d '' f; do
+              test_projects+=("$f")
+            done < <(find "$d" -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          done
 
           if [ ${#test_projects[@]} -eq 0 ]; then
-            echo "❌ No test projects found in ./tests directory!"
+            echo "❌ No test projects found!"
             exit 1
           fi
 
@@ -472,10 +496,20 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
 
-          $testProjects = @(Get-ChildItem -Path './tests/*' -Recurse -File -Include '*.csproj','*.vbproj','*.fsproj')
+          # Search both ./tests and root-level *.Tests.* directories for backwards compat
+          $searchPaths = @('./tests', '.') | Where-Object { Test-Path $_ }
+          $testProjects = @($searchPaths | ForEach-Object {
+            if ($_ -eq '.') {
+              Get-ChildItem -Path '.' -Directory -Filter '*.Tests.*' | ForEach-Object {
+                Get-ChildItem -Path $_.FullName -Recurse -File -Include '*.csproj','*.vbproj','*.fsproj'
+              }
+            } else {
+              Get-ChildItem -Path "$_/*" -Recurse -File -Include '*.csproj','*.vbproj','*.fsproj'
+            }
+          } | Sort-Object -Property FullName -Unique)
 
           if (@($testProjects).Count -eq 0) {
-            Write-Error "❌ No test projects found in ./tests directory!"
+            Write-Error "❌ No test projects found!"
             exit 1
           }
 
@@ -786,13 +820,21 @@ jobs:
       - name:  Run tests (.NET 6.0 - 10.0 only - ARM64 compatible)
         run: |
           # Find all test projects (C#, VB.NET, F#)
+          # Search both ./tests and root-level *.Tests.* directories for backwards compat
+          test_dirs=()
+          while IFS= read -r -d '' d; do
+            test_dirs+=("$d")
+          done < <(find . -maxdepth 1 -type d \( -name "*.Tests.*" -o -name "tests" \) -print0)
+
           test_projects=()
-          while IFS= read -r -d '' file; do
-          test_projects+=("$file")
-          done < <(find ./tests -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          for d in "${test_dirs[@]}"; do
+            while IFS= read -r -d '' f; do
+              test_projects+=("$f")
+            done < <(find "$d" -type f \( -name "*.csproj" -o -name "*.vbproj" -o -name "*.fsproj" \) -print0)
+          done
 
           if [ ${#test_projects[@]} -eq 0 ]; then
-            echo "❌ No test projects found in ./tests directory!"
+            echo "❌ No test projects found!"
             exit 1
           fi
 
