@@ -132,7 +132,7 @@ public class ICollectionExtensionTests
     public void AddRange_to_HashSet_only_adds_unique_items()
     {
         // Arrange
-        ICollection<string> source = new HashSet<string> { "item1" };
+        ICollection<string> source = new HashSet<string>(StringComparer.Ordinal) { "item1" };
         var items = new List<string> { "item2", "item1", "item3" }; // "item1" is already in the HashSet; Add will return false for this duplicate and not add it again
 
         // Act
