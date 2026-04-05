@@ -83,7 +83,7 @@ if ($Repository -eq "Chris-Wolfgang/ICollection-Extensions" -or -not $Repository
         Write-Host "Using repository: $Repository" -ForegroundColor Green
     } catch {
         if ($Repository -eq "Chris-Wolfgang/ICollection-Extensions") {
-            Write-Error "Could not detect repository. Please run the setup script first to replace placeholders, or specify -Repository parameter."
+            Write-Error "Could not detect repository. Please run from within a git repository so the repository can be auto-detected, or specify the -Repository parameter."
         } else {
             Write-Error "Could not detect repository. Please run from within a git repository or specify -Repository parameter."
         }
@@ -261,9 +261,13 @@ if ($errors -gt 0) {
         Write-Host "Run it manually to create a fresh ruleset:" -ForegroundColor Cyan
         Write-Host "  pwsh -File `"$setupScript`" -Repository $Repository" -ForegroundColor Cyan
     } elseif (Test-Path $setupScript) {
-        Write-Host "Running Setup-BranchRuleset.ps1 to create a fresh ruleset..." -ForegroundColor Cyan
+        Write-Host "Running Setup-BranchRuleset.ps1 in a subprocess..." -ForegroundColor Cyan
         Write-Host ""
-        & $setupScript -Repository $Repository
+        # Run in a separate process so Setup's exit statements don't terminate this session
+        pwsh -NoProfile -File $setupScript -Repository $Repository
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Setup-BranchRuleset.ps1 failed with exit code $LASTEXITCODE." -ForegroundColor Red
+        }
     } else {
         Write-Host "Setup-BranchRuleset.ps1 not found. Run it manually to create a fresh ruleset." -ForegroundColor Yellow
         Write-Host "View rulesets at: https://github.com/$Repository/settings/rules" -ForegroundColor Cyan
