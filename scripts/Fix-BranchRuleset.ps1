@@ -15,6 +15,9 @@
 .PARAMETER Force
     Skip the confirmation prompt and proceed automatically. Alias: -y
 
+.PARAMETER SkipSetup
+    Skip automatic invocation of Setup-BranchRuleset.ps1 after fixing.
+
 .EXAMPLE
     .\Fix-BranchRuleset.ps1
     Inspects and fixes rulesets for the current repository with interactive confirmation
@@ -22,6 +25,10 @@
 .EXAMPLE
     .\Fix-BranchRuleset.ps1 -Force
     Inspects and fixes rulesets without prompting for confirmation
+
+.EXAMPLE
+    .\Fix-BranchRuleset.ps1 -Force -SkipSetup
+    Fixes rulesets non-interactively without recreating a fresh ruleset
 
 .EXAMPLE
     .\Fix-BranchRuleset.ps1 -Repository "Chris-Wolfgang/my-repo"
@@ -39,7 +46,10 @@ param(
 
     [Parameter()]
     [Alias("y")]
-    [switch]$Force
+    [switch]$Force,
+
+    [Parameter()]
+    [switch]$SkipSetup
 )
 
 # Check if gh CLI is installed
@@ -73,7 +83,7 @@ if ($Repository -eq "Chris-Wolfgang/ICollection-Extensions" -or -not $Repository
         Write-Host "Using repository: $Repository" -ForegroundColor Green
     } catch {
         if ($Repository -eq "Chris-Wolfgang/ICollection-Extensions") {
-            Write-Error "Could not detect repository. Please run from within a git repository so the repository can be auto-detected, or specify the -Repository parameter."
+            Write-Error "Could not detect repository. Please run the setup script first to replace placeholders, or specify -Repository parameter."
         } else {
             Write-Error "Could not detect repository. Please run from within a git repository or specify -Repository parameter."
         }
@@ -244,25 +254,16 @@ if ($errors -gt 0) {
     Write-Host "All changes applied successfully." -ForegroundColor Green
     Write-Host ""
 
-    # Offer to run Setup-BranchRuleset.ps1 to create a fresh ruleset
+    # Invoke Setup-BranchRuleset.ps1 to create a fresh ruleset
     $setupScript = Join-Path $PSScriptRoot "Setup-BranchRuleset.ps1"
-    if (Test-Path $setupScript) {
-        $runSetup = $false
-        if ($Force) {
-            $runSetup = $true
-        } else {
-            $response = Read-Host "Run Setup-BranchRuleset.ps1 to create a fresh ruleset? (y/N)"
-            $runSetup = ($response -eq 'y' -or $response -eq 'Y')
-        }
-
-        if ($runSetup) {
-            Write-Host "Running Setup-BranchRuleset.ps1 in a subprocess..." -ForegroundColor Cyan
-            Write-Host ""
-            # Run in a separate process so Setup's exit statements don't terminate this session
-            pwsh -File $setupScript -Repository $Repository
-        } else {
-            Write-Host "Skipped. Run manually:  .\scripts\Setup-BranchRuleset.ps1 -Repository $Repository" -ForegroundColor Yellow
-        }
+    if ($SkipSetup) {
+        Write-Host "Skipping Setup-BranchRuleset.ps1 (-SkipSetup specified)." -ForegroundColor Yellow
+        Write-Host "Run it manually to create a fresh ruleset:" -ForegroundColor Cyan
+        Write-Host "  pwsh -File `"$setupScript`" -Repository $Repository" -ForegroundColor Cyan
+    } elseif (Test-Path $setupScript) {
+        Write-Host "Running Setup-BranchRuleset.ps1 to create a fresh ruleset..." -ForegroundColor Cyan
+        Write-Host ""
+        & $setupScript -Repository $Repository
     } else {
         Write-Host "Setup-BranchRuleset.ps1 not found. Run it manually to create a fresh ruleset." -ForegroundColor Yellow
         Write-Host "View rulesets at: https://github.com/$Repository/settings/rules" -ForegroundColor Cyan
