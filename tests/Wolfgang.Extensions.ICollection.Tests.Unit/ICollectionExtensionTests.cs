@@ -263,4 +263,127 @@ public class ICollectionExtensionTests
         Assert.Contains(5, source);
         Assert.Contains(6, source);
     }
+
+
+
+    // =========================================================================
+    // IsEmpty tests
+    // =========================================================================
+
+    [Fact]
+    public void IsEmpty_when_source_is_null_throws_ArgumentNullException()
+    {
+        // Arrange
+        ICollection<string> source = null!;
+
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentNullException>(() => source.IsEmpty());
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void IsEmpty_when_source_is_empty_returns_true()
+    {
+        // Arrange
+        ICollection<string> source = new List<string>();
+
+        // Act
+        var result = source.IsEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+
+
+    [Fact]
+    public void IsEmpty_when_source_has_items_returns_false()
+    {
+        // Arrange
+        ICollection<string> source = new List<string> { "item1" };
+
+        // Act
+        var result = source.IsEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+
+    [Fact]
+    public void IsEmpty_when_source_is_HashSet_returns_correct_result()
+    {
+        // Arrange
+        ICollection<int> empty = new HashSet<int>();
+        ICollection<int> nonEmpty = new HashSet<int> { 1, 2, 3 };
+
+        // Act & Assert
+        Assert.True(empty.IsEmpty());
+        Assert.False(nonEmpty.IsEmpty());
+    }
+
+
+
+    // =========================================================================
+    // IsNotEmpty tests
+    // =========================================================================
+
+    [Fact]
+    public void IsNotEmpty_when_source_is_null_throws_ArgumentNullException()
+    {
+        // Arrange
+        ICollection<string> source = null!;
+
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentNullException>(() => source.IsNotEmpty());
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void IsNotEmpty_when_source_is_empty_returns_false()
+    {
+        // Arrange
+        ICollection<string> source = new List<string>();
+
+        // Act
+        var result = source.IsNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+
+    [Fact]
+    public void IsNotEmpty_when_source_has_items_returns_true()
+    {
+        // Arrange
+        ICollection<string> source = new List<string> { "item1" };
+
+        // Act
+        var result = source.IsNotEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+
+
+    [Fact]
+    public void IsNotEmpty_when_source_is_LinkedList_returns_correct_result()
+    {
+        // Arrange
+        ICollection<int> empty = new LinkedList<int>();
+        ICollection<int> nonEmpty = new LinkedList<int>();
+        nonEmpty.Add(42);
+
+        // Act & Assert
+        Assert.False(empty.IsNotEmpty());
+        Assert.True(nonEmpty.IsNotEmpty());
+    }
 }

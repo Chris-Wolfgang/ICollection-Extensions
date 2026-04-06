@@ -85,4 +85,136 @@ public static class ICollectionExtensions
             source.Add(item);
         }
     }
+
+
+
+    /// <summary>
+    /// Determines whether the collection contains no elements.
+    /// </summary>
+    /// <param name="source">
+    /// The collection to check.
+    /// </param>
+    /// <typeparam name="T">
+    /// The type of items in the collection.
+    /// </typeparam>
+    /// <returns>
+    /// <c>true</c> if the collection contains no elements; otherwise, <c>false</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="source"/> is null.
+    /// </exception>
+    /// <remarks>
+    /// <para>
+    /// This extension method provides a cleaner, more readable alternative to checking
+    /// <c>source.Count == 0</c>. It works with any <see cref="ICollection{T}"/> implementation.
+    /// </para>
+    /// <para>
+    /// Unlike <see cref="Enumerable.Any{TSource}(IEnumerable{TSource})"/>, this method uses the
+    /// <see cref="ICollection{T}.Count"/> property directly, avoiding the overhead of enumerator
+    /// allocation. This makes it an O(1) operation for all <see cref="ICollection{T}"/> implementations.
+    /// </para>
+    /// <para>
+    /// <strong>Edge Cases and Behavior:</strong>
+    /// <list type="bullet">
+    /// <item><description>Returns <c>true</c> for a newly created, empty collection.</description></item>
+    /// <item><description>Returns <c>false</c> if the collection has one or more elements.</description></item>
+    /// <item><description>This method is not thread-safe. If multiple threads modify the collection concurrently, external synchronization is required.</description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// // Check if a list is empty
+    /// ICollection&lt;string&gt; names = new List&lt;string&gt;();
+    /// bool empty = names.IsEmpty(); // true
+    /// names.Add("Alice");
+    /// empty = names.IsEmpty(); // false
+    ///
+    /// // Use in conditional logic
+    /// ICollection&lt;int&gt; results = GetResults();
+    /// if (results.IsEmpty())
+    /// {
+    ///     Console.WriteLine("No results found.");
+    /// }
+    ///
+    /// // Works with any ICollection&lt;T&gt; implementation
+    /// ICollection&lt;string&gt; set = new HashSet&lt;string&gt;(StringComparer.Ordinal);
+    /// bool isEmpty = set.IsEmpty(); // true
+    /// </code>
+    /// </example>
+    public static bool IsEmpty<T>(this ICollection<T> source)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        return source.Count == 0;
+    }
+
+
+
+    /// <summary>
+    /// Determines whether the collection contains one or more elements.
+    /// </summary>
+    /// <param name="source">
+    /// The collection to check.
+    /// </param>
+    /// <typeparam name="T">
+    /// The type of items in the collection.
+    /// </typeparam>
+    /// <returns>
+    /// <c>true</c> if the collection contains one or more elements; otherwise, <c>false</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="source"/> is null.
+    /// </exception>
+    /// <remarks>
+    /// <para>
+    /// This extension method provides a cleaner, more readable alternative to checking
+    /// <c>source.Count &gt; 0</c>. It works with any <see cref="ICollection{T}"/> implementation.
+    /// </para>
+    /// <para>
+    /// Unlike <see cref="Enumerable.Any{TSource}(IEnumerable{TSource})"/>, this method uses the
+    /// <see cref="ICollection{T}.Count"/> property directly, avoiding the overhead of enumerator
+    /// allocation. This makes it an O(1) operation for all <see cref="ICollection{T}"/> implementations.
+    /// </para>
+    /// <para>
+    /// <strong>Edge Cases and Behavior:</strong>
+    /// <list type="bullet">
+    /// <item><description>Returns <c>false</c> for a newly created, empty collection.</description></item>
+    /// <item><description>Returns <c>true</c> if the collection has one or more elements.</description></item>
+    /// <item><description>This method is not thread-safe. If multiple threads modify the collection concurrently, external synchronization is required.</description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// // Check if a list has items
+    /// ICollection&lt;string&gt; names = new List&lt;string&gt; { "Alice" };
+    /// bool hasItems = names.IsNotEmpty(); // true
+    ///
+    /// // Use in conditional logic
+    /// ICollection&lt;int&gt; results = GetResults();
+    /// if (results.IsNotEmpty())
+    /// {
+    ///     ProcessResults(results);
+    /// }
+    ///
+    /// // Works with any ICollection&lt;T&gt; implementation
+    /// ICollection&lt;int&gt; queue = new LinkedList&lt;int&gt;();
+    /// bool notEmpty = queue.IsNotEmpty(); // false
+    /// queue.Add(42);
+    /// notEmpty = queue.IsNotEmpty(); // true
+    /// </code>
+    /// </example>
+    public static bool IsNotEmpty<T>(this ICollection<T> source)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        return source.Count > 0;
+    }
 }
