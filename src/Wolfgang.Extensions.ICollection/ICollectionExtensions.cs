@@ -5,7 +5,7 @@ namespace Wolfgang.Extensions.ICollection;
 
 // ReSharper disable once InconsistentNaming
 /// <summary>
-/// A collection of extension methods to ICollection{T}
+/// A collection of extension methods to <see cref="ICollection{T}"/>
 /// </summary>
 public static class ICollectionExtensions
 {
