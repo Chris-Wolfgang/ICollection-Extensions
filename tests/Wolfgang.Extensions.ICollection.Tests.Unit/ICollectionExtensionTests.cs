@@ -23,20 +23,24 @@ public class ICollectionExtensionTests
         // Arrange
         ICollection<string> source = new List<string>();
         IEnumerable<string> items = null!;
+
         // Act & Assert
         var ex = Assert.Throws<ArgumentNullException>(() =>  source.AddRange(items));
         Assert.Equal("items", ex.ParamName);
     }
 
 
+
     [Fact]
-    public void AddRange_adds_items_to_source_collection()
+    public void AddRange_when_source_has_items_adds_all_items()
     {
         // Arrange
         ICollection<string> source = new List<string> { "item1" };
         var items = new List<string> { "item2", "item3" };
+
         // Act
         source.AddRange(items);
+
         // Assert
         Assert.Equal(3, source.Count);
         Assert.Contains("item1", source);
@@ -47,7 +51,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddRange_with_empty_items_does_not_modify_source_collection()
+    public void AddRange_when_items_is_empty_does_not_modify_source_collection()
     {
         // Arrange
         ICollection<string> source = new List<string> { "item1" };
@@ -61,8 +65,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_to_empty_source_adds_all_items()
+    public void AddRange_when_source_is_empty_adds_all_items()
     {
         // Arrange
         ICollection<string> source = new List<string>();
@@ -79,8 +84,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_throws_NotSupportedException_for_ReadOnlyCollection()
+    public void AddRange_when_source_is_ReadOnly_throws_NotSupportedException()
     {
         // Arrange
         var items = new List<string> { "item1", "item2" };
@@ -91,8 +97,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_works_with_value_types()
+    public void AddRange_when_items_are_value_types_adds_all_items()
     {
         // Arrange
         ICollection<int> source = new List<int> { 1, 2, 3 };
@@ -109,8 +116,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_with_nullable_reference_types_including_nulls()
+    public void AddRange_when_items_contain_nulls_adds_all_including_nulls()
     {
         // Arrange
         ICollection<string?> source = new List<string?> { "item1" };
@@ -128,12 +136,13 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_to_HashSet_only_adds_unique_items()
+    public void AddRange_when_source_is_HashSet_only_adds_unique_items()
     {
         // Arrange
         ICollection<string> source = new HashSet<string>(StringComparer.Ordinal) { "item1" };
-        var items = new List<string> { "item2", "item1", "item3" }; // "item1" is already in the HashSet; Add will return false for this duplicate and not add it again
+        var items = new List<string> { "item2", "item1", "item3" }; // "item1" is already in the HashSet
 
         // Act
         source.AddRange(items);
@@ -146,8 +155,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_with_snapshot_of_collection_contents()
+    public void AddRange_when_items_are_snapshot_of_source_adds_duplicates()
     {
         // Arrange
         ICollection<string> source = new List<string> { "item1", "item2" };
@@ -158,13 +168,14 @@ public class ICollectionExtensionTests
 
         // Assert
         Assert.Equal(4, source.Count);
-        Assert.Equal(2, source.Count(s => s.Equals("item1")));
-        Assert.Equal(2, source.Count(s => s.Equals("item2")));
+        Assert.Equal(2, source.Count(s => s.Equals("item1", StringComparison.Ordinal)));
+        Assert.Equal(2, source.Count(s => s.Equals("item2", StringComparison.Ordinal)));
     }
 
 
+
     [Fact]
-    public void AddRange_with_single_item()
+    public void AddRange_when_items_has_single_item_adds_it()
     {
         // Arrange
         ICollection<string> source = new List<string> { "existing" };
@@ -180,8 +191,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_works_with_Collection_type()
+    public void AddRange_when_source_is_Collection_type_adds_all_items()
     {
         // Arrange
         ICollection<string> source = new System.Collections.ObjectModel.Collection<string> { "item1" };
@@ -198,8 +210,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_with_large_collection()
+    public void AddRange_when_items_is_large_collection_adds_all_items()
     {
         // Arrange
         ICollection<int> source = new List<int>();
@@ -215,8 +228,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_works_with_LinkedList()
+    public void AddRange_when_source_is_LinkedList_adds_all_items()
     {
         // Arrange
         ICollection<string> source = new LinkedList<string>();
@@ -234,8 +248,9 @@ public class ICollectionExtensionTests
     }
 
 
+
     [Fact]
-    public void AddRange_with_lazy_IEnumerable_from_LINQ()
+    public void AddRange_when_items_is_lazy_enumerable_adds_all_items()
     {
         // Arrange
         ICollection<int> source = new List<int> { 1, 2, 3 };
@@ -249,5 +264,128 @@ public class ICollectionExtensionTests
         Assert.Contains(4, source);
         Assert.Contains(5, source);
         Assert.Contains(6, source);
+    }
+
+
+
+    // =========================================================================
+    // IsEmpty tests
+    // =========================================================================
+
+    [Fact]
+    public void IsEmpty_when_source_is_null_throws_ArgumentNullException()
+    {
+        // Arrange
+        ICollection<string> source = null!;
+
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentNullException>(() => source.IsEmpty());
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void IsEmpty_when_source_is_empty_returns_true()
+    {
+        // Arrange
+        ICollection<string> source = new List<string>();
+
+        // Act
+        var result = source.IsEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+
+
+    [Fact]
+    public void IsEmpty_when_source_has_items_returns_false()
+    {
+        // Arrange
+        ICollection<string> source = new List<string> { "item1" };
+
+        // Act
+        var result = source.IsEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+
+    [Fact]
+    public void IsEmpty_when_source_is_HashSet_returns_correct_result()
+    {
+        // Arrange
+        ICollection<int> empty = new HashSet<int>();
+        ICollection<int> nonEmpty = new HashSet<int> { 1, 2, 3 };
+
+        // Act & Assert
+        Assert.True(empty.IsEmpty());
+        Assert.False(nonEmpty.IsEmpty());
+    }
+
+
+
+    // =========================================================================
+    // IsNotEmpty tests
+    // =========================================================================
+
+    [Fact]
+    public void IsNotEmpty_when_source_is_null_throws_ArgumentNullException()
+    {
+        // Arrange
+        ICollection<string> source = null!;
+
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentNullException>(() => source.IsNotEmpty());
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void IsNotEmpty_when_source_is_empty_returns_false()
+    {
+        // Arrange
+        ICollection<string> source = new List<string>();
+
+        // Act
+        var result = source.IsNotEmpty();
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+
+    [Fact]
+    public void IsNotEmpty_when_source_has_items_returns_true()
+    {
+        // Arrange
+        ICollection<string> source = new List<string> { "item1" };
+
+        // Act
+        var result = source.IsNotEmpty();
+
+        // Assert
+        Assert.True(result);
+    }
+
+
+
+    [Fact]
+    public void IsNotEmpty_when_source_is_LinkedList_returns_correct_result()
+    {
+        // Arrange
+        ICollection<int> empty = new LinkedList<int>();
+        ICollection<int> nonEmpty = new LinkedList<int>();
+        nonEmpty.Add(42);
+
+        // Act & Assert
+        Assert.False(empty.IsNotEmpty());
+        Assert.True(nonEmpty.IsNotEmpty());
     }
 }

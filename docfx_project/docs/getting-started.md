@@ -62,6 +62,31 @@ ICollection<double> values = new LinkedList<double>();
 values.AddRange(new[] { 1.5, 2.5, 3.5 });
 ```
 
+### 3. Check If a Collection Is Empty or Has Items
+
+Use `IsEmpty()` and `IsNotEmpty()` for cleaner, more readable emptiness checks:
+
+```csharp
+ICollection<string> names = new List<string>();
+
+// Instead of: if (names.Count == 0)
+if (names.IsEmpty())
+{
+    Console.WriteLine("No names found.");
+}
+
+names.Add("Alice");
+
+// Instead of: if (names.Count > 0)
+if (names.IsNotEmpty())
+{
+    Console.WriteLine($"Found {names.Count} name(s).");
+}
+```
+
+> **Readability note:** `IsEmpty()` and `IsNotEmpty()` use `ICollection<T>.Count` directly (O(1)),
+> providing a clearer, self-documenting alternative to `!Enumerable.Any()`.
+
 ## Common Scenarios
 
 ### Scenario 1: Adding Items from Multiple Sources
@@ -193,7 +218,7 @@ readOnly.AddRange(new[] { 4, 5 }); // Throws NotSupportedException
 
 ### Thread Safety
 
-The `AddRange` method is **not thread-safe**. If you need to add items from multiple threads:
+The extension methods (`AddRange`, `IsEmpty`, `IsNotEmpty`) are **not thread-safe**. If you need to access collections from multiple threads:
 
 ```csharp
 using Wolfgang.Extensions.ICollection;
