@@ -202,7 +202,7 @@ public class ICollectionExtensionTests
     public void AddRange_with_large_collection()
     {
         // Arrange
-        var source = new List<int>();
+        ICollection<int> source = new List<int>();
         var items = Enumerable.Range(1, 10000);
 
         // Act
@@ -210,9 +210,8 @@ public class ICollectionExtensionTests
 
         // Assert
         Assert.Equal(10000, source.Count);
-        Assert.Equal(1, source[0]); // First element
-        Assert.Equal(5000, source[4999]); // Middle element
-        Assert.Equal(10000, source[9999]); // Last element
+        Assert.Equal(1, source.First());
+        Assert.Equal(10000, source.Last());
     }
 
 
