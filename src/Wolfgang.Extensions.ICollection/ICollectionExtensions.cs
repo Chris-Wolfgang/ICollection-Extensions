@@ -109,10 +109,9 @@ public static class ICollectionExtensions
     /// <c>source.Count == 0</c>. It works with any <see cref="ICollection{T}"/> implementation.
     /// </para>
     /// <para>
-    /// This method uses the <see cref="ICollection{T}.Count"/> property directly, providing
-    /// a clear, self-documenting O(1) check. While <c>Enumerable.Any()</c> also uses a Count
-    /// fast-path for <see cref="ICollection{T}"/>, this method expresses intent more clearly
-    /// when checking for emptiness.
+    /// This method checks the <see cref="ICollection{T}.Count"/> property directly, providing
+    /// a clear, self-documenting emptiness check. The exact performance depends on the concrete
+    /// collection type, but is typically O(1) for common implementations.
     /// </para>
     /// <para>
     /// <strong>Edge Cases and Behavior:</strong>
@@ -176,10 +175,9 @@ public static class ICollectionExtensions
     /// <c>source.Count &gt; 0</c>. It works with any <see cref="ICollection{T}"/> implementation.
     /// </para>
     /// <para>
-    /// This method uses the <see cref="ICollection{T}.Count"/> property directly, providing
-    /// a clear, self-documenting O(1) check. While <c>Enumerable.Any()</c> also uses a Count
-    /// fast-path for <see cref="ICollection{T}"/>, this method expresses intent more clearly
-    /// when checking for emptiness.
+    /// This method checks the <see cref="ICollection{T}.Count"/> property directly, providing
+    /// a clear, self-documenting emptiness check. The exact performance depends on the concrete
+    /// collection type, but is typically O(1) for common implementations.
     /// </para>
     /// <para>
     /// <strong>Edge Cases and Behavior:</strong>
