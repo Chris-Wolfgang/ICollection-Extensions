@@ -84,8 +84,8 @@ if (names.IsNotEmpty())
 }
 ```
 
-> **Performance note:** `IsEmpty()` and `IsNotEmpty()` use `ICollection<T>.Count` directly (O(1)),
-> avoiding the enumerator allocation overhead of `!Enumerable.Any()`.
+> **Readability note:** `IsEmpty()` and `IsNotEmpty()` use `ICollection<T>.Count` directly (O(1)),
+> providing a clearer, self-documenting alternative to `!Enumerable.Any()`.
 
 ## Common Scenarios
 

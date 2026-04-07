@@ -223,6 +223,8 @@ public class ICollectionExtensionTests
 
         // Assert
         Assert.Equal(10000, source.Count);
+        Assert.Equal(1, source.First());
+        Assert.Equal(10000, source.Last());
     }
 
 
