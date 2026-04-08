@@ -21,7 +21,7 @@
 
 	<!-- .NET Framework 4.6.2 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net462'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -45,7 +45,7 @@
 
 	<!-- .NET Framework 4.7.0 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net47'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -68,7 +68,7 @@
 
 	<!-- .NET Framework 4.7.1 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net471'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -92,7 +92,7 @@
 
 	<!-- .NET Framework 4.7.2 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -114,7 +114,7 @@
 
 	<!-- .NET Framework 4.8.0 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -137,7 +137,7 @@
 
 	<!-- .NET Framework 4.8.1 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net481'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -161,7 +161,7 @@
 
 	<!-- .NET Core 3.1 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -184,7 +184,7 @@
 
 	<!-- .NET 5.0 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -208,7 +208,7 @@
 	<!-- .NET 6.0 -->
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -232,7 +232,7 @@
 	<!-- .NET 7.0 -->
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -254,7 +254,7 @@
 
 	<!-- .NET 8.0 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -277,7 +277,7 @@
 
 	<!-- .NET 9.0 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -300,7 +300,7 @@
 
 	<!-- .NET 10.0 -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		<PackageReference Include="coverlet.collector" Version="8.0.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
