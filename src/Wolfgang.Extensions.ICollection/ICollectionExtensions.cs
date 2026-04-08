@@ -45,6 +45,7 @@ public static class ICollectionExtensions
     /// <item><description>If the source collection has constraints (e.g., unique items in HashSet), the Add method's behavior is preserved.</description></item>
     /// <item><description>If the source collection is read-only, the Add method will throw a <see cref="NotSupportedException"/>.</description></item>
     /// <item><description>The method does not check for duplicates; duplicate handling depends on the underlying collection implementation.</description></item>
+    /// <item><description>When <paramref name="source"/> is a <see cref="List{T}"/> and <paramref name="items"/> implements <see cref="ICollection{T}"/>, the list's capacity is pre-allocated to avoid repeated resizing.</description></item>
     /// <item><description>This method is not thread-safe. If multiple threads access the collection concurrently, external synchronization is required.</description></item>
     /// </list>
     /// </para>
@@ -78,6 +79,13 @@ public static class ICollectionExtensions
         if (items is null)
         {
             throw new ArgumentNullException(nameof(items));
+        }
+
+        // If items is a collection, we know the count upfront and can try to
+        // pre-allocate capacity on the target to avoid repeated resizing.
+        if (items is ICollection<T> itemsCollection && source is List<T> list)
+        {
+            list.Capacity = Math.Max(list.Capacity, list.Count + itemsCollection.Count);
         }
 
         foreach (var item in items)
