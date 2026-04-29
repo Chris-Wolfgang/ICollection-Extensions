@@ -404,7 +404,7 @@ jobs:
           
           # Check whether any .nupkg files were actually created
           $packages = Get-ChildItem -Path $packagesPath -Filter '*.nupkg' -ErrorAction SilentlyContinue
-
+          
           if ($packages.Count -eq 0) {
             Write-Warning "No .nupkg files were produced during packing - downstream publish and release jobs will be skipped"
             "has-packages=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
@@ -419,12 +419,12 @@ jobs:
         shell: pwsh
         run: |
           $packages = Get-ChildItem -Path 'nuget-packages' -Filter '*.nupkg' -ErrorAction SilentlyContinue
-
+          
           if ($packages.Count -eq 0) {
             Write-Warning "No .nupkg files found - skipping smoke test"
             exit 0
           }
-
+          
           # Helper to read package ID and version from the .nuspec inside a .nupkg
           Add-Type -AssemblyName System.IO.Compression.FileSystem
           function Get-PackageMetadata {
@@ -553,6 +553,7 @@ jobs:
             }
           }
 
+
       - name: Upload NuGet packages
         uses: actions/upload-artifact@v7
         with:
@@ -604,7 +605,7 @@ jobs:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
           $packages = Get-ChildItem -Path './packages' -Filter '*.nupkg' -ErrorAction SilentlyContinue
-
+          
           if ($packages.Count -eq 0) {
             Write-Warning "No .nupkg files found - nothing to publish"
             exit 0
@@ -675,5 +676,4 @@ jobs:
             ./nuget-packages/*.nupkg
             ./nuget-packages/*.bom.json
             release-coverage.zip
-
 
