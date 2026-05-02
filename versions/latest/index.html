@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Wolfgang.Extensions.ICollection | Wolfgang.Extensions.ICollection Documentation </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Wolfgang.Extensions.ICollection | Wolfgang.Extensions.ICollection Documentation ">
+      
+      
+      <link rel="icon" href="favicon.ico">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.2.0/docfx_project/index.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="landing" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="logo.svg" alt="Wolfgang.Extensions.ICollection">
+            Wolfgang.Extensions.ICollection
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="wolfgangextensionsicollection">Wolfgang.Extensions.ICollection</h1>
+
+<h2 id="essential-extension-methods-for-icollectiont">Essential Extension Methods for ICollection&lt;T&gt;</h2>
+<p>Wolfgang.Extensions.ICollection is a lightweight .NET library that extends the functionality of <code>ICollection&lt;T&gt;</code> with convenient bulk operation methods. The library brings the convenience of <code>List&lt;T&gt;.AddRange()</code> to all collection types that implement <code>ICollection&lt;T&gt;</code>.</p>
+<h3 id="why-use-this-library">Why Use This Library?</h3>
+<p>Many collection types in .NET implement <code>ICollection&lt;T&gt;</code> but lack convenient bulk operation methods. This library provides these missing operations while:</p>
+<ul>
+<li><strong>Working with any ICollection&lt;T&gt;</strong> - List, HashSet, LinkedList, ObservableCollection, and more</li>
+<li><strong>Maintaining simplicity</strong> - Small, focused API surface with zero dependencies</li>
+<li><strong>Preserving type safety</strong> - Generic methods that work with your specific types</li>
+<li><strong>Respecting constraints</strong> - Honors the behavior of the underlying collection implementation</li>
+</ul>
+<h3 id="quick-example">Quick Example</h3>
+<pre><code class="lang-csharp">using Wolfgang.Extensions.ICollection;
+
+ICollection&lt;string&gt; names = new HashSet&lt;string&gt;();
+names.AddRange(new[] { &quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot; });
+// Works with any ICollection&lt;T&gt; implementation!
+</code></pre>
+<h3 id="get-started">Get Started</h3>
+<ul>
+<li><a href="docs/introduction.html">Introduction</a> - Learn about the library and its purpose</li>
+<li><a href="docs/getting-started.html">Getting Started</a> - Installation and first steps</li>
+<li><a href="api/index.html">API Documentation</a> - Complete API reference</li>
+</ul>
+<h3 id="installation">Installation</h3>
+<p>Install via NuGet Package Manager:</p>
+<pre><code class="lang-bash">Install-Package Wolfgang.Extensions.ICollection
+</code></pre>
+<p>Or using .NET CLI:</p>
+<pre><code class="lang-bash">dotnet add package Wolfgang.Extensions.ICollection
+</code></pre>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li>✅ <strong>AddRange</strong> - Add multiple items to any ICollection&lt;T&gt; in one call</li>
+<li>✅ <strong>Multi-framework support</strong> - .NET Framework 4.6.2, .NET Standard 2.0, .NET 8.0, .NET 10.0</li>
+<li>✅ <strong>Zero dependencies</strong> - No external dependencies</li>
+<li>✅ <strong>Well documented</strong> - Comprehensive XML documentation and examples</li>
+<li>✅ <strong>Unit tested</strong> - CI enforces at least 90% line coverage</li>
+</ul>
+<h3 id="license">License</h3>
+<p>MIT License - see <a href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/LICENSE">LICENSE</a> for details.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.2.0/docfx_project/index.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Made with DocFX
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
