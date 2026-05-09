@@ -1,0 +1,63 @@
+### YamlMime:XRefMap
+sorted: true
+references:
+- uid: Wolfgang.Extensions.ICollection
+  name: Wolfgang.Extensions.ICollection
+  href: api/Wolfgang.Extensions.ICollection.html
+  commentId: N:Wolfgang.Extensions.ICollection
+  fullName: Wolfgang.Extensions.ICollection
+  nameWithType: Wolfgang.Extensions.ICollection
+- uid: Wolfgang.Extensions.ICollection.ICollectionExtensions
+  name: ICollectionExtensions
+  href: api/Wolfgang.Extensions.ICollection.ICollectionExtensions.html
+  commentId: T:Wolfgang.Extensions.ICollection.ICollectionExtensions
+  fullName: Wolfgang.Extensions.ICollection.ICollectionExtensions
+  nameWithType: ICollectionExtensions
+- uid: Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange*
+  name: AddRange
+  href: api/Wolfgang.Extensions.ICollection.ICollectionExtensions.html#Wolfgang_Extensions_ICollection_ICollectionExtensions_AddRange_
+  commentId: Overload:Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange
+  isSpec: "True"
+  fullName: Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange
+  nameWithType: ICollectionExtensions.AddRange
+- uid: Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})
+  name: AddRange<T>(ICollection<T>, IEnumerable<T>)
+  href: api/Wolfgang.Extensions.ICollection.ICollectionExtensions.html#Wolfgang_Extensions_ICollection_ICollectionExtensions_AddRange__1_System_Collections_Generic_ICollection___0__System_Collections_Generic_IEnumerable___0__
+  commentId: M:Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})
+  name.vb: AddRange(Of T)(ICollection(Of T), IEnumerable(Of T))
+  fullName: Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange<T>(System.Collections.Generic.ICollection<T>, System.Collections.Generic.IEnumerable<T>)
+  fullName.vb: Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange(Of T)(System.Collections.Generic.ICollection(Of T), System.Collections.Generic.IEnumerable(Of T))
+  nameWithType: ICollectionExtensions.AddRange<T>(ICollection<T>, IEnumerable<T>)
+  nameWithType.vb: ICollectionExtensions.AddRange(Of T)(ICollection(Of T), IEnumerable(Of T))
+- uid: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty*
+  name: IsEmpty
+  href: api/Wolfgang.Extensions.ICollection.ICollectionExtensions.html#Wolfgang_Extensions_ICollection_ICollectionExtensions_IsEmpty_
+  commentId: Overload:Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty
+  isSpec: "True"
+  fullName: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty
+  nameWithType: ICollectionExtensions.IsEmpty
+- uid: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty``1(System.Collections.Generic.ICollection{``0})
+  name: IsEmpty<T>(ICollection<T>)
+  href: api/Wolfgang.Extensions.ICollection.ICollectionExtensions.html#Wolfgang_Extensions_ICollection_ICollectionExtensions_IsEmpty__1_System_Collections_Generic_ICollection___0__
+  commentId: M:Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty``1(System.Collections.Generic.ICollection{``0})
+  name.vb: IsEmpty(Of T)(ICollection(Of T))
+  fullName: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty<T>(System.Collections.Generic.ICollection<T>)
+  fullName.vb: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty(Of T)(System.Collections.Generic.ICollection(Of T))
+  nameWithType: ICollectionExtensions.IsEmpty<T>(ICollection<T>)
+  nameWithType.vb: ICollectionExtensions.IsEmpty(Of T)(ICollection(Of T))
+- uid: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty*
+  name: IsNotEmpty
+  href: api/Wolfgang.Extensions.ICollection.ICollectionExtensions.html#Wolfgang_Extensions_ICollection_ICollectionExtensions_IsNotEmpty_
+  commentId: Overload:Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty
+  isSpec: "True"
+  fullName: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty
+  nameWithType: ICollectionExtensions.IsNotEmpty
+- uid: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty``1(System.Collections.Generic.ICollection{``0})
+  name: IsNotEmpty<T>(ICollection<T>)
+  href: api/Wolfgang.Extensions.ICollection.ICollectionExtensions.html#Wolfgang_Extensions_ICollection_ICollectionExtensions_IsNotEmpty__1_System_Collections_Generic_ICollection___0__
+  commentId: M:Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty``1(System.Collections.Generic.ICollection{``0})
+  name.vb: IsNotEmpty(Of T)(ICollection(Of T))
+  fullName: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty<T>(System.Collections.Generic.ICollection<T>)
+  fullName.vb: Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty(Of T)(System.Collections.Generic.ICollection(Of T))
+  nameWithType: ICollectionExtensions.IsNotEmpty<T>(ICollection<T>)
+  nameWithType.vb: ICollectionExtensions.IsNotEmpty(Of T)(ICollection(Of T))
