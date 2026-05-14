@@ -1,135 +1,65 @@
-# Code Formatting Guidelines
+# Code Formatting
 
-This document describes the code formatting rules enforced in this repository via `.editorconfig` and Roslyn analyzers.
+This repository uses `dotnet format` to enforce consistent C# code style.
 
----
+## Prerequisites
 
-## General Rules (All Files)
+The `dotnet format` command is **built into the .NET SDK** starting with .NET 6 and later. Since this project requires .NET 8.0 SDK or later, you already have `dotnet format` available — no separate tool installation is needed.
 
-| Setting | Value |
-|--------|-------|
-| Charset | UTF-8 |
-| Line endings | LF (Unix-style) |
-| Indentation | Spaces |
-| Indent size | 4 |
-| Insert final newline | Yes |
-| Trim trailing whitespace | Yes |
+> **Note:** The standalone `dotnet-format` global tool was deprecated when `dotnet format` was integrated into the .NET 6 SDK in August 2021.
 
-### File-Type Overrides
+## For Developers
 
-| File Type | Indent Size | Line Endings |
-|-----------|------------|--------------|
-| `*.csproj`, `*.props`, `*.targets`, etc. | 2 | LF |
-| `*.json` | 2 | LF |
-| `*.yml`, `*.yaml` | 2 | LF |
-| `*.ps1` | 4 | CRLF (UTF-8 BOM) |
+### Before Committing
 
----
+Run the formatting script with PowerShell Core (`pwsh`) on any supported platform:
 
-## C# Formatting Rules
-
-### Indentation and Spacing
-
-- **Indent size:** 4 spaces
-- **Braces:** Allman style (new line before opening brace)
-- **Space before colon in base or interface list:** Yes
-- **Space after colon in base or interface list:** Yes
-- **Space around binary operators:** Yes
-
-### New Line Preferences
-
-```
-csharp_new_line_before_open_brace = all
-csharp_new_line_before_else = true
-csharp_new_line_before_catch = true
-csharp_new_line_before_finally = true
-csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_members_in_anonymous_types = true
+```powershell
+.\scripts\format.ps1
 ```
 
-### Namespaces
+Or check without making changes:
 
-- **File-scoped namespaces required** in C# 10+:
-
-```csharp
-// Correct
-namespace MyNamespace;
-
-public class MyClass { }
-
-// Incorrect
-namespace MyNamespace
-{
-    public class MyClass { }
-}
+```powershell
+.\scripts\format.ps1 -Check
 ```
 
-### `var` Usage
-
-- Use `var` for built-in types and when the type is apparent from the right-hand side.
-- Use explicit types when the type is not obvious.
-
-```csharp
-// Preferred
-var count = 0;
-var items = new List<string>();
-
-// Preferred when type is not obvious
-IEnumerable<string> results = GetResults();
-```
-
-### Null Checks
-
-Prefer pattern matching over equality comparisons:
-
-```csharp
-// Correct
-if (value is null) { }
-if (value is not null) { }
-
-// Avoid
-if (value == null) { }
-if (value != null) { }
-```
-
-### Naming Conventions
-
-| Symbol | Convention | Example |
-|--------|-----------|---------|
-| Public types and members | PascalCase | `PublicMethod` |
-| Parameters and local variables | camelCase | `localVariable` |
-| Private fields | `_camelCase` | `_privateField` |
-| Constants | PascalCase | `MaxRetries` |
-| Interfaces | `I` prefix + PascalCase | `IMyInterface` |
-| Type parameters | `T` prefix + PascalCase | `TResult` |
-
----
-
-## Running the Formatter
+### Manual Formatting
 
 ```bash
-# Format all files
 dotnet format
-
-# Check formatting without changes (CI mode)
-dotnet format --verify-no-changes
-
-# PowerShell formatting script
-pwsh ./scripts/format.ps1
 ```
 
----
+### Verify Without Modifying Files
 
-## Analyzer Severity Levels
+```bash
+dotnet format --verify-no-changes
+```
 
-This project uses several analyzer packages. Key rules:
+This is useful as a pre-commit guard or in a CI step if the repo opts in to enforcing formatting at PR time. By default, the standard PR workflow does **not** run `dotnet format --verify-no-changes`; formatting is treated as a developer-side hygiene step driven by `.editorconfig` and IDE-on-save behavior.
 
-| Category | Example Rule | Default Severity |
-|----------|-------------|-----------------|
-| AsyncFixer | `AsyncFixer01` – Unnecessary async/await | Error |
-| AsyncFixer | `AsyncFixer02` – Blocking calls in async methods | Error |
-| CA (Code Analysis) | `CA1849` – Call async methods when in async method | Warning |
-| VSTHRD | `VSTHRD100` – Avoid async void methods | Warning |
-| Roslynator | `RCS1138` – Add summary to documentation comment | Warning |
+## Configuration
 
-See the [.editorconfig](../.editorconfig) file for the complete set of rules and their configured severities.
+Code style rules are defined in `.editorconfig` at the repository root. `.editorconfig` is the source of truth — anything in this document that conflicts with `.editorconfig` should be considered out of date.
+
+## Local Enforcement
+
+Code formatting is enforced locally via `.editorconfig` and `dotnet format`. Run the formatting script before submitting a PR. If the repo has opted into a CI formatting check, the PR workflow will fail on unformatted code; resolve by running `.\scripts\format.ps1` locally and pushing the resulting changes.
+
+## IDE Integration
+
+Most IDEs automatically read `.editorconfig`:
+
+- **Visual Studio**: Built-in support, formats on save (Tools → Options → Text Editor → C# → Code Style)
+- **VS Code**: Install "EditorConfig for VS Code" extension
+- **JetBrains Rider**: Built-in support
+
+## Formatting Rules
+
+Authoritative rules live in `.editorconfig` (and `.gitattributes` for line endings, which may override the `.editorconfig` defaults for specific file types — e.g. forcing CRLF on `*.ps1`). The list below is a quick orientation; check those files for the binding values:
+
+- **Indentation**: 4 spaces for C#, 2 for XML/JSON (per `.editorconfig`)
+- **Braces**: Opening brace on its own line
+- **Line endings**: LF for source/docs, with file-type overrides in `.gitattributes` (e.g. CRLF for `*.ps1`)
+- **Trailing whitespace**: Removed
+- **Using directives**: System namespaces first, sorted alphabetically
