@@ -37,11 +37,13 @@ if ($LASTEXITCODE -ne 0)
     Write-Host ""
     Write-Host "❌ dotnet format is not available!" -ForegroundColor Red
     Write-Host ""
-    Write-Host "The 'dotnet format' command is typically included in the .NET SDK (.NET 6+)," -ForegroundColor Yellow
-    Write-Host "but may also be installed as a global tool." -ForegroundColor Yellow
+    Write-Host "The 'dotnet format' command is built into the .NET SDK starting with .NET 6." -ForegroundColor Yellow
+    Write-Host "You need an SDK new enough to load this repo's target frameworks — see" -ForegroundColor Yellow
+    Write-Host ".github/workflows/pr.yaml (and global.json if present) for the SDK" -ForegroundColor Yellow
+    Write-Host "versions CI uses. The latest stable .NET SDK is generally a safe choice." -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "To install globally:  dotnet tool install -g dotnet-format" -ForegroundColor Cyan
-    Write-Host "Or install the .NET 8.0+ SDK from: https://dotnet.microsoft.com/download" -ForegroundColor Cyan
+    Write-Host "Install the .NET SDK from:" -ForegroundColor Yellow
+    Write-Host "https://dotnet.microsoft.com/download" -ForegroundColor Cyan
     Write-Host ""
     exit 1
 }
