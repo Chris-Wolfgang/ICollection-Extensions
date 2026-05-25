@@ -4,7 +4,6 @@
 		<LangVersion>latest</LangVersion>
 		<Version>0.2.0</Version>
 		<Title>$(AssemblyName)</Title>
-		<Authors>Chris Wolfgang</Authors>
 		<Description>A collection of extension methods for types that implement ICollection&lt;T&gt;</Description>
 		<Copyright>Copyright 2026 Chris Wolfgang</Copyright>
 		<PackageProjectUrl>https://github.com/Chris-Wolfgang/ICollection-Extensions</PackageProjectUrl>
