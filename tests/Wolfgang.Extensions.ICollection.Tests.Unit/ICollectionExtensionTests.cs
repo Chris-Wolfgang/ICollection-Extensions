@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace Wolfgang.Extensions.ICollection.Tests.Unit;
 
 // ReSharper disable once InconsistentNaming
@@ -315,16 +317,30 @@ public class ICollectionExtensionTests
 
 
 
-    [Fact]
-    public void IsEmpty_when_source_is_HashSet_returns_correct_result()
-    {
-        // Arrange
-        ICollection<int> empty = new HashSet<int>();
-        ICollection<int> nonEmpty = new HashSet<int> { 1, 2, 3 };
+    public static TheoryData<ICollection<int>, bool> IsEmptyCollectionTypeCases =>
+        new()
+        {
+            { new List<int>(),                  true  },
+            { new List<int> { 1, 2, 3 },        false },
+            { new HashSet<int>(),               true  },
+            { new HashSet<int> { 1, 2, 3 },     false },
+            { new LinkedList<int>(),            true  },
+            { LinkedListWith(1, 2, 3),          false },
+            { new Collection<int>(),            true  },
+            { new Collection<int> { 1, 2, 3 },  false },
+        };
 
-        // Act & Assert
-        Assert.True(empty.IsEmpty());
-        Assert.False(nonEmpty.IsEmpty());
+    [Theory]
+    [MemberData(nameof(IsEmptyCollectionTypeCases))]
+    public void IsEmpty_when_source_is_any_ICollection_implementation_returns_correct_result(
+        ICollection<int> source,
+        bool expected)
+    {
+        // Act
+        var result = source.IsEmpty();
+
+        // Assert
+        Assert.Equal(expected, result);
     }
 
 
@@ -376,16 +392,98 @@ public class ICollectionExtensionTests
 
 
 
-    [Fact]
-    public void IsNotEmpty_when_source_is_LinkedList_returns_correct_result()
-    {
-        // Arrange
-        ICollection<int> empty = new LinkedList<int>();
-        ICollection<int> nonEmpty = new LinkedList<int>();
-        nonEmpty.Add(42);
+    public static TheoryData<ICollection<int>, bool> IsNotEmptyCollectionTypeCases =>
+        new()
+        {
+            { new List<int>(),                  false },
+            { new List<int> { 1, 2, 3 },        true  },
+            { new HashSet<int>(),               false },
+            { new HashSet<int> { 1, 2, 3 },     true  },
+            { new LinkedList<int>(),            false },
+            { LinkedListWith(1, 2, 3),          true  },
+            { new Collection<int>(),            false },
+            { new Collection<int> { 1, 2, 3 },  true  },
+        };
 
-        // Act & Assert
-        Assert.False(empty.IsNotEmpty());
-        Assert.True(nonEmpty.IsNotEmpty());
+    [Theory]
+    [MemberData(nameof(IsNotEmptyCollectionTypeCases))]
+    public void IsNotEmpty_when_source_is_any_ICollection_implementation_returns_correct_result(
+        ICollection<int> source,
+        bool expected)
+    {
+        // Act
+        var result = source.IsNotEmpty();
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+
+
+    // =========================================================================
+    // Implementation-detail tests: capacity pre-allocation path
+    // =========================================================================
+
+    [Fact]
+    public void AddRange_when_source_is_List_and_items_is_ICollection_pre_allocates_capacity()
+    {
+        // Arrange — start with a list whose Capacity is less than the final
+        // Count so we can prove the extension grew it in one step rather than
+        // relying on List's amortised doubling. The List<int> reference is
+        // held so we can inspect Capacity after the call.
+        var list = new List<int>(capacity: 1) { 0 };
+        // Receiver must be typed as ICollection<int> so the extension method
+        // wins overload resolution against List<T>.AddRange (instance methods
+        // take precedence on the receiver's static type).
+        ICollection<int> source = list;
+        var items = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+        // Act
+        source.AddRange(items);
+
+        // Assert — Capacity must accommodate the final count (10) exactly,
+        // proving the pre-allocation branch ran. If the optimisation regressed
+        // and List had to grow via Add()'s amortised doubling, Capacity would
+        // overshoot to 16 (or another power-of-two).
+        Assert.Equal(10, list.Capacity);
+        Assert.Equal(10, list.Count);
+    }
+
+
+
+    [Fact]
+    public void AddRange_when_source_List_already_has_sufficient_capacity_does_not_shrink_it()
+    {
+        // Arrange — list with deliberately oversized capacity. Typing the
+        // receiver as ICollection<int> ensures the extension wins overload
+        // resolution; otherwise List<T>.AddRange (instance method) would
+        // take precedence and skip the Math.Max guard we're trying to test.
+        var list = new List<int>(capacity: 100) { 0 };
+        ICollection<int> source = list;
+        var items = new List<int> { 1, 2, 3 };
+
+        // Act
+        source.AddRange(items);
+
+        // Assert — Capacity should NOT be reduced to fit; the
+        // Math.Max(current, needed) guard preserves over-allocations.
+        Assert.Equal(100, list.Capacity);
+        Assert.Equal(4, list.Count);
+    }
+
+
+
+    // =========================================================================
+    // Helpers
+    // =========================================================================
+
+    private static LinkedList<T> LinkedListWith<T>(params T[] items)
+    {
+        var list = new LinkedList<T>();
+        foreach (var item in items)
+        {
+            list.AddLast(item);
+        }
+        return list;
     }
 }
