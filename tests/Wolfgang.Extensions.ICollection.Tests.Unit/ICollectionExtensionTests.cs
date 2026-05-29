@@ -788,4 +788,60 @@ public class ICollectionExtensionTests
         Assert.Equal(3, added);
         Assert.Equal(new[] { 1, 2, 3 }, source);
     }
+
+
+
+    // =========================================================================
+    // ReadOnly NotSupportedException coverage for the new methods
+    // =========================================================================
+
+    [Fact]
+    public void AddRangeIf_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 0 });
+        Assert.Throws<NotSupportedException>(
+            () => source.AddRangeIf(new[] { 1, 2, 3 }, _ => true));
+    }
+
+
+
+    [Fact]
+    public void RemoveWhere_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(() => source.RemoveWhere(_ => true));
+    }
+
+
+
+    [Fact]
+    public void ReplaceAll_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(() => source.ReplaceAll(new[] { 9 }));
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_single_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(() => source.AddIfNotContains(3));
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(
+            () => source.AddIfNotContains(new[] { 3, 4 }));
+    }
 }

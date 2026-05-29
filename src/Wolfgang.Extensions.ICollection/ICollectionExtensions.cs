@@ -231,7 +231,7 @@ public static class ICollectionExtensions
 
 
     /// <summary>
-    /// Removes every occurrence of each item in <paramref name="items"/>
+    /// Removes one occurrence of each item in <paramref name="items"/>
     /// from <paramref name="source"/>.
     /// </summary>
     /// <param name="source">The collection to remove items from.</param>
@@ -338,11 +338,10 @@ public static class ICollectionExtensions
     /// <remarks>
     /// Matching items are materialised into a temporary list before
     /// removal so the underlying collection can be mutated safely without
-    /// invalidating the enumerator. For <see cref="HashSet{T}"/> consumers
-    /// that already expose a native <c>RemoveWhere</c>, this extension
-    /// allocates one additional list and is slightly slower; for every
-    /// other <see cref="ICollection{T}"/> implementation it's the
-    /// canonical safe pattern.
+    /// invalidating the enumerator. When <paramref name="source"/> is a
+    /// <see cref="HashSet{T}"/> the call delegates to the native
+    /// <see cref="HashSet{T}.RemoveWhere(System.Predicate{T})"/>, which
+    /// skips the temporary-list allocation.
     /// </remarks>
     public static int RemoveWhere<T>(this ICollection<T> source, Func<T, bool> predicate)
     {
@@ -354,6 +353,16 @@ public static class ICollectionExtensions
         if (predicate is null)
         {
             throw new ArgumentNullException(nameof(predicate));
+        }
+
+        // Fast path: HashSet<T> already exposes a native RemoveWhere that
+        // avoids the temp-list allocation + second pass below. Skipped for
+        // List<T> because List<T>.RemoveAll on netstandard2.0/net462 was a
+        // late addition and the in-place enumerator pattern below is just
+        // as cheap for the small-to-medium sizes typical of this extension.
+        if (source is HashSet<T> set)
+        {
+            return set.RemoveWhere(item => predicate(item));
         }
 
         var toRemove = new List<T>();
