@@ -31,8 +31,8 @@ Initial public NuGet release.
   intermediate resize allocations in the common batch-append path.
 - `IsEmpty<T>(this ICollection<T>)` and `IsNotEmpty<T>(this ICollection<T>)`
   extension methods returning a Boolean for the source's empty state.
-- Multi-framework targeting: `net462`, `netstandard2.0`,
-  `netstandard2.1`, `net8.0`, `net10.0`.
+- Multi-framework targeting: `netstandard2.0`, `netstandard2.1`,
+  `net8.0`, `net9.0`, `net10.0`.
 - README content packaged into the NuGet `.nupkg` so it renders on the
   package's nuget.org page.
 
