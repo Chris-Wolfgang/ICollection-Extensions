@@ -6,10 +6,14 @@ namespace Wolfgang.Extensions.ICollection.Benchmarks;
 
 /// <summary>
 /// Microbenchmarks for the public extension methods. <c>AddRange</c> has
-/// two interesting shapes — the fast path where the source is also an
-/// <c>IList&lt;T&gt;</c> and the appended sequence exposes
+/// two interesting shapes — the fast path where the target is
+/// <c>List&lt;T&gt;</c> and the appended sequence exposes
 /// <c>ICollection&lt;T&gt;.Count</c> (capacity can be pre-allocated), and
-/// the slow path where neither holds (one-by-one append). The
+/// the slow path where the target is some other <c>ICollection&lt;T&gt;</c>
+/// (one-by-one append, no pre-allocation). Every receiver is typed as
+/// <c>ICollection&lt;T&gt;</c> at the call site so the extension method
+/// wins overload resolution against any concrete-type instance method
+/// (e.g. <c>List&lt;T&gt;.AddRange</c> would otherwise bind first). The
 /// MemoryDiagnoser is enabled so any future refactor that introduces
 /// allocation surfaces in the gh-pages benchmark chart immediately.
 /// </summary>
@@ -26,45 +30,59 @@ public class ICollectionExtensionsBenchmarks
 
 
     [Benchmark]
-    public List<int> AddRange_to_List_from_IList()
+    public ICollection<int> AddRange_fast_path_List_target()
     {
-        // Fast path: both sides expose Count + IList semantics.
-        var target = new List<int>();
-        target.AddRange((IEnumerable<int>)_itemsToAdd);
+        // Fast path: target is List<T> (the only ICollection<T> with
+        // settable Capacity) AND _itemsToAdd is an int[], so the
+        // 'items is ICollection<T>' check succeeds and the pre-allocation
+        // branch fires. The receiver is typed as ICollection<T> so the
+        // extension wins overload resolution — without this typing,
+        // 'target.AddRange(...)' would bind to List<T>.AddRange instead.
+        ICollection<int> target = new List<int>();
+        target.AddRange(_itemsToAdd);
         return target;
     }
 
 
 
     [Benchmark]
-    public LinkedList<int> AddRange_to_LinkedList_from_IList()
+    public ICollection<int> AddRange_slow_path_LinkedList_target()
     {
-        // Slow path: LinkedList is ICollection<T> but not IList<T>, so the
-        // capacity pre-allocation branch does not apply.
-        var target = new LinkedList<int>();
-        target.AddRange((IEnumerable<int>)_itemsToAdd);
+        // Slow path: LinkedList<T> is ICollection<T> but not List<T>, so
+        // the capacity pre-allocation branch does not fire. Iteration
+        // falls through to one-by-one Add().
+        ICollection<int> target = new LinkedList<int>();
+        target.AddRange(_itemsToAdd);
         return target;
     }
 
 
 
     [Benchmark]
-    public bool IsEmpty_on_empty_List() => new List<int>().IsEmpty();
+    public bool IsEmpty_on_empty_collection()
+    {
+        ICollection<int> source = new List<int>();
+        return source.IsEmpty();
+    }
 
 
 
     [Benchmark]
-    public bool IsEmpty_on_nonempty_List() => _itemsToAdd.AsCollection().IsEmpty();
+    public bool IsEmpty_on_nonempty_collection() => _itemsToAdd.AsCollection().IsEmpty();
 
 
 
     [Benchmark]
-    public bool IsNotEmpty_on_empty_List() => new List<int>().IsNotEmpty();
+    public bool IsNotEmpty_on_empty_collection()
+    {
+        ICollection<int> source = new List<int>();
+        return source.IsNotEmpty();
+    }
 
 
 
     [Benchmark]
-    public bool IsNotEmpty_on_nonempty_List() => _itemsToAdd.AsCollection().IsNotEmpty();
+    public bool IsNotEmpty_on_nonempty_collection() => _itemsToAdd.AsCollection().IsNotEmpty();
 }
 
 
