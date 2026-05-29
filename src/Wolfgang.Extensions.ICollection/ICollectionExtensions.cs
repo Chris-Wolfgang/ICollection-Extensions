@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Wolfgang.Extensions.ICollection;
 
-// ReSharper disable once InconsistentNaming
+
 /// <summary>
-/// A collection of extension methods to <see cref="ICollection{T}"/>
+/// A collection of extension methods to <see cref="ICollection{T}"/>.
 /// </summary>
 public static class ICollectionExtensions
 {
@@ -81,8 +81,10 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(items));
         }
 
-        // If items is a collection, we know the count upfront and can try to
-        // pre-allocate capacity on the target to avoid repeated resizing.
+        // Pre-allocate capacity on the target when it's a List<T> (the only
+        // ICollection<T> with a settable Capacity) and items exposes Count
+        // up-front via ICollection<T>. Both conditions must hold; without
+        // them the loop below just relies on the target's own growth policy.
         if (items is ICollection<T> itemsCollection && source is List<T> list)
         {
             list.Capacity = Math.Max(list.Capacity, list.Count + itemsCollection.Count);
