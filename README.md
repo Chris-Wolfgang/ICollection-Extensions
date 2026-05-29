@@ -107,7 +107,7 @@ products.AddRange(newProducts);
 
 | Method | Returns | Description |
 |---|---|---|
-| `AddRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Appends every item in the sequence to the collection. Pre-allocates capacity when both sides expose `Count` + `IList<T>` semantics. |
+| `AddRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Appends every item in the sequence to the collection. Pre-allocates capacity when the target is `List<T>` and the appended sequence exposes `ICollection<T>.Count`. |
 | `IsEmpty<T>(this ICollection<T>)` | `bool` | `true` if the collection has zero items, otherwise `false`. |
 | `IsNotEmpty<T>(this ICollection<T>)` | `bool` | `true` if the collection has at least one item, otherwise `false`. |
 
@@ -127,7 +127,7 @@ Adds every item from `items` to `source`.
 - Empty `items` is a no-op (no exception)
 - Duplicate handling follows the target collection's semantics (e.g.,
   `HashSet<T>` silently ignores duplicates)
-- Pre-allocates capacity when `source` is an `IList<T>` and `items`
+- Pre-allocates capacity when `source` is `List<T>` and `items`
   exposes `ICollection<T>.Count` (the common batch-append fast path)
 - Not thread-safe — external synchronization required for concurrent
   access
@@ -139,7 +139,7 @@ public static bool IsEmpty<T>(this ICollection<T> source)
 public static bool IsNotEmpty<T>(this ICollection<T> source)
 ```
 
-Reads `source.Count` and compares to zero. `O(1)` for every standard
+Reads `source.Count` and compares to zero. typically `O(1)` for standard
 `ICollection<T>` implementation.
 
 **Throws:**
