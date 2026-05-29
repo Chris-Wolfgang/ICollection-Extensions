@@ -1,7 +1,12 @@
 # Wolfgang.Extensions.ICollection
 
-[![NuGet](https://img.shields.io/nuget/v/Wolfgang.Extensions.ICollection.svg)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/)
+[![NuGet](https://img.shields.io/nuget/v/Wolfgang.Extensions.ICollection.svg?logo=nuget)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/)
+[![Downloads](https://img.shields.io/nuget/dt/Wolfgang.Extensions.ICollection.svg?logo=nuget)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/)
+[![PR build](https://img.shields.io/github/actions/workflow/status/Chris-Wolfgang/ICollection-Extensions/pr.yaml?label=PR%20build&logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions/actions/workflows/pr.yaml)
+[![Release](https://img.shields.io/github/actions/workflow/status/Chris-Wolfgang/ICollection-Extensions/release.yaml?label=release&logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions/actions/workflows/release.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![.NET](https://img.shields.io/badge/.NET-Multi--Targeted-blueviolet?logo=dotnet)](#-target-frameworks)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions)
 
 A lightweight .NET library providing essential extension methods for types implementing the `ICollection<T>` interface. This library brings the convenience of `List<T>.AddRange()` to all collection types.
 
@@ -100,39 +105,55 @@ products.AddRange(newProducts);
 
 ## 📚 API Reference
 
-### AddRange Method
+| Method | Returns | Description |
+|---|---|---|
+| `AddRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Appends every item in the sequence to the collection. Pre-allocates capacity when the target is `List<T>` and the appended sequence exposes `ICollection<T>.Count`. |
+| `IsEmpty<T>(this ICollection<T>)` | `bool` | `true` if the collection has zero items, otherwise `false`. |
+| `IsNotEmpty<T>(this ICollection<T>)` | `bool` | `true` if the collection has at least one item, otherwise `false`. |
+
+### `AddRange<T>`
 
 ```csharp
 public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> items)
 ```
 
-Adds all items from the specified enumerable to the source collection.
+Adds every item from `items` to `source`.
 
-**Parameters:**
-- `source` - The collection to add items to (must not be null)
-- `items` - The items to add (must not be null)
+**Throws:**
+- `ArgumentNullException` if `source` or `items` is `null`
+- `NotSupportedException` if `source` is read-only
 
-**Type Parameters:**
-- `T` - The type of items in the collection
+**Behavior:**
+- Empty `items` is a no-op (no exception)
+- Duplicate handling follows the target collection's semantics (e.g.,
+  `HashSet<T>` silently ignores duplicates)
+- Pre-allocates capacity when `source` is `List<T>` and `items`
+  exposes `ICollection<T>.Count` (the common batch-append fast path)
+- Not thread-safe — external synchronization required for concurrent
+  access
 
-**Exceptions:**
-- `ArgumentNullException` - Thrown if `source` or `items` is null
-- `NotSupportedException` - Thrown if the collection is read-only
+### `IsEmpty<T>` / `IsNotEmpty<T>`
 
-**Behavior Notes:**
-- Empty enumerables are handled gracefully (no exception, no items added)
-- Duplicate handling depends on the collection implementation (e.g., HashSet ignores duplicates)
-- Not thread-safe; external synchronization required for concurrent access
-- Preserves the collection's native constraints and behaviors
+```csharp
+public static bool IsEmpty<T>(this ICollection<T> source)
+public static bool IsNotEmpty<T>(this ICollection<T> source)
+```
+
+Reads `source.Count` and compares to zero. typically `O(1)` for standard
+`ICollection<T>` implementation.
+
+**Throws:**
+- `ArgumentNullException` if `source` is `null`
 
 ## 🔧 Target Frameworks
 
-This package targets the following frameworks:
-
-- **.NET Framework 4.6.2**
-- **.NET Standard 2.0** (provides compatibility with .NET Core 2.0+, .NET 5+, and newer .NET Framework versions)
-- **.NET 8.0**
-- **.NET 10.0**
+| TFM | Use case |
+|---|---|
+| `netstandard2.0` | Broad consumer compatibility (covers .NET Framework 4.6.1+, .NET Core 2.0+, .NET 5+, Mono, Xamarin) |
+| `netstandard2.1` | Picks up the BCL improvements available since 2019 |
+| `net8.0` | Current LTS |
+| `net9.0` | Latest released runtime |
+| `net10.0` | Active LTS branch |
 
 ## 🤝 Contributing
 
