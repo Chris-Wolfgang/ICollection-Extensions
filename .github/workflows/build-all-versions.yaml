@@ -265,10 +265,20 @@ jobs:
           $repoName = ($env:GITHUB_REPOSITORY -split '/')[-1]
           $base = if ($repoName) { "/$repoName/" } else { "/" }
 
+          # Derive versions.json from the directories actually produced by
+          # earlier steps in this workflow (not from raw git tags). If a
+          # docfx build failed for a tag, no folder lands under
+          # all_version_docs/versions/<tag>/, so it must not appear in the
+          # version picker — otherwise the picker would link to a 404.
           $semverRe = '^v(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>[0-9A-Za-z.-]+))?$'
-          $tags = git tag -l 'v*' | Where-Object { $_ -ne '' }
+          $versionsRoot = Join-Path $outDir 'versions'
+          $builtDirs = if (Test-Path $versionsRoot) {
+            Get-ChildItem -Path $versionsRoot -Directory | Where-Object { $_.Name -ne 'latest' } | Select-Object -ExpandProperty Name
+          } else {
+            @()
+          }
 
-          $taggedVersions = foreach ($t in $tags) {
+          $taggedVersions = foreach ($t in $builtDirs) {
             if ($t -match $semverRe) {
               $stable = if ([string]::IsNullOrEmpty($Matches['prerelease'])) { 1 } else { 0 }
               [PSCustomObject]@{
