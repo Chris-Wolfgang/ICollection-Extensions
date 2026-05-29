@@ -356,10 +356,12 @@ public static class ICollectionExtensions
         }
 
         // Fast path: HashSet<T> already exposes a native RemoveWhere that
-        // avoids the temp-list allocation + second pass below. Skipped for
-        // List<T> because List<T>.RemoveAll on netstandard2.0/net462 was a
-        // late addition and the in-place enumerator pattern below is just
-        // as cheap for the small-to-medium sizes typical of this extension.
+        // avoids the temp-list allocation + second pass below. We don't
+        // special-case List<T>.RemoveAll (which has shipped since .NET
+        // Framework 2.0) because the generic two-pass pattern handles
+        // every other ICollection<T> uniformly and the extra type-check
+        // cost outweighs the savings at the small-to-medium sizes typical
+        // for this extension.
         if (source is HashSet<T> set)
         {
             return set.RemoveWhere(item => predicate(item));
@@ -441,16 +443,28 @@ public static class ICollectionExtensions
     /// <remarks>
     /// Containment is determined by the target collection's own
     /// <see cref="ICollection{T}.Contains"/> implementation, which usually
-    /// uses <see cref="EqualityComparer{T}.Default"/>. <see cref="HashSet{T}"/>'s
-    /// own <see cref="HashSet{T}.Add"/> already returns a Boolean to the
-    /// same effect; this extension generalises the behaviour to every
-    /// <see cref="ICollection{T}"/>.
+    /// uses <see cref="EqualityComparer{T}.Default"/>. When
+    /// <paramref name="source"/> is an <see cref="ISet{T}"/> the call is
+    /// delegated to <see cref="ISet{T}.Add"/>, which returns the same
+    /// Boolean signal in a single lookup (and preserves the set's native
+    /// equality semantics, e.g. a custom <see cref="IEqualityComparer{T}"/>).
+    /// For other <see cref="ICollection{T}"/> implementations the
+    /// extension generalises the behaviour using
+    /// <see cref="ICollection{T}.Contains"/> + <see cref="ICollection{T}.Add"/>.
     /// </remarks>
     public static bool AddIfNotContains<T>(this ICollection<T> source, T item)
     {
         if (source is null)
         {
             throw new ArgumentNullException(nameof(source));
+        }
+
+        // Fast path: ISet<T> (HashSet<T>, SortedSet<T>, etc.) — ISet.Add
+        // already returns the "did we add?" Boolean in a single lookup,
+        // so we skip the redundant Contains call.
+        if (source is ISet<T> set)
+        {
+            return set.Add(item);
         }
 
         if (source.Contains(item))

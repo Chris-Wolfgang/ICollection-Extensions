@@ -11,10 +11,11 @@
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
 		<FileVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(Version)', '[-+].*$', '')).0</FileVersion>
 		<Title>$(AssemblyName)</Title>
-		<Authors>Chris Wolfgang</Authors>
+		<!-- <Authors> and <Copyright> are inherited from Directory.Build.props
+		     (canonical CI3 defaults). Re-defining them here would duplicate the
+		     fleet-wide values and drift over time. -->
 		<Description>A collection of extension methods for types that implement ICollection&lt;T&gt;</Description>
 		<PackageTags>icollection;collection;extensions;extension-methods;addrange;dotnet;netstandard</PackageTags>
-		<Copyright>Copyright 2026 Chris Wolfgang</Copyright>
 		<PackageProjectUrl>https://github.com/Chris-Wolfgang/ICollection-Extensions</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Chris-Wolfgang/ICollection-Extensions.git</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
