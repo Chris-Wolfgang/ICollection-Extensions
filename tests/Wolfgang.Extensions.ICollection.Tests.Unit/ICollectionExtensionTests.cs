@@ -748,6 +748,22 @@ public class ICollectionExtensionTests
 
 
     [Fact]
+    public void AddIfNotContains_single_uses_ISet_Add_when_source_is_HashSet()
+    {
+        // HashSet<T> is ISet<T> — the extension's ISet fast path should
+        // delegate to set.Add (one lookup) instead of Contains+Add (two).
+        // We can't directly observe the call count, but behaviour parity
+        // is the contract: returns the same Boolean as a direct set.Add
+        // would have.
+        ICollection<int> source = new HashSet<int> { 1, 2 };
+        Assert.True(source.AddIfNotContains(3));
+        Assert.False(source.AddIfNotContains(2));
+        Assert.Equal(new[] { 1, 2, 3 }, ((HashSet<int>)source));
+    }
+
+
+
+    [Fact]
     public void AddIfNotContains_many_when_source_is_null_throws_ArgumentNullException()
     {
         ICollection<int> source = null!;
