@@ -108,6 +108,12 @@ products.AddRange(newProducts);
 | Method | Returns | Description |
 |---|---|---|
 | `AddRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Appends every item in the sequence to the collection. Pre-allocates capacity when the target is `List<T>` and the appended sequence exposes `ICollection<T>.Count`. |
+| `AddRangeIf<T>(this ICollection<T>, IEnumerable<T>, Func<T, bool>)` | `void` | Appends items for which the predicate returns `true`. |
+| `RemoveRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Removes one occurrence of each listed item from the collection. |
+| `RemoveWhere<T>(this ICollection<T>, Func<T, bool>)` | `int` | Removes every item matching the predicate; returns the count removed. Safe for any `ICollection<T>`. |
+| `ReplaceAll<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Clears the collection then appends every item from the new sequence. |
+| `AddIfNotContains<T>(this ICollection<T>, T)` | `bool` | Adds the item only if it is not already present; returns whether the add happened. |
+| `AddIfNotContains<T>(this ICollection<T>, IEnumerable<T>)` | `int` | Bulk overload; returns the count actually added. |
 | `IsEmpty<T>(this ICollection<T>)` | `bool` | `true` if the collection has zero items, otherwise `false`. |
 | `IsNotEmpty<T>(this ICollection<T>)` | `bool` | `true` if the collection has at least one item, otherwise `false`. |
 

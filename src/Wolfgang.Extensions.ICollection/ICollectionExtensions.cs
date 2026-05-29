@@ -227,4 +227,270 @@ public static class ICollectionExtensions
 
         return source.Count > 0;
     }
+
+
+
+    /// <summary>
+    /// Removes every occurrence of each item in <paramref name="items"/>
+    /// from <paramref name="source"/>.
+    /// </summary>
+    /// <param name="source">The collection to remove items from.</param>
+    /// <param name="items">The items to remove.</param>
+    /// <typeparam name="T">The type of items in the collection.</typeparam>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="source"/> or <paramref name="items"/> is null.
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if <paramref name="source"/> is read-only.
+    /// </exception>
+    /// <remarks>
+    /// Each item in <paramref name="items"/> is removed using
+    /// <see cref="ICollection{T}.Remove"/>; if the target collection allows
+    /// duplicates and the same value appears multiple times in
+    /// <paramref name="items"/>, multiple occurrences are removed (one per
+    /// call). Items in <paramref name="items"/> that are not present in
+    /// <paramref name="source"/> are silently skipped.
+    /// </remarks>
+    public static void RemoveRange<T>(this ICollection<T> source, IEnumerable<T> items)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        if (items is null)
+        {
+            throw new ArgumentNullException(nameof(items));
+        }
+
+        foreach (var item in items)
+        {
+            source.Remove(item);
+        }
+    }
+
+
+
+    /// <summary>
+    /// Adds every item from <paramref name="items"/> to
+    /// <paramref name="source"/> for which <paramref name="predicate"/>
+    /// returns <c>true</c>.
+    /// </summary>
+    /// <param name="source">The collection to add to.</param>
+    /// <param name="items">The candidate items.</param>
+    /// <param name="predicate">A function returning <c>true</c> for items
+    /// that should be added.</param>
+    /// <typeparam name="T">The type of items in the collection.</typeparam>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="source"/>, <paramref name="items"/>, or
+    /// <paramref name="predicate"/> is null.
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if <paramref name="source"/> is read-only.
+    /// </exception>
+    public static void AddRangeIf<T>(
+        this ICollection<T> source,
+        IEnumerable<T> items,
+        Func<T, bool> predicate)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        if (items is null)
+        {
+            throw new ArgumentNullException(nameof(items));
+        }
+
+        if (predicate is null)
+        {
+            throw new ArgumentNullException(nameof(predicate));
+        }
+
+        foreach (var item in items)
+        {
+            if (predicate(item))
+            {
+                source.Add(item);
+            }
+        }
+    }
+
+
+
+    /// <summary>
+    /// Removes every item from <paramref name="source"/> for which
+    /// <paramref name="predicate"/> returns <c>true</c>.
+    /// </summary>
+    /// <param name="source">The collection to remove from.</param>
+    /// <param name="predicate">A function returning <c>true</c> for items
+    /// that should be removed.</param>
+    /// <typeparam name="T">The type of items in the collection.</typeparam>
+    /// <returns>The number of items removed.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="source"/> or <paramref name="predicate"/>
+    /// is null.
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if <paramref name="source"/> is read-only.
+    /// </exception>
+    /// <remarks>
+    /// Matching items are materialised into a temporary list before
+    /// removal so the underlying collection can be mutated safely without
+    /// invalidating the enumerator. For <see cref="HashSet{T}"/> consumers
+    /// that already expose a native <c>RemoveWhere</c>, this extension
+    /// allocates one additional list and is slightly slower; for every
+    /// other <see cref="ICollection{T}"/> implementation it's the
+    /// canonical safe pattern.
+    /// </remarks>
+    public static int RemoveWhere<T>(this ICollection<T> source, Func<T, bool> predicate)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        if (predicate is null)
+        {
+            throw new ArgumentNullException(nameof(predicate));
+        }
+
+        var toRemove = new List<T>();
+        foreach (var item in source)
+        {
+            if (predicate(item))
+            {
+                toRemove.Add(item);
+            }
+        }
+
+        foreach (var item in toRemove)
+        {
+            source.Remove(item);
+        }
+
+        return toRemove.Count;
+    }
+
+
+
+    /// <summary>
+    /// Clears <paramref name="source"/> and then adds every item from
+    /// <paramref name="items"/>.
+    /// </summary>
+    /// <param name="source">The collection to replace the contents of.</param>
+    /// <param name="items">The new contents.</param>
+    /// <typeparam name="T">The type of items in the collection.</typeparam>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="source"/> or <paramref name="items"/> is null.
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if <paramref name="source"/> is read-only.
+    /// </exception>
+    /// <remarks>
+    /// The operation is not atomic. If enumeration of
+    /// <paramref name="items"/> throws midway through, the collection is
+    /// left empty (or with whatever items were already appended). Callers
+    /// that need atomic replacement should materialise the new contents
+    /// first.
+    /// </remarks>
+    public static void ReplaceAll<T>(this ICollection<T> source, IEnumerable<T> items)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        if (items is null)
+        {
+            throw new ArgumentNullException(nameof(items));
+        }
+
+        source.Clear();
+        source.AddRange(items);
+    }
+
+
+
+    /// <summary>
+    /// Adds <paramref name="item"/> to <paramref name="source"/> if it is
+    /// not already present (per
+    /// <see cref="ICollection{T}.Contains"/>).
+    /// </summary>
+    /// <param name="source">The collection to add to.</param>
+    /// <param name="item">The candidate item.</param>
+    /// <typeparam name="T">The type of items in the collection.</typeparam>
+    /// <returns><c>true</c> if the item was added; <c>false</c> if it was
+    /// already present.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="source"/> is null.
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if <paramref name="source"/> is read-only.
+    /// </exception>
+    /// <remarks>
+    /// Containment is determined by the target collection's own
+    /// <see cref="ICollection{T}.Contains"/> implementation, which usually
+    /// uses <see cref="EqualityComparer{T}.Default"/>. <see cref="HashSet{T}"/>'s
+    /// own <see cref="HashSet{T}.Add"/> already returns a Boolean to the
+    /// same effect; this extension generalises the behaviour to every
+    /// <see cref="ICollection{T}"/>.
+    /// </remarks>
+    public static bool AddIfNotContains<T>(this ICollection<T> source, T item)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        if (source.Contains(item))
+        {
+            return false;
+        }
+
+        source.Add(item);
+        return true;
+    }
+
+
+
+    /// <summary>
+    /// Adds each item from <paramref name="items"/> to
+    /// <paramref name="source"/> if it is not already present.
+    /// </summary>
+    /// <param name="source">The collection to add to.</param>
+    /// <param name="items">The candidate items.</param>
+    /// <typeparam name="T">The type of items in the collection.</typeparam>
+    /// <returns>The number of items actually added (items already present
+    /// in <paramref name="source"/>, or repeated within
+    /// <paramref name="items"/> after the first addition, are skipped).</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if <paramref name="source"/> or <paramref name="items"/> is null.
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if <paramref name="source"/> is read-only.
+    /// </exception>
+    public static int AddIfNotContains<T>(this ICollection<T> source, IEnumerable<T> items)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        if (items is null)
+        {
+            throw new ArgumentNullException(nameof(items));
+        }
+
+        var added = 0;
+        foreach (var item in items)
+        {
+            if (source.AddIfNotContains(item))
+            {
+                added++;
+            }
+        }
+        return added;
+    }
 }
