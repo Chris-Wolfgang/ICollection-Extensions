@@ -35,7 +35,9 @@
   <Folder Name="/.root/scripts/">
     <File Path="scripts/format.ps1" />
   </Folder>
-  <Folder Name="/benchmarks/" />
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/Wolfgang.Extensions.ICollection.Benchmarks/Wolfgang.Extensions.ICollection.Benchmarks.csproj" />
+  </Folder>
   <Folder Name="/examples/" />
   <Folder Name="/src/">
     <Project Path="src/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
