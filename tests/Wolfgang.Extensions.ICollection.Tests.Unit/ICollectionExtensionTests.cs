@@ -317,7 +317,7 @@ public class ICollectionExtensionTests
 
 
 
-    public static TheoryData<ICollection<int>, bool> IsEmpty_collection_type_cases =>
+    public static TheoryData<ICollection<int>, bool> IsEmptyCollectionTypeCases =>
         new()
         {
             { new List<int>(),                  true  },
@@ -331,7 +331,7 @@ public class ICollectionExtensionTests
         };
 
     [Theory]
-    [MemberData(nameof(IsEmpty_collection_type_cases))]
+    [MemberData(nameof(IsEmptyCollectionTypeCases))]
     public void IsEmpty_when_source_is_any_ICollection_implementation_returns_correct_result(
         ICollection<int> source,
         bool expected)
@@ -392,7 +392,7 @@ public class ICollectionExtensionTests
 
 
 
-    public static TheoryData<ICollection<int>, bool> IsNotEmpty_collection_type_cases =>
+    public static TheoryData<ICollection<int>, bool> IsNotEmptyCollectionTypeCases =>
         new()
         {
             { new List<int>(),                  false },
@@ -406,7 +406,7 @@ public class ICollectionExtensionTests
         };
 
     [Theory]
-    [MemberData(nameof(IsNotEmpty_collection_type_cases))]
+    [MemberData(nameof(IsNotEmptyCollectionTypeCases))]
     public void IsNotEmpty_when_source_is_any_ICollection_implementation_returns_correct_result(
         ICollection<int> source,
         bool expected)
