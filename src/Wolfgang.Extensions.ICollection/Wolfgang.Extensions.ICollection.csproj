@@ -9,7 +9,7 @@
 		     InformationalVersion (the latter auto-derived from <Version>) carry
 		     the actual release version. -->
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
-		<FileVersion>$([System.Text.RegularExpressions.Regex]::Replace("$(Version)", "[-+].*$", "")).0</FileVersion>
+		<FileVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(Version)', '[-+].*$', '')).0</FileVersion>
 		<Title>$(AssemblyName)</Title>
 		<Authors>Chris Wolfgang</Authors>
 		<Description>A collection of extension methods for types that implement ICollection&lt;T&gt;</Description>
