@@ -429,8 +429,13 @@ public class ICollectionExtensionTests
     {
         // Arrange — start with a list whose Capacity is less than the final
         // Count so we can prove the extension grew it in one step rather than
-        // relying on List's amortised doubling.
-        var source = new List<int>(capacity: 1) { 0 };
+        // relying on List's amortised doubling. The List<int> reference is
+        // held so we can inspect Capacity after the call.
+        var list = new List<int>(capacity: 1) { 0 };
+        // Receiver must be typed as ICollection<int> so the extension method
+        // wins overload resolution against List<T>.AddRange (instance methods
+        // take precedence on the receiver's static type).
+        ICollection<int> source = list;
         var items = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
         // Act
@@ -440,8 +445,8 @@ public class ICollectionExtensionTests
         // proving the pre-allocation branch ran. If the optimisation regressed
         // and List had to grow via Add()'s amortised doubling, Capacity would
         // overshoot to 16 (or another power-of-two).
-        Assert.Equal(10, source.Capacity);
-        Assert.Equal(10, source.Count);
+        Assert.Equal(10, list.Capacity);
+        Assert.Equal(10, list.Count);
     }
 
 
@@ -449,8 +454,12 @@ public class ICollectionExtensionTests
     [Fact]
     public void AddRange_when_source_List_already_has_sufficient_capacity_does_not_shrink_it()
     {
-        // Arrange — list with deliberately oversized capacity.
-        var source = new List<int>(capacity: 100) { 0 };
+        // Arrange — list with deliberately oversized capacity. Typing the
+        // receiver as ICollection<int> ensures the extension wins overload
+        // resolution; otherwise List<T>.AddRange (instance method) would
+        // take precedence and skip the Math.Max guard we're trying to test.
+        var list = new List<int>(capacity: 100) { 0 };
+        ICollection<int> source = list;
         var items = new List<int> { 1, 2, 3 };
 
         // Act
@@ -458,8 +467,8 @@ public class ICollectionExtensionTests
 
         // Assert — Capacity should NOT be reduced to fit; the
         // Math.Max(current, needed) guard preserves over-allocations.
-        Assert.Equal(100, source.Capacity);
-        Assert.Equal(4, source.Count);
+        Assert.Equal(100, list.Capacity);
+        Assert.Equal(4, list.Count);
     }
 
 
