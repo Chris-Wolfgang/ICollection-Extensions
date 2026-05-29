@@ -26,7 +26,7 @@ Initial public NuGet release.
 ### Added
 
 - `AddRange<T>(this ICollection<T>, IEnumerable<T>)` extension method.
-  Pre-allocates capacity when the source is also `IList<T>` and the
+  Pre-allocates capacity when the source is `List<T>` and the
   appended sequence exposes `ICollection<T>.Count`, eliminating
   intermediate resize allocations in the common batch-append path.
 - `IsEmpty<T>(this ICollection<T>)` and `IsNotEmpty<T>(this ICollection<T>)`
