@@ -11,12 +11,17 @@
     If specified, only checks formatting without making changes (like CI does).
 
 .EXAMPLE
-    .\format.ps1
-    Formats all code in the repository.
+    .\scripts\format.ps1
+    Formats all code in the repository (invoke from repo root).
 
 .EXAMPLE
-    .\format.ps1 -Check
+    .\scripts\format.ps1 -Check
     Checks formatting without making changes.
+
+.NOTES
+    The script resolves the solution from the repo root regardless of
+    the caller's current directory, so invoking it from any working
+    directory inside the repo works.
 #>
 
 param(
@@ -24,6 +29,12 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+# Pin cwd to the repo root so the solution lookup below works regardless
+# of where the caller invokes the script from (repo root, scripts/, etc).
+$repoRoot = (Resolve-Path -Path (Join-Path $PSScriptRoot '..')).Path
+Push-Location $repoRoot
+try {
 
 Write-Host "🎨 Code Formatting Script" -ForegroundColor Cyan
 Write-Host ""
@@ -37,11 +48,13 @@ if ($LASTEXITCODE -ne 0)
     Write-Host ""
     Write-Host "❌ dotnet format is not available!" -ForegroundColor Red
     Write-Host ""
-    Write-Host "The 'dotnet format' command is typically included in the .NET SDK (.NET 6+)," -ForegroundColor Yellow
-    Write-Host "but may also be installed as a global tool." -ForegroundColor Yellow
+    Write-Host "The 'dotnet format' command is built into the .NET SDK starting with .NET 6." -ForegroundColor Yellow
+    Write-Host "You need an SDK new enough to load this repo's target frameworks — see" -ForegroundColor Yellow
+    Write-Host ".github/workflows/pr.yaml (and global.json if present) for the SDK" -ForegroundColor Yellow
+    Write-Host "versions CI uses. The latest stable .NET SDK is generally a safe choice." -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "To install globally:  dotnet tool install -g dotnet-format" -ForegroundColor Cyan
-    Write-Host "Or install the .NET 8.0+ SDK from: https://dotnet.microsoft.com/download" -ForegroundColor Cyan
+    Write-Host "Install the .NET SDK from:" -ForegroundColor Yellow
+    Write-Host "https://dotnet.microsoft.com/download" -ForegroundColor Cyan
     Write-Host ""
     exit 1
 }
@@ -78,7 +91,7 @@ if ($Check)
     {
         Write-Host ""
         Write-Host "❌ Formatting issues detected!" -ForegroundColor Red
-        Write-Host "Run '.\format.ps1' (without -Check) to fix them automatically." -ForegroundColor Yellow
+        Write-Host "Run '.\scripts\format.ps1' (without -Check) to fix them automatically." -ForegroundColor Yellow
         exit 1
     }
 }
@@ -101,4 +114,7 @@ else
         Write-Host "❌ Formatting failed!" -ForegroundColor Red
         exit 1
     }
+}
+} finally {
+    Pop-Location
 }
