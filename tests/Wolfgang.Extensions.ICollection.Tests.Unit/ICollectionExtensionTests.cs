@@ -486,4 +486,362 @@ public class ICollectionExtensionTests
         }
         return list;
     }
+
+
+
+    // =========================================================================
+    // RemoveRange tests
+    // =========================================================================
+
+    [Fact]
+    public void RemoveRange_when_source_is_null_throws_ArgumentNullException()
+    {
+        ICollection<string> source = null!;
+        var ex = Assert.Throws<ArgumentNullException>(() => source.RemoveRange(new[] { "x" }));
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void RemoveRange_when_items_is_null_throws_ArgumentNullException()
+    {
+        ICollection<string> source = new List<string>();
+        var ex = Assert.Throws<ArgumentNullException>(() => source.RemoveRange(null!));
+        Assert.Equal("items", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void RemoveRange_removes_each_listed_item()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 3, 4, 5 };
+        source.RemoveRange(new[] { 2, 4 });
+        Assert.Equal(new[] { 1, 3, 5 }, source);
+    }
+
+
+
+    [Fact]
+    public void RemoveRange_silently_skips_items_not_present()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        source.RemoveRange(new[] { 7, 8, 9 });
+        Assert.Equal(new[] { 1, 2, 3 }, source);
+    }
+
+
+
+    [Fact]
+    public void RemoveRange_removes_one_occurrence_per_item_in_items()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 2, 2, 3 };
+        source.RemoveRange(new[] { 2, 2 });
+        Assert.Equal(new[] { 1, 2, 3 }, source);
+    }
+
+
+
+    [Fact]
+    public void RemoveRange_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(() => source.RemoveRange(new[] { 1 }));
+    }
+
+
+
+    // =========================================================================
+    // AddRangeIf tests
+    // =========================================================================
+
+    [Fact]
+    public void AddRangeIf_when_source_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = null!;
+        var ex = Assert.Throws<ArgumentNullException>(
+            () => source.AddRangeIf(new[] { 1 }, _ => true));
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void AddRangeIf_when_items_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = new List<int>();
+        var ex = Assert.Throws<ArgumentNullException>(
+            () => source.AddRangeIf(null!, _ => true));
+        Assert.Equal("items", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void AddRangeIf_when_predicate_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = new List<int>();
+        var ex = Assert.Throws<ArgumentNullException>(
+            () => source.AddRangeIf(new[] { 1 }, null!));
+        Assert.Equal("predicate", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void AddRangeIf_adds_only_items_matching_predicate()
+    {
+        ICollection<int> source = new List<int>();
+        source.AddRangeIf(new[] { 1, 2, 3, 4, 5, 6 }, n => n % 2 == 0);
+        Assert.Equal(new[] { 2, 4, 6 }, source);
+    }
+
+
+
+    [Fact]
+    public void AddRangeIf_with_always_false_predicate_adds_nothing()
+    {
+        ICollection<int> source = new List<int> { 0 };
+        source.AddRangeIf(new[] { 1, 2, 3 }, _ => false);
+        Assert.Equal(new[] { 0 }, source);
+    }
+
+
+
+    // =========================================================================
+    // RemoveWhere tests
+    // =========================================================================
+
+    [Fact]
+    public void RemoveWhere_when_source_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = null!;
+        var ex = Assert.Throws<ArgumentNullException>(() => source.RemoveWhere(_ => true));
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void RemoveWhere_when_predicate_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = new List<int>();
+        var ex = Assert.Throws<ArgumentNullException>(() => source.RemoveWhere(null!));
+        Assert.Equal("predicate", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void RemoveWhere_returns_count_of_removed_items()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 3, 4, 5, 6 };
+        var removed = source.RemoveWhere(n => n % 2 == 0);
+        Assert.Equal(3, removed);
+        Assert.Equal(new[] { 1, 3, 5 }, source);
+    }
+
+
+
+    [Fact]
+    public void RemoveWhere_returns_zero_when_nothing_matches()
+    {
+        ICollection<int> source = new List<int> { 1, 3, 5 };
+        var removed = source.RemoveWhere(n => n % 2 == 0);
+        Assert.Equal(0, removed);
+        Assert.Equal(new[] { 1, 3, 5 }, source);
+    }
+
+
+
+    [Fact]
+    public void RemoveWhere_handles_removing_every_item()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        var removed = source.RemoveWhere(_ => true);
+        Assert.Equal(3, removed);
+        Assert.Empty(source);
+    }
+
+
+
+    // =========================================================================
+    // ReplaceAll tests
+    // =========================================================================
+
+    [Fact]
+    public void ReplaceAll_when_source_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = null!;
+        var ex = Assert.Throws<ArgumentNullException>(() => source.ReplaceAll(new[] { 1 }));
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void ReplaceAll_when_items_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = new List<int>();
+        var ex = Assert.Throws<ArgumentNullException>(() => source.ReplaceAll(null!));
+        Assert.Equal("items", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void ReplaceAll_clears_and_repopulates()
+    {
+        ICollection<string> source = new List<string> { "old1", "old2", "old3" };
+        source.ReplaceAll(new[] { "new1", "new2" });
+        Assert.Equal(new[] { "new1", "new2" }, source);
+    }
+
+
+
+    [Fact]
+    public void ReplaceAll_with_empty_items_just_clears()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        source.ReplaceAll(Array.Empty<int>());
+        Assert.Empty(source);
+    }
+
+
+
+    // =========================================================================
+    // AddIfNotContains tests
+    // =========================================================================
+
+    [Fact]
+    public void AddIfNotContains_single_when_source_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = null!;
+        var ex = Assert.Throws<ArgumentNullException>(() => source.AddIfNotContains(1));
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_single_returns_true_when_item_was_added()
+    {
+        ICollection<int> source = new List<int> { 1, 2 };
+        var added = source.AddIfNotContains(3);
+        Assert.True(added);
+        Assert.Equal(new[] { 1, 2, 3 }, source);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_single_returns_false_when_item_already_present()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        var added = source.AddIfNotContains(2);
+        Assert.False(added);
+        Assert.Equal(new[] { 1, 2, 3 }, source);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_when_source_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = null!;
+        var ex = Assert.Throws<ArgumentNullException>(
+            () => source.AddIfNotContains(new[] { 1, 2 }));
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_when_items_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = new List<int>();
+        var ex = Assert.Throws<ArgumentNullException>(
+            () => source.AddIfNotContains((IEnumerable<int>)null!));
+        Assert.Equal("items", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_returns_count_of_items_added()
+    {
+        ICollection<int> source = new List<int> { 1, 2 };
+        var added = source.AddIfNotContains(new[] { 2, 3, 4 });
+        Assert.Equal(2, added);
+        Assert.Equal(new[] { 1, 2, 3, 4 }, source);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_dedupes_within_items_after_first_addition()
+    {
+        ICollection<int> source = new List<int>();
+        var added = source.AddIfNotContains(new[] { 1, 1, 2, 2, 3 });
+        Assert.Equal(3, added);
+        Assert.Equal(new[] { 1, 2, 3 }, source);
+    }
+
+
+
+    // =========================================================================
+    // ReadOnly NotSupportedException coverage for the new methods
+    // =========================================================================
+
+    [Fact]
+    public void AddRangeIf_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 0 });
+        Assert.Throws<NotSupportedException>(
+            () => source.AddRangeIf(new[] { 1, 2, 3 }, _ => true));
+    }
+
+
+
+    [Fact]
+    public void RemoveWhere_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(() => source.RemoveWhere(_ => true));
+    }
+
+
+
+    [Fact]
+    public void ReplaceAll_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(() => source.ReplaceAll(new[] { 9 }));
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_single_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(() => source.AddIfNotContains(3));
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_when_source_is_ReadOnly_throws_NotSupportedException()
+    {
+        ICollection<int> source =
+            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+        Assert.Throws<NotSupportedException>(
+            () => source.AddIfNotContains(new[] { 3, 4 }));
+    }
 }

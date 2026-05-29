@@ -10,6 +10,12 @@
 
 ## Extension Methods
 - `AddRange<T>(this ICollection<T>, IEnumerable<T>)` — appends every item from the sequence to the collection. Pre-allocates capacity when the target is `List<T>` and the appended sequence exposes `ICollection<T>.Count` (the common batch-append fast path).
+- `AddRangeIf<T>(this ICollection<T>, IEnumerable<T>, Func<T, bool>)` — appends items for which the predicate returns `true`.
+- `RemoveRange<T>(this ICollection<T>, IEnumerable<T>)` — removes one occurrence of each listed item.
+- `RemoveWhere<T>(this ICollection<T>, Func<T, bool>) -> int` — removes every item matching the predicate; returns the count removed. Materialises matches into a temp list before mutating to keep enumeration safe.
+- `ReplaceAll<T>(this ICollection<T>, IEnumerable<T>)` — clears the collection then appends every item from the new sequence. Not atomic — see remarks.
+- `AddIfNotContains<T>(this ICollection<T>, T) -> bool` — generalises `HashSet<T>.Add`'s Boolean return to every `ICollection<T>`.
+- `AddIfNotContains<T>(this ICollection<T>, IEnumerable<T>) -> int` — bulk overload; returns the count actually added.
 - `IsEmpty<T>(this ICollection<T>)` — `true` if `Count == 0`. O(1) for every standard `ICollection<T>` implementation.
 - `IsNotEmpty<T>(this ICollection<T>)` — `true` if `Count > 0`.
 

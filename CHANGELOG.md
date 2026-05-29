@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `RemoveRange<T>(this ICollection<T>, IEnumerable<T>)` — removes one
+  occurrence of each listed item from the source collection.
+- `AddRangeIf<T>(this ICollection<T>, IEnumerable<T>, Func<T, bool>)` —
+  adds items that satisfy the predicate.
+- `RemoveWhere<T>(this ICollection<T>, Func<T, bool>) -> int` — removes
+  every item matching the predicate; returns the count removed. Safe
+  for any `ICollection<T>` (materialises matches into a temp list
+  before mutating).
+- `ReplaceAll<T>(this ICollection<T>, IEnumerable<T>)` — clears the
+  collection then appends every item from the new sequence.
+- `AddIfNotContains<T>(this ICollection<T>, T) -> bool` — adds a
+  single item only if it is not already present; returns whether the
+  add happened. Generalises `HashSet<T>.Add`'s Boolean return to every
+  `ICollection<T>`.
+- `AddIfNotContains<T>(this ICollection<T>, IEnumerable<T>) -> int` —
+  bulk overload; returns the count actually added.
+
 ### Changed
 
 ### Deprecated
