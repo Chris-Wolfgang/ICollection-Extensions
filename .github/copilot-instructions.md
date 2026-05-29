@@ -27,7 +27,7 @@
 - Test names follow `MethodUnderTest_when_condition_expected_result`
 
 ## Test Conventions
-- xunit 2.9.3 with `xunit.runner.visualstudio` 2.8.2 (NOT v3 — incompatible with xunit v2)
+- xunit 2.9.3 across every TFM. `xunit.runner.visualstudio` is pinned **per TFM**: `[2.4.5]` for net462 and net47 (last version compatible with those frameworks), `[2.8.2]` for net471/net472/net48/net481/netcoreapp3.1/net5.0–net10.0. NEVER bump to xunit v3 — incompatible with our xunit v2 surface.
 - One assertion per logical case; prefer `[Theory]` + `MemberData` when the same shape repeats across collection types
 
 ## Target Frameworks
