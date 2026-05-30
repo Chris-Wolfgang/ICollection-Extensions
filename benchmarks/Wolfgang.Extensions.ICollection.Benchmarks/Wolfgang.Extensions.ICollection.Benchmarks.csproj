@@ -5,7 +5,9 @@
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <!-- <Nullable>enable</Nullable> is inherited from Directory.Build.props
+         (canonical fleet-wide default). Redefining it here would duplicate
+         the centralized setting and could drift over time. -->
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

@@ -263,6 +263,16 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(items));
         }
 
+        // Self-aliasing guard: callers can legitimately invoke
+        // 'list.RemoveRange(list)' to mean "drop everything". Iterating
+        // 'source' while mutating it would throw InvalidOperationException
+        // on most BCL enumerators; snapshot first so the loop sees a
+        // stable view.
+        if (ReferenceEquals(items, source))
+        {
+            items = new List<T>(source);
+        }
+
         foreach (var item in items)
         {
             source.Remove(item);
@@ -364,7 +374,9 @@ public static class ICollectionExtensions
         // for this extension.
         if (source is HashSet<T> set)
         {
-            return set.RemoveWhere(item => predicate(item));
+            // Use Invoke method-group so the conversion to Predicate<T>
+            // doesn't allocate a closure over `predicate`.
+            return set.RemoveWhere(predicate.Invoke);
         }
 
         var toRemove = new List<T>();
@@ -416,6 +428,15 @@ public static class ICollectionExtensions
         if (items is null)
         {
             throw new ArgumentNullException(nameof(items));
+        }
+
+        // Self-aliasing guard: 'list.ReplaceAll(list)' should be a no-op
+        // (or — for collections where Clear changes identity — at least
+        // not silently wipe the data). Snapshotting before the Clear
+        // means the final state is the original contents copied back in.
+        if (ReferenceEquals(items, source))
+        {
+            items = new List<T>(source);
         }
 
         source.Clear();
