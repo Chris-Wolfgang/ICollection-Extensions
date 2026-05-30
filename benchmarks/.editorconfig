@@ -28,3 +28,11 @@ dotnet_diagnostic.MA0089.severity = none
 # Sonar: "Methods should not have identical implementations" — common
 # in *_fast / *_slow path comparison benchmarks.
 dotnet_diagnostic.S4144.severity = none
+
+# Sonar: "Rename class … to match pascal case" — flags types whose names
+# start with an uppercase 'I' followed by another uppercase letter (it
+# thinks the name looks like an interface). The benchmark class is named
+# after the type it benchmarks — ICollectionExtensionsBenchmarks mirrors
+# ICollectionExtensions which mirrors ICollection<T>. The 'I' is
+# intentional.
+dotnet_diagnostic.S101.severity = none
