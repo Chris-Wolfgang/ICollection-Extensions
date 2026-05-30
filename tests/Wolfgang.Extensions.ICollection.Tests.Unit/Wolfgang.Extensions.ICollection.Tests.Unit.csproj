@@ -3,14 +3,21 @@
     <PropertyGroup>
         <TargetFrameworks>net462;net47;net471;net472;net48;net481;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-        <Version>1.0.0</Version>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
 
         <Copyright>Copyright 2026 Chris Wolfgang</Copyright>
+
+        <!-- PublicApiAnalyzers is wired into Directory.Build.props (A1/CI3
+             canonical), but only library projects under src/ should be
+             subjected to public-API tracking. The `Update="..."
+             ExcludeAssets="analyzers"` approach proved unreliable across
+             TFMs because the DBP's `IncludeAssets` wins the merge. Use
+             NoWarn instead — fully suppresses the analyzer's diagnostics
+             on this test project without disturbing the package import. -->
+        <NoWarn>$(NoWarn);RS0016;RS0017;RS0024;RS0026;RS0027;RS0036;RS0037;RS0041</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <!-- <Nullable>enable</Nullable> is inherited from Directory.Build.props
+         (canonical fleet-wide default). Redefining it here would duplicate
+         the centralized setting and could drift over time. -->
+    <IsPackable>false</IsPackable>
+
+    <!-- PublicApiAnalyzers ships from Directory.Build.props but only library
+         projects under src/ should be tracked for breaking-change detection.
+         Benchmarks have no shippable public surface — NoWarn fully
+         suppresses RS0016/etc on this project. (ExcludeAssets="analyzers"
+         on the Update reference proved unreliable across TFMs because
+         the DBP's IncludeAssets wins the merge.) -->
+    <NoWarn>$(NoWarn);RS0016;RS0017;RS0024;RS0026;RS0027;RS0036;RS0037;RS0041</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+  </ItemGroup>
+
+  <!-- Analyzer PackageReferences are centralized in Directory.Build.props -->
+
+</Project>

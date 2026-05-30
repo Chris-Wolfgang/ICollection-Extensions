@@ -1,168 +1,46 @@
-# Copilot Coding Agent Instructions
+# Copilot Instructions for Wolfgang.Extensions.ICollection
 
-## Repository Summary
+## Project Overview
+- **Package:** Wolfgang.Extensions.ICollection
+- **Namespace:** Wolfgang.Extensions.ICollection
+- **Purpose:** Extension methods for `System.Collections.Generic.ICollection<T>` — bulk add and emptiness checks that work across every concrete collection type, not just `List<T>`.
 
-This is a **repository template** for creating new .NET repositories. It provides a standardized structure with comprehensive GitHub integration, CI/CD workflows, and development tooling. The template is designed for .NET 8.0 projects using C# and follows Microsoft's recommended project organization patterns.
+## Key Types
+- `ICollectionExtensions` — static class with extension methods on `ICollection<T>`
 
-**Repository Type**: Template (not a working project)  
-**Target Platform**: .NET 8.0  
-**Primary Language**: C#  
-**Size**: Small template (~15 configuration files, empty project folders)  
+## Extension Methods
+- `AddRange<T>(this ICollection<T>, IEnumerable<T>)` — appends every item from the sequence to the collection. Pre-allocates capacity when the target is `List<T>` and the appended sequence exposes `ICollection<T>.Count` (the common batch-append fast path).
+- `AddRangeIf<T>(this ICollection<T>, IEnumerable<T>, Func<T, bool>)` — appends items for which the predicate returns `true`.
+- `RemoveRange<T>(this ICollection<T>, IEnumerable<T>)` — removes one occurrence of each listed item.
+- `RemoveWhere<T>(this ICollection<T>, Func<T, bool>) -> int` — removes every item matching the predicate; returns the count removed. Materialises matches into a temp list before mutating to keep enumeration safe.
+- `ReplaceAll<T>(this ICollection<T>, IEnumerable<T>)` — clears the collection then appends every item from the new sequence. Not atomic — see remarks.
+- `AddIfNotContains<T>(this ICollection<T>, T) -> bool` — generalises `HashSet<T>.Add`'s Boolean return to every `ICollection<T>`.
+- `AddIfNotContains<T>(this ICollection<T>, IEnumerable<T>) -> int` — bulk overload; returns the count actually added.
+- `IsEmpty<T>(this ICollection<T>)` — `true` if `Count == 0`. O(1) for every standard `ICollection<T>` implementation.
+- `IsNotEmpty<T>(this ICollection<T>)` — `true` if `Count > 0`.
 
-## Build and Validation Instructions
+## Important Notes
+- All nine methods throw `ArgumentNullException` for `null` arguments and pass through the target's own `NotSupportedException` for read-only collections.
+- The pre-allocation branch in `AddRange` requires **both** conditions to hold: target is `List<T>` (the only `ICollection<T>` with a settable `Capacity`) **and** the sequence exposes `Count` via `ICollection<T>`. Without both, the loop falls back to the target's own growth policy.
+- `HashSet<T>` semantics flow through naturally — duplicates added via `AddRange` are silently ignored.
+- Self-aliasing (`list.AddRange(list)`, `list.ReplaceAll(list)`, etc.) is guarded via a `ReferenceEquals` snapshot on the methods that would mutate `source` while enumerating `items`: `AddRange`, `AddRangeIf`, `RemoveRange`, and `ReplaceAll`. `AddIfNotContains(IEnumerable<T>)` doesn't need the snapshot — every item is already present so the inner `AddIfNotContains(T)` returns `false` without mutating, making the enumeration safe by construction.
+- Public API is tracked by `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` under `src/Wolfgang.Extensions.ICollection/`. Additions surface as RS0016 at compile time; the analyzer is suppressed on test + benchmark projects via `NoWarn`.
 
-### Prerequisites
-- .NET 8.0.x SDK (always install if not present)
-- ReportGenerator tool (installed via `dotnet tool install -g dotnet-reportgenerator-globaltool`)
-- DevSkim CLI (installed via `dotnet tool install --global Microsoft.CST.DevSkim.CLI`)
+## Code Style
+- Allman brace style
+- 3 blank lines between members
+- File-scoped namespaces
+- Warnings as errors in Release builds
+- Test names follow `MethodUnderTest_when_condition_expected_result`
 
-### Build Process (For Repositories Created from This Template)
-**IMPORTANT**: This template has no buildable projects. These commands apply to repositories created FROM this template.
+## Test Conventions
+- xunit 2.9.3 across every TFM. `xunit.runner.visualstudio` is pinned **per TFM**: `[2.4.5]` for `netcoreapp3.1` and `net5.0` (the last versions of the runner compatible with those older runtimes), `[2.8.2]` for every other TFM (`net462`/`net47`/`net471`/`net472`/`net48`/`net481` and `net6.0` through `net10.0`). NEVER bump to xunit v3 — incompatible with our xunit v2 surface.
+- One assertion per logical case; prefer `[Theory]` + `MemberData` when the same shape repeats across collection types
 
-1. **Restore Dependencies** (always run first):
-   ```powershell
-   dotnet restore
-   ```
+## Target Frameworks
+- **src:** netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0
+- **tests:** the full multi-TFM matrix from net462 through net10.0
 
-2. **Build Solution**:
-   ```powershell
-   dotnet build --no-restore --configuration Release
-   ```
-
-3. **Run Tests with Coverage**:
-   ```powershell
-   # Find and test all test projects
-   Get-ChildItem -Path ./tests -Filter '*Test*.csproj' -Recurse | ForEach-Object {
-     dotnet test $_.FullName --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory "./TestResults"
-   }
-   ```
-
-4. **Generate Coverage Reports**:
-   ```powershell
-   reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"CoverageReport" -reporttypes:"Html;TextSummary;MarkdownSummaryGithub;CsvSummary"
-   ```
-
-5. **Security Scanning**:
-   ```powershell
-   devskim analyze --source-code . -f text --output-file devskim-results.txt -E
-   ```
-
-### Critical Build Requirements
-- **Code Coverage**: Minimum 90% line coverage required for all projects
-- **Security Scanning**: DevSkim must pass with no errors
-- **Build Configuration**: Always use Release configuration for CI
-- **Test Pattern**: Test projects must match `*Test*.csproj` pattern in `/tests` folder
-
-### Common Issues and Workarounds
-- **Timeout Issues**: Coverage and security scans can take 5-10 minutes for larger projects
-- **Coverage Threshold Failures**: If below 90%, the build will fail - this is by design
-- **Missing Test Projects**: The workflow expects at least one test project in `/tests` folder
-- **DevSkim False Positives**: Review `devskim-results.txt` for any security findings
-
-## Project Layout and Architecture
-
-### Standard Directory Structure
-```
-root/
-├── MySolution.sln              # Solution file (create in root)
-├── src/                        # Application projects
-│   ├── MyApp/
-│   │   └── MyApp.csproj
-│   └── MyLib/
-│       └── MyLib.csproj
-├── tests/                      # Test projects (required)
-│   ├── MyApp.Tests/
-│   │   └── MyApp.Tests.csproj
-│   └── MyLib.Tests/
-│       └── MyLib.Tests.csproj
-├── benchmarks/                 # Performance benchmarks (optional)
-│   └── MyApp.Benchmarks/
-│       └── MyApp.Benchmarks.csproj
-├── examples/                   # Example projects (optional)
-├── docs/                       # Documentation
-└── .github/                    # GitHub configuration
-```
-
-### Key Configuration Files
-- **`.editorconfig`**: Code style rules (C# file-scoped namespaces, var preferences, analyzer severity)
-- **`.gitignore`**: Comprehensive .NET gitignore (Visual Studio, build artifacts, packages)
-- **`CONTRIBUTING.md`**: Contribution guidelines
-- **`CODE_OF_CONDUCT.md`**: Standard Contributor Covenant v2.0
-
-### GitHub Integration
-- **Workflows**: `.github/workflows/pr.yaml` - Comprehensive CI/CD pipeline
-- **Issue Templates**: Bug reports (YAML) and feature requests (Markdown)
-- **PR Template**: Structured pull request template with checklists
-- **CODEOWNERS**: Default owner `@Chris-Wolfgang`, update usernames as needed
-- **Dependabot**: Configured for NuGet packages in all project directories
-
-### Continuous Integration Pipeline (`.github/workflows/pr.yaml`)
-The workflow runs on pull requests to `main` branch and includes:
-
-1. **Environment**: Ubuntu Latest with .NET 8.0.x
-2. **Build Steps**: Checkout → Setup .NET → Restore → Build → Test → Coverage → Security
-3. **Artifacts**: Coverage reports and DevSkim results uploaded
-4. **Branch Protection**: Configured to require this workflow to pass before merging
-
-### Branch Protection Configuration
-Configure branch protection rules directly in the GitHub UI under **Settings → Branches → Branch protection rules** for your default branch (typically `main`). Choose one of the recommended profiles below.
-
-**Single-Developer Configuration (Default):**
-- No PR approvals required (you can merge your own PRs)
-- Allows solo developers to merge their own PRs while still enforcing CI/CD checks
-
-**Multi-Developer Configuration:**
-- Requires 1+ approval before merging
-- Requires code owner review
-
-**All Configurations Include:**
-- Require status checks to pass before merging
-- Require branches to be up to date
-- Require conversation resolution before merging
-- Restrict deletions and block force pushes
-- Require code scanning (CodeQL High+ severity)
-
-## Key Files and Locations
-
-### Root Directory Files
-- `README.md` - Basic template description (update for your project)
-- `LICENSE` - MIT License
-- `.editorconfig` - Code style configuration
-- `.gitignore` - .NET-specific gitignore
-
-### GitHub Directory (`.github/`)
-- `workflows/pr.yaml` - Main CI/CD pipeline
-- `ISSUE_TEMPLATE/` - Bug report (YAML) and feature request templates
-- `pull_request_template.md` - PR template with checklists
-- `CODEOWNERS` - Code ownership rules
-- `dependabot.yml` - Dependency update configuration
-
-### Project Directories (Currently Empty in Template)
-- `src/` - Application source code
-- `tests/` - Unit and integration tests
-- `benchmarks/` - Performance benchmarks
-- `examples/` - Example usage projects
-- `docs/` - Documentation (contains placeholder `index.html`)
-
-## Agent Guidelines
-
-### Trust These Instructions
-This information has been validated against the template structure and GitHub workflows. **Only search for additional information if these instructions are incomplete or found to be incorrect.**
-
-### When Working with This Template
-1. **Creating New Projects**: Follow the standard directory structure outlined in the Project Layout section above
-2. **Adding Dependencies**: Use `dotnet add package` commands
-3. **Code Style**: Follow `.editorconfig` rules (file-scoped namespaces, explicit typing)
-4. **Testing**: Ensure test projects follow `*Test*.csproj` naming convention
-5. **Coverage**: Aim for >90% code coverage to pass CI
-6. **Security**: Review DevSkim findings and address security concerns
-
-### Validation Steps
-Before submitting changes:
-1. Run `dotnet restore && dotnet build --configuration Release`
-2. Run tests with coverage collection
-3. Verify coverage meets 90% threshold
-4. Run DevSkim security scan
-5. Ensure all GitHub Actions checks pass
-
-This template provides a solid foundation for .NET projects with enterprise-grade CI/CD, security scanning, and development best practices built-in.
+## Related repos
+- Sibling extension libraries in the Wolfgang.Extensions.* family: IEnumerable-Extensions, IAsyncEnumerable-Extensions, IComparable-Extensions, IEquatable-Extensions, DateTime-Extensions, String-Extensions
+- Each follows the same csproj + test + benchmark + docfx pattern from `Chris-Wolfgang/repo-template`

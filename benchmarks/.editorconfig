@@ -1,0 +1,38 @@
+# Benchmark-project EditorConfig override.
+#
+# Benchmarks intentionally do things that production code shouldn't:
+#   - public no-op methods returning values that are immediately discarded
+#     (the whole point — BenchmarkDotNet's [Benchmark] attribute requires
+#     public methods so it can JIT them as separate callable wrappers)
+#   - allocations measured as expected output, not regressions
+#   - constants chosen to bias toward slow / fast paths rather than
+#     reflecting realistic input
+#
+# Rules from the root .editorconfig and Directory.Build.props
+# (TreatWarningsAsErrors=true in Release) still apply; this file just
+# relaxes the analyzer rules that the BDN attribute model would otherwise
+# trip.
+root = false
+
+[*.cs]
+
+# Roslynator: "Mark members as static" — BenchmarkDotNet's [Benchmark]
+# methods are instance-level by design.
+dotnet_diagnostic.RCS1213.severity = none
+dotnet_diagnostic.CA1822.severity = none
+
+# Meziantou: "Use a return type with the value type Span<T>" — benchmark
+# return values are sinks, not actual outputs callers depend on.
+dotnet_diagnostic.MA0089.severity = none
+
+# Sonar: "Methods should not have identical implementations" — common
+# in *_fast / *_slow path comparison benchmarks.
+dotnet_diagnostic.S4144.severity = none
+
+# Sonar: "Rename class … to match pascal case" — flags types whose names
+# start with an uppercase 'I' followed by another uppercase letter (it
+# thinks the name looks like an interface). The benchmark class is named
+# after the type it benchmarks — ICollectionExtensionsBenchmarks mirrors
+# ICollectionExtensions which mirrors ICollection<T>. The 'I' is
+# intentional.
+dotnet_diagnostic.S101.severity = none

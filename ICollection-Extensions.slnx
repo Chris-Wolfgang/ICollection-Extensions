@@ -20,7 +20,7 @@
   </Folder>
   <Folder Name="/.root/.github/workflows/">
     <File Path=".github/workflows/build-all-versions.yaml" />
-    <File Path=".github/workflows/codeql.yml" />
+    <File Path=".github/workflows/codeql.yaml" />
     <File Path=".github/workflows/docfx.yaml" />
     <File Path=".github/workflows/pr.yaml" />
     <File Path=".github/workflows/release.yaml" />
@@ -35,7 +35,9 @@
   <Folder Name="/.root/scripts/">
     <File Path="scripts/format.ps1" />
   </Folder>
-  <Folder Name="/benchmarks/" />
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/Wolfgang.Extensions.ICollection.Benchmarks/Wolfgang.Extensions.ICollection.Benchmarks.csproj" />
+  </Folder>
   <Folder Name="/examples/" />
   <Folder Name="/src/">
     <Project Path="src/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
