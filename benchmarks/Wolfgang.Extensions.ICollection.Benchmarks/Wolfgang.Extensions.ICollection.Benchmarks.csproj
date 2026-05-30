@@ -19,6 +19,14 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
   </ItemGroup>
 
+  <!-- PublicApiAnalyzers ships from Directory.Build.props but only library
+       projects under src/ should be tracked for breaking-change detection.
+       Benchmarks have no shippable public surface — opt out so RS0016
+       doesn't fire on [Benchmark] methods. -->
+  <ItemGroup>
+    <PackageReference Update="Microsoft.CodeAnalysis.PublicApiAnalyzers" ExcludeAssets="analyzers" />
+  </ItemGroup>
+
   <!-- Analyzer PackageReferences are centralized in Directory.Build.props -->
 
 </Project>
