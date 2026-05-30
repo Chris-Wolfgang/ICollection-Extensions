@@ -101,6 +101,20 @@ public class ICollectionExtensionTests
 
 
     [Fact]
+    public void AddRange_when_source_is_Array_throws_NotSupportedException()
+    {
+        // Array implements ICollection<T> but is fixed-size: its
+        // IsReadOnly returns true and ICollection<T>.Add throws
+        // NotSupportedException by contract. AddRange surfaces that
+        // throw on the first item it tries to append.
+        ICollection<int> source = new int[5];
+        Assert.True(source.IsReadOnly);
+        Assert.Throws<NotSupportedException>(() => source.AddRange(new[] { 1, 2, 3 }));
+    }
+
+
+
+    [Fact]
     public void AddRange_when_items_are_value_types_adds_all_items()
     {
         // Arrange
