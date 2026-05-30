@@ -82,6 +82,16 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(items));
         }
 
+        // Self-aliasing guard: 'list.AddRange(list)' would mutate the
+        // collection during the foreach below, which most BCL enumerators
+        // reject with InvalidOperationException. Snapshot first so the
+        // loop sees a stable view; the effective behaviour is "append a
+        // copy of the current contents to the collection".
+        if (ReferenceEquals(items, source))
+        {
+            items = new List<T>(source);
+        }
+
         // Pre-allocate capacity on the target when it's a List<T> (the only
         // ICollection<T> with a settable Capacity) and items exposes Count
         // up-front via ICollection<T>. Both conditions must hold; without
@@ -317,6 +327,14 @@ public static class ICollectionExtensions
         if (predicate is null)
         {
             throw new ArgumentNullException(nameof(predicate));
+        }
+
+        // Self-aliasing guard: snapshot when items === source so the
+        // Where + foreach below doesn't trip the mutate-during-enumerate
+        // contract on most BCL enumerators.
+        if (ReferenceEquals(items, source))
+        {
+            items = new List<T>(source);
         }
 
         foreach (var item in items.Where(predicate))

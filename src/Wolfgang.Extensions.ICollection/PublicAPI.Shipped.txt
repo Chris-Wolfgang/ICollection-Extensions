@@ -1,1 +1,11 @@
 #nullable enable
+Wolfgang.Extensions.ICollection.ICollectionExtensions
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.AddIfNotContains<T>(this System.Collections.Generic.ICollection<T>! source, System.Collections.Generic.IEnumerable<T>! items) -> int
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.AddIfNotContains<T>(this System.Collections.Generic.ICollection<T>! source, T item) -> bool
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange<T>(this System.Collections.Generic.ICollection<T>! source, System.Collections.Generic.IEnumerable<T>! items) -> void
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRangeIf<T>(this System.Collections.Generic.ICollection<T>! source, System.Collections.Generic.IEnumerable<T>! items, System.Func<T, bool>! predicate) -> void
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty<T>(this System.Collections.Generic.ICollection<T>! source) -> bool
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty<T>(this System.Collections.Generic.ICollection<T>! source) -> bool
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.RemoveRange<T>(this System.Collections.Generic.ICollection<T>! source, System.Collections.Generic.IEnumerable<T>! items) -> void
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.RemoveWhere<T>(this System.Collections.Generic.ICollection<T>! source, System.Func<T, bool>! predicate) -> int
+static Wolfgang.Extensions.ICollection.ICollectionExtensions.ReplaceAll<T>(this System.Collections.Generic.ICollection<T>! source, System.Collections.Generic.IEnumerable<T>! items) -> void

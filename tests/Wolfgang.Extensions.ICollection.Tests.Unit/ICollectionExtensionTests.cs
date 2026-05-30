@@ -270,6 +270,19 @@ public class ICollectionExtensionTests
 
 
 
+    [Fact]
+    public void AddRange_when_items_is_same_instance_as_source_appends_snapshot()
+    {
+        // Self-aliasing guard: 'list.AddRange(list)' must snapshot items
+        // before mutating source; otherwise the foreach below trips the
+        // mutate-during-enumerate contract on List<T>'s enumerator.
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        source.AddRange(source);
+        Assert.Equal(new[] { 1, 2, 3, 1, 2, 3 }, source);
+    }
+
+
+
     // =========================================================================
     // IsEmpty tests
     // =========================================================================
@@ -619,6 +632,20 @@ public class ICollectionExtensionTests
         ICollection<int> source = new List<int> { 0 };
         source.AddRangeIf(new[] { 1, 2, 3 }, _ => false);
         Assert.Equal(new[] { 0 }, source);
+    }
+
+
+
+    [Fact]
+    public void AddRangeIf_when_items_is_same_instance_as_source_appends_filtered_snapshot()
+    {
+        // Self-aliasing guard: 'list.AddRangeIf(list, predicate)' must
+        // snapshot items before enumerating; otherwise the Where +
+        // foreach would trip the mutate-during-enumerate contract when
+        // a matching item is appended.
+        ICollection<int> source = new List<int> { 1, 2, 3, 4 };
+        source.AddRangeIf(source, n => n % 2 == 0);
+        Assert.Equal(new[] { 1, 2, 3, 4, 2, 4 }, source);
     }
 
 
