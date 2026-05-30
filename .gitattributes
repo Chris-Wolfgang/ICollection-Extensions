@@ -9,11 +9,13 @@
 *.fsx text eol=lf
 
 # Scripts
-# PowerShell scripts: CRLF line endings (intentional override)
-# Both .gitattributes and .editorconfig consistently configure PowerShell files
-# to use CRLF (Windows-style) line endings for PowerShell convention compliance.
-# See .editorconfig [*.ps1] section for the matching configuration.
-*.ps1 text eol=crlf
+# PowerShell scripts: LF line endings + no BOM.
+# `.editorconfig` no longer has a `[*.ps1]` override — falling back to the
+# repo defaults (`charset = utf-8`, no BOM, LF) — because `#!/usr/bin/env pwsh`
+# shebangs require LF + no-BOM on Linux/macOS to execute correctly. Keeping
+# `.gitattributes` aligned to LF here so checkout doesn't re-introduce CRLF
+# on Windows clones.
+*.ps1 text eol=lf
 
 
 # Build and configuration files

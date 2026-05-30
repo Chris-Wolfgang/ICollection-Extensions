@@ -39,6 +39,14 @@ jobs:
     name: Run BenchmarkDotNet & publish chart
     runs-on: ubuntu-latest
 
+    # Skip the run when the benchmark project isn't yet in the tree on
+    # main. The workflow ships in the protected-files sync ahead of the
+    # feature stack that introduces the project, so during that brief
+    # window every qualifying push to main would otherwise fail at the
+    # 'dotnet restore' step. hashFiles() returns '' when the path glob
+    # matches nothing.
+    if: hashFiles('benchmarks/Wolfgang.Extensions.ICollection.Benchmarks/Wolfgang.Extensions.ICollection.Benchmarks.csproj') != ''
+
     permissions:
       # Required to push the rendered chart + history to the gh-pages branch.
       contents: write
