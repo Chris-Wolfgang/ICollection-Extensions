@@ -9,16 +9,16 @@
         <IsTestProject>true</IsTestProject>
 
         <Copyright>Copyright 2026 Chris Wolfgang</Copyright>
-    </PropertyGroup>
 
-    <!-- PublicApiAnalyzers is wired into Directory.Build.props (A1/CI3
-         canonical), but only library projects under src/ should be
-         subjected to public-API tracking. Override here to drop the
-         analyzer assets on this test project so RS0016 / RS0037 don't
-         fire on every [Fact] method. -->
-    <ItemGroup>
-        <PackageReference Update="Microsoft.CodeAnalysis.PublicApiAnalyzers" ExcludeAssets="analyzers" />
-    </ItemGroup>
+        <!-- PublicApiAnalyzers is wired into Directory.Build.props (A1/CI3
+             canonical), but only library projects under src/ should be
+             subjected to public-API tracking. The `Update="..."
+             ExcludeAssets="analyzers"` approach proved unreliable across
+             TFMs because the DBP's `IncludeAssets` wins the merge. Use
+             NoWarn instead — fully suppresses the analyzer's diagnostics
+             on this test project without disturbing the package import. -->
+        <NoWarn>$(NoWarn);RS0016;RS0017;RS0024;RS0026;RS0027;RS0036;RS0037;RS0041</NoWarn>
+    </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
