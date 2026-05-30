@@ -23,7 +23,7 @@
 - All nine methods throw `ArgumentNullException` for `null` arguments and pass through the target's own `NotSupportedException` for read-only collections.
 - The pre-allocation branch in `AddRange` requires **both** conditions to hold: target is `List<T>` (the only `ICollection<T>` with a settable `Capacity`) **and** the sequence exposes `Count` via `ICollection<T>`. Without both, the loop falls back to the target's own growth policy.
 - `HashSet<T>` semantics flow through naturally — duplicates added via `AddRange` are silently ignored.
-- Self-aliasing (`list.AddRange(list)`, `list.ReplaceAll(list)`, etc.) is guarded via a `ReferenceEquals` snapshot on every mutating method that enumerates `items` — without that guard most BCL enumerators throw `InvalidOperationException` from mutate-during-enumerate.
+- Self-aliasing (`list.AddRange(list)`, `list.ReplaceAll(list)`, etc.) is guarded via a `ReferenceEquals` snapshot on the methods that would mutate `source` while enumerating `items`: `AddRange`, `AddRangeIf`, `RemoveRange`, and `ReplaceAll`. `AddIfNotContains(IEnumerable<T>)` doesn't need the snapshot — every item is already present so the inner `AddIfNotContains(T)` returns `false` without mutating, making the enumeration safe by construction.
 - Public API is tracked by `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` under `src/Wolfgang.Extensions.ICollection/`. Additions surface as RS0016 at compile time; the analyzer is suppressed on test + benchmark projects via `NoWarn`.
 
 ## Code Style
