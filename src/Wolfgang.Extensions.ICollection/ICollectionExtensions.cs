@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Wolfgang.Extensions.ICollection;
 
@@ -379,15 +380,11 @@ public static class ICollectionExtensions
             return set.RemoveWhere(predicate.Invoke);
         }
 
-        var toRemove = new List<T>();
-        foreach (var item in source)
-        {
-            if (predicate(item))
-            {
-                toRemove.Add(item);
-            }
-        }
-
+        // Materialise matches before mutating so the underlying collection
+        // can be modified safely without invalidating the enumerator.
+        // Using Where + ToList here keeps Sonar S3267 happy and reads
+        // closer to the intent than the manual filter loop.
+        var toRemove = source.Where(predicate).ToList();
         foreach (var item in toRemove)
         {
             source.Remove(item);
