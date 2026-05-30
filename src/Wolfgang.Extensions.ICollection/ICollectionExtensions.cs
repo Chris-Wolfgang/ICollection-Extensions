@@ -319,12 +319,9 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(predicate));
         }
 
-        foreach (var item in items)
+        foreach (var item in items.Where(predicate))
         {
-            if (predicate(item))
-            {
-                source.Add(item);
-            }
+            source.Add(item);
         }
     }
 
@@ -524,14 +521,10 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(items));
         }
 
-        var added = 0;
-        foreach (var item in items)
-        {
-            if (source.AddIfNotContains(item))
-            {
-                added++;
-            }
-        }
-        return added;
+        // Count() with a side-effecting predicate: AddIfNotContains returns
+        // true exactly for items it actually added, so the count is the
+        // number of newly added items. This replaces a manual foreach +
+        // counter that S3267 (Sonar) flags as a Where-able pattern.
+        return items.Count(source.AddIfNotContains);
     }
 }
