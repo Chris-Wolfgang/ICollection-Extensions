@@ -145,8 +145,8 @@ public static bool IsEmpty<T>(this ICollection<T> source)
 public static bool IsNotEmpty<T>(this ICollection<T> source)
 ```
 
-Reads `source.Count` and compares to zero. typically `O(1)` for standard
-`ICollection<T>` implementation.
+Reads `source.Count` and compares to zero. Typically `O(1)` for standard
+`ICollection<T>` implementations.
 
 **Throws:**
 - `ArgumentNullException` if `source` is `null`

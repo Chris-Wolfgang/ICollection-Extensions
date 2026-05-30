@@ -68,7 +68,11 @@ public class ICollectionExtensionsBenchmarks
 
 
     [Benchmark]
-    public bool IsEmpty_on_nonempty_collection() => _itemsToAdd.AsCollection().IsEmpty();
+    // int[] implements ICollection<int>, so the IsEmpty extension binds
+    // directly — no cast/shim required (unlike AddRange, where the
+    // List<T>.AddRange instance method wins resolution and we have to
+    // type the receiver as ICollection<int>).
+    public bool IsEmpty_on_nonempty_collection() => _itemsToAdd.IsEmpty();
 
 
 
@@ -82,16 +86,6 @@ public class ICollectionExtensionsBenchmarks
 
 
     [Benchmark]
-    public bool IsNotEmpty_on_nonempty_collection() => _itemsToAdd.AsCollection().IsNotEmpty();
+    public bool IsNotEmpty_on_nonempty_collection() => _itemsToAdd.IsNotEmpty();
 }
 
-
-
-/// <summary>
-/// Small helper to coerce an array into the <see cref="ICollection{T}"/>
-/// shape the extension methods take without allocating a new list.
-/// </summary>
-internal static class CollectionShim
-{
-    public static ICollection<T> AsCollection<T>(this T[] source) => source;
-}

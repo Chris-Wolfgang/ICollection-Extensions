@@ -20,10 +20,11 @@
 - `IsNotEmpty<T>(this ICollection<T>)` — `true` if `Count > 0`.
 
 ## Important Notes
-- All three methods throw `ArgumentNullException` for `null` arguments and pass through the target's own `NotSupportedException` for read-only collections.
+- All nine methods throw `ArgumentNullException` for `null` arguments and pass through the target's own `NotSupportedException` for read-only collections.
 - The pre-allocation branch in `AddRange` requires **both** conditions to hold: target is `List<T>` (the only `ICollection<T>` with a settable `Capacity`) **and** the sequence exposes `Count` via `ICollection<T>`. Without both, the loop falls back to the target's own growth policy.
 - `HashSet<T>` semantics flow through naturally — duplicates added via `AddRange` are silently ignored.
-- Public API will be tracked by `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` once the A1 baseline is generated; additions will surface as RS0016 at compile time.
+- Self-aliasing (`list.AddRange(list)`, `list.ReplaceAll(list)`, etc.) is guarded via a `ReferenceEquals` snapshot on every mutating method that enumerates `items` — without that guard most BCL enumerators throw `InvalidOperationException` from mutate-during-enumerate.
+- Public API is tracked by `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` under `src/Wolfgang.Extensions.ICollection/`. Additions surface as RS0016 at compile time; the analyzer is suppressed on test + benchmark projects via `NoWarn`.
 
 ## Code Style
 - Allman brace style
@@ -33,7 +34,7 @@
 - Test names follow `MethodUnderTest_when_condition_expected_result`
 
 ## Test Conventions
-- xunit 2.9.3 across every TFM. `xunit.runner.visualstudio` is pinned **per TFM**: `[2.4.5]` for net462 and net47 (last version compatible with those frameworks), `[2.8.2]` for net471/net472/net48/net481/netcoreapp3.1/net5.0–net10.0. NEVER bump to xunit v3 — incompatible with our xunit v2 surface.
+- xunit 2.9.3 across every TFM. `xunit.runner.visualstudio` is pinned **per TFM**: `[2.4.5]` for `netcoreapp3.1` and `net5.0` (the last versions of the runner compatible with those older runtimes), `[2.8.2]` for every other TFM (`net462`/`net47`/`net471`/`net472`/`net48`/`net481` and `net6.0` through `net10.0`). NEVER bump to xunit v3 — incompatible with our xunit v2 surface.
 - One assertion per logical case; prefer `[Theory]` + `MemberData` when the same shape repeats across collection types
 
 ## Target Frameworks
