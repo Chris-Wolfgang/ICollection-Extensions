@@ -544,6 +544,19 @@ public class ICollectionExtensionTests
 
 
     [Fact]
+    public void RemoveRange_when_items_is_same_instance_as_source_removes_all_items()
+    {
+        // Self-aliasing guard: 'list.RemoveRange(list)' must not throw
+        // InvalidOperationException from mutate-during-enumerate. Snapshot
+        // ensures the loop sees a stable view; the final state is empty.
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        source.RemoveRange(source);
+        Assert.Empty(source);
+    }
+
+
+
+    [Fact]
     public void RemoveRange_when_source_is_ReadOnly_throws_NotSupportedException()
     {
         ICollection<int> source =
@@ -711,6 +724,19 @@ public class ICollectionExtensionTests
 
 
 
+    [Fact]
+    public void ReplaceAll_when_items_is_same_instance_as_source_is_a_no_op()
+    {
+        // Self-aliasing guard: 'list.ReplaceAll(list)' must not silently
+        // wipe the collection (the Clear would otherwise drain the source
+        // before the AddRange enumeration started).
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        source.ReplaceAll(source);
+        Assert.Equal(new[] { 1, 2, 3 }, source);
+    }
+
+
+
     // =========================================================================
     // AddIfNotContains tests
     // =========================================================================
@@ -755,10 +781,13 @@ public class ICollectionExtensionTests
         // We can't directly observe the call count, but behaviour parity
         // is the contract: returns the same Boolean as a direct set.Add
         // would have.
-        ICollection<int> source = new HashSet<int> { 1, 2 };
+        var set = new HashSet<int> { 1, 2 };
+        ICollection<int> source = set;
         Assert.True(source.AddIfNotContains(3));
         Assert.False(source.AddIfNotContains(2));
-        Assert.Equal(new[] { 1, 2, 3 }, ((HashSet<int>)source));
+        // Order-independent: HashSet<T> enumeration order is not guaranteed,
+        // so compare set contents via SetEquals rather than sequence equality.
+        Assert.True(set.SetEquals(new[] { 1, 2, 3 }));
     }
 
 
