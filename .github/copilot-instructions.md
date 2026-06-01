@@ -12,11 +12,11 @@
 - `AddRange<T>(this ICollection<T>, IEnumerable<T>)` — appends every item from the sequence to the collection. Pre-allocates capacity when the target is `List<T>` and the appended sequence exposes `ICollection<T>.Count` (the common batch-append fast path).
 - `AddRangeIf<T>(this ICollection<T>, IEnumerable<T>, Func<T, bool>)` — appends items for which the predicate returns `true`.
 - `RemoveRange<T>(this ICollection<T>, IEnumerable<T>)` — removes one occurrence of each listed item.
-- `RemoveWhere<T>(this ICollection<T>, Func<T, bool>) -> int` — removes every item matching the predicate; returns the count removed. Materialises matches into a temp list before mutating to keep enumeration safe.
+- `RemoveWhere<T>(this ICollection<T>, Func<T, bool>) -> int` — removes every item matching the predicate; returns the count removed. `HashSet<T>` fast path delegates to the native `HashSet<T>.RemoveWhere(Predicate<T>)` (no temp-list allocation); other `ICollection<T>` implementations materialise matches into a temp list before mutating to keep enumeration safe.
 - `ReplaceAll<T>(this ICollection<T>, IEnumerable<T>)` — clears the collection then appends every item from the new sequence. Not atomic — see remarks.
-- `AddIfNotContains<T>(this ICollection<T>, T) -> bool` — generalises `HashSet<T>.Add`'s Boolean return to every `ICollection<T>`.
+- `AddIfNotContains<T>(this ICollection<T>, T) -> bool` — `ISet<T>` fast path delegates to `ISet<T>.Add` (single lookup, honours the set's own `IEqualityComparer<T>`); other `ICollection<T>` implementations use `Contains` + `Add`. Generalises `HashSet<T>.Add`'s Boolean return to every `ICollection<T>`.
 - `AddIfNotContains<T>(this ICollection<T>, IEnumerable<T>) -> int` — bulk overload; returns the count actually added.
-- `IsEmpty<T>(this ICollection<T>)` — `true` if `Count == 0`. O(1) for every standard `ICollection<T>` implementation.
+- `IsEmpty<T>(this ICollection<T>)` — `true` if `Count == 0`. Typically O(1) for standard `ICollection<T>` implementations; the `ICollection<T>.Count` contract does not formally guarantee constant time.
 - `IsNotEmpty<T>(this ICollection<T>)` — `true` if `Count > 0`.
 
 ## Important Notes
