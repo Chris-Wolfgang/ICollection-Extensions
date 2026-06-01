@@ -1,0 +1,23 @@
+Summary
+  Generated on: 6/1/2026 - 12:01:50 AM
+  Coverage date: 6/1/2026 - 12:01:45 AM - 6/1/2026 - 12:01:47 AM
+  Parser: MultiReport (3x Cobertura)
+  Assemblies: 1
+  Classes: 1
+  Files: 1
+  Line coverage: 98.5%
+  Covered lines: 68
+  Uncovered lines: 1
+  Coverable lines: 69
+  Total lines: 548
+  Branch coverage: 98.2% (57 of 58)
+  Covered branches: 57
+  Total branches: 58
+  Method coverage: 100% (9 of 9)
+  Full method coverage: 88.8% (8 of 9)
+  Covered methods: 9
+  Fully covered methods: 8
+  Total methods: 9
+
+Wolfgang.Extensions.ICollection                           98.5%
+  Wolfgang.Extensions.ICollection.ICollectionExtensions   98.5%

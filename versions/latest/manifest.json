@@ -32,7 +32,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "Wolfgang.Extensions.ICollection.ICollectionExtensions",
-      "Summary": "<p sourcefile=\"api/Wolfgang.Extensions.ICollection.ICollectionExtensions.yml\" sourcestartlinenumber=\"1\">A collection of extension methods to <xref href=\"System.Collections.Generic.ICollection%601\" data-throw-if-not-resolved=\"false\"></xref></p>\n"
+      "Summary": "<p sourcefile=\"api/Wolfgang.Extensions.ICollection.ICollectionExtensions.yml\" sourcestartlinenumber=\"1\">A collection of extension methods to <xref href=\"System.Collections.Generic.ICollection%601\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
     },
     {
       "type": "ManagedReference",
