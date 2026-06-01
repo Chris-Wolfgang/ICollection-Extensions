@@ -26,7 +26,6 @@
     <File Path=".github/workflows/release.yaml" />
   </Folder>
   <Folder Name="/.root/assets/">
-    <File Path="assets/icon.ico" />
     <File Path="assets/icon.png" />
   </Folder>
   <Folder Name="/.root/docs/">
@@ -38,7 +37,10 @@
   <Folder Name="/benchmarks/">
     <Project Path="benchmarks/Wolfgang.Extensions.ICollection.Benchmarks/Wolfgang.Extensions.ICollection.Benchmarks.csproj" />
   </Folder>
-  <Folder Name="/examples/" />
+  <Folder Name="/examples/">
+    <Project Path="examples/Wolfgang.Extensions.ICollection.DotNet80.Example1/Wolfgang.Extensions.ICollection.DotNet80.Example1.csproj" />
+    <Project Path="examples/Wolfgang.Extensions.ICollection.DotNet10.Example1/Wolfgang.Extensions.ICollection.DotNet10.Example1.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
   </Folder>
