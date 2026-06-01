@@ -130,7 +130,7 @@ Self-aliasing is safe by construction: `list.AddRange(list)` snapshots the sourc
 
 ## 🔍 Code Quality & Static Analysis
 
-This project enforces **strict code quality standards** through **8 specialized analyzers**, an `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` Release gate, and custom async-first rules:
+This project enforces **strict code quality standards** through **8 analyzer rule sets** (7 explicit `PackageReference`s plus the .NET SDK's built-in `Microsoft.CodeAnalysis.NetAnalyzers`), an `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` Release gate, and custom async-first rules:
 
 ### Analyzers in Use
 
