@@ -9,7 +9,8 @@
 		     InformationalVersion (the latter auto-derived from <Version>) carry
 		     the actual release version. -->
 		<AssemblyVersion>1.0.0.0</AssemblyVersion>
-		<FileVersion>$(Version).0</FileVersion>
+		<FileVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(Version)', '[-+].*$', '')).0</FileVersion>
+		<Title>$(AssemblyName)</Title>
 		<!-- <Authors> and <Copyright> are inherited from Directory.Build.props
 		     (canonical CI3 defaults). Re-defining them here would duplicate the
 		     fleet-wide values and drift over time. -->
@@ -23,11 +24,16 @@
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<SignAssembly>False</SignAssembly>
 		<PackageIcon>icon.png</PackageIcon>
+		<ApplicationIcon>icon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'net10.0'">
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="icon.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <None Include="..\..\assets\icon.png">

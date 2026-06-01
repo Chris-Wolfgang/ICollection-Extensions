@@ -343,7 +343,7 @@ public class ICollectionExtensionTests
 
 
 
-        // Cross-collection-type coverage: every standard ICollection<T>
+    // Cross-collection-type coverage: every standard ICollection<T>
     // implementation, empty vs non-empty. Re-used by both IsEmpty and
     // IsNotEmpty tests (the latter just inverts `expectedIsEmpty`).
     public static TheoryData<ICollection<int>, bool> EmptyStateCases =>

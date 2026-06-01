@@ -200,7 +200,7 @@ public static class ICollectionExtensions
     /// </para>
     /// <para>
     /// This method checks the <see cref="ICollection{T}.Count"/> property directly, providing
-    /// a clear, self-documenting emptiness check. Typically <c>O(1)</c> for standard
+    /// a clear, self-documenting non-emptiness check. Typically <c>O(1)</c> for standard
     /// <see cref="ICollection{T}"/> implementations; the <see cref="ICollection{T}.Count"/>
     /// contract does not formally guarantee constant time, so a custom implementation could
     /// be slower.
