@@ -1,183 +1,232 @@
 # Wolfgang.Extensions.ICollection
 
-[![NuGet](https://img.shields.io/nuget/v/Wolfgang.Extensions.ICollection.svg?logo=nuget)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/)
-[![Downloads](https://img.shields.io/nuget/dt/Wolfgang.Extensions.ICollection.svg?logo=nuget)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/)
-[![PR build](https://img.shields.io/github/actions/workflow/status/Chris-Wolfgang/ICollection-Extensions/pr.yaml?label=PR%20build&logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions/actions/workflows/pr.yaml)
+A collection of extension methods for types that implement `ICollection<T>` in .Net
+
+[![NuGet](https://img.shields.io/nuget/v/Wolfgang.Extensions.ICollection.svg?logo=nuget&label=NuGet)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection)
+[![NuGet downloads](https://img.shields.io/nuget/dt/Wolfgang.Extensions.ICollection.svg?logo=nuget&label=downloads)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection)
+[![PR build](https://img.shields.io/github/actions/workflow/status/Chris-Wolfgang/ICollection-Extensions/pr.yaml?event=pull_request_target&label=PR%20build&logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions/actions/workflows/pr.yaml)
 [![Release](https://img.shields.io/github/actions/workflow/status/Chris-Wolfgang/ICollection-Extensions/release.yaml?label=release&logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions/actions/workflows/release.yaml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![.NET](https://img.shields.io/badge/.NET-Multi--Targeted-blueviolet?logo=dotnet)](#-target-frameworks)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-Multi--Targeted-purple.svg)](https://dotnet.microsoft.com/)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions)
 
-A lightweight .NET library providing essential extension methods for types implementing the `ICollection<T>` interface. This library brings the convenience of `List<T>.AddRange()` to all collection types.
-
-## 🎯 Purpose
-
-Many collection types in .NET implement `ICollection<T>` but lack convenient bulk operation methods like `AddRange`. This library fills that gap by providing extension methods that work with any `ICollection<T>` implementation, including:
-
-- `List<T>`
-- `HashSet<T>`
-- `LinkedList<T>`
-- `Collection<T>`
-- `ObservableCollection<T>`
-- Custom collection implementations
+---
 
 ## 📦 Installation
-
-### NuGet Package Manager
-
-```bash
-Install-Package Wolfgang.Extensions.ICollection
-```
-
-### .NET CLI
 
 ```bash
 dotnet add package Wolfgang.Extensions.ICollection
 ```
 
-### Package Reference
+**NuGet Package:** [Wolfgang.Extensions.ICollection](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection)
 
-```xml
-<PackageReference Include="Wolfgang.Extensions.ICollection" Version="x.x.x" />
-```
-
-## 🚀 Usage
-
-### Basic Example
-
-```csharp
-using Wolfgang.Extensions.ICollection;
-
-// Add multiple items to any ICollection<T>
-ICollection<string> names = new List<string> { "Alice" };
-names.AddRange(new[] { "Bob", "Charlie", "David" });
-// names now contains: "Alice", "Bob", "Charlie", "David"
-```
-
-### Working with Different Collection Types
-
-```csharp
-using Wolfgang.Extensions.ICollection;
-
-// Works with HashSet
-ICollection<int> uniqueNumbers = new HashSet<int> { 1, 2, 3 };
-uniqueNumbers.AddRange(new[] { 4, 5, 6 });
-// uniqueNumbers now contains: 1, 2, 3, 4, 5, 6
-
-// Works with LinkedList
-ICollection<string> linkedList = new LinkedList<string>();
-linkedList.AddRange(new[] { "First", "Second", "Third" });
-
-// Works with ObservableCollection
-ICollection<int> observable = new ObservableCollection<int>();
-observable.AddRange(Enumerable.Range(1, 5));
-```
-
-### Adding Items from LINQ Queries
-
-```csharp
-using Wolfgang.Extensions.ICollection;
-
-// Add filtered results from LINQ
-var evenNumbers = Enumerable.Range(1, 20).Where(n => n % 2 == 0);
-ICollection<int> collection = new List<int>();
-collection.AddRange(evenNumbers);
-// collection now contains: 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
-```
-
-### Practical Scenarios
-
-```csharp
-using Wolfgang.Extensions.ICollection;
-
-// Combining multiple sources
-ICollection<string> allItems = new List<string>();
-allItems.AddRange(GetItemsFromDatabase());
-allItems.AddRange(GetItemsFromCache());
-allItems.AddRange(GetItemsFromApi());
-
-// Building collections incrementally
-ICollection<Product> products = new HashSet<Product>();
-products.AddRange(featuredProducts);
-products.AddRange(recommendedProducts);
-products.AddRange(newProducts);
-```
-
-## 📚 API Reference
-
-| Method | Returns | Description |
-|---|---|---|
-| `AddRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Appends every item in the sequence to the collection. Pre-allocates capacity when the target is `List<T>` and the appended sequence exposes `ICollection<T>.Count`. |
-| `AddRangeIf<T>(this ICollection<T>, IEnumerable<T>, Func<T, bool>)` | `void` | Appends items for which the predicate returns `true`. |
-| `RemoveRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Removes one occurrence of each listed item from the collection. |
-| `RemoveWhere<T>(this ICollection<T>, Func<T, bool>)` | `int` | Removes every item matching the predicate; returns the count removed. Safe for any `ICollection<T>`. |
-| `ReplaceAll<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Clears the collection then appends every item from the new sequence. |
-| `AddIfNotContains<T>(this ICollection<T>, T)` | `bool` | Adds the item only if it is not already present; returns whether the add happened. |
-| `AddIfNotContains<T>(this ICollection<T>, IEnumerable<T>)` | `int` | Bulk overload; returns the count actually added. |
-| `IsEmpty<T>(this ICollection<T>)` | `bool` | `true` if the collection has zero items, otherwise `false`. |
-| `IsNotEmpty<T>(this ICollection<T>)` | `bool` | `true` if the collection has at least one item, otherwise `false`. |
-
-### `AddRange<T>`
-
-```csharp
-public static void AddRange<T>(this ICollection<T> source, IEnumerable<T> items)
-```
-
-Adds every item from `items` to `source`.
-
-**Throws:**
-- `ArgumentNullException` if `source` or `items` is `null`
-- `NotSupportedException` if `source` is read-only
-
-**Behavior:**
-- Empty `items` is a no-op (no exception)
-- Duplicate handling follows the target collection's semantics (e.g.,
-  `HashSet<T>` silently ignores duplicates)
-- Pre-allocates capacity when `source` is `List<T>` and `items`
-  exposes `ICollection<T>.Count` (the common batch-append fast path)
-- Not thread-safe — external synchronization required for concurrent
-  access
-
-### `IsEmpty<T>` / `IsNotEmpty<T>`
-
-```csharp
-public static bool IsEmpty<T>(this ICollection<T> source)
-public static bool IsNotEmpty<T>(this ICollection<T> source)
-```
-
-Reads `source.Count` and compares to zero. Typically `O(1)` for standard
-`ICollection<T>` implementations.
-
-**Throws:**
-- `ArgumentNullException` if `source` is `null`
-
-## 🔧 Target Frameworks
-
-| TFM | Use case |
-|---|---|
-| `netstandard2.0` | Broad consumer compatibility (covers .NET Framework 4.6.1+, .NET Core 2.0+, .NET 5+, Mono, Xamarin) |
-| `netstandard2.1` | Picks up the BCL improvements available since 2019 |
-| `net8.0` | Current LTS |
-| `net9.0` | Latest released runtime |
-| `net10.0` | Active LTS branch |
-
-## 🤝 Contributing
-
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
-## 👤 Author
+---
 
-**Chris Wolfgang**
+## 📚 Documentation
 
-- GitHub: [@Chris-Wolfgang](https://github.com/Chris-Wolfgang)
+- **GitHub Repository:** [https://github.com/Chris-Wolfgang/ICollection-Extensions](https://github.com/Chris-Wolfgang/ICollection-Extensions)
+- **API Documentation:** https://Chris-Wolfgang.github.io/ICollection-Extensions/
+- **CHANGELOG:** [CHANGELOG.md](CHANGELOG.md)
+- **Contributing Guide:** [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Formatting Guide:** [docs/README-FORMATTING.md](docs/README-FORMATTING.md)
+- **Release Workflow Setup:** [docs/RELEASE-WORKFLOW-SETUP.md](docs/RELEASE-WORKFLOW-SETUP.md)
+- **Workflow Security:** [docs/WORKFLOW_SECURITY.md](docs/WORKFLOW_SECURITY.md)
 
-## 🔗 Links
+---
 
-- [Documentation](https://chris-wolfgang.github.io/ICollection-Extensions/)
-- [NuGet Package](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/)
-- [Source Code](https://github.com/Chris-Wolfgang/ICollection-Extensions)
-- [Report Issues](https://github.com/Chris-Wolfgang/ICollection-Extensions/issues)
+## 🚀 Quick Start
+
+```csharp
+using System.Collections.Generic;       // ICollection<T>, List<T>, HashSet<T>
+using Wolfgang.Extensions.ICollection;
+
+ICollection<int> numbers = new List<int> { 1, 2, 3 };
+
+numbers.AddRange(new[] { 4, 5, 6 });                  // → 1, 2, 3, 4, 5, 6
+numbers.AddRangeIf(new[] { 7, 8, 9 }, n => n % 2 == 1); // → +7, +9 (8 skipped)
+numbers.RemoveRange(new[] { 1, 9 });                  // → 2, 3, 4, 5, 6, 7
+numbers.RemoveWhere(n => n > 5);                       // → 2 removed
+numbers.ReplaceAll(new[] { 10, 20, 30 });              // → 10, 20, 30
+
+numbers.AddIfNotContains(10);                          // → false (already present)
+numbers.AddIfNotContains(40);                          // → true; appended
+numbers.AddIfNotContains(new[] { 40, 50 });            // → 1 (only 50 was new)
+
+numbers.IsEmpty();                                     // → false
+numbers.IsNotEmpty();                                  // → true
+```
+
+Every method works against the `ICollection<T>` contract, so it transparently supports `List<T>`, `HashSet<T>`, `LinkedList<T>`, `Collection<T>`, `ObservableCollection<T>`, and any custom implementation. Self-aliasing (`list.AddRange(list)`, `list.ReplaceAll(list)`, etc.) is guarded so it never trips the BCL's mutate-during-enumerate contract.
+
+---
+
+## ✨ Features
+
+The table below is a snapshot of the public API at the time of writing. For the
+authoritative list (kept in sync with source on every release), see the
+[API documentation](https://Chris-Wolfgang.github.io/ICollection-Extensions/api/Wolfgang.Extensions.ICollection.ICollectionExtensions.html).
+
+### Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `AddRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Appends every item from the sequence to the collection. Pre-allocates capacity when the target is `List<T>` and the appended sequence exposes `ICollection<T>.Count`. |
+| `AddRangeIf<T>(this ICollection<T>, IEnumerable<T>, Func<T, bool>)` | `void` | Appends only the items for which the predicate returns `true`. |
+| `RemoveRange<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Removes one occurrence of each listed item. |
+| `RemoveWhere<T>(this ICollection<T>, Func<T, bool>)` | `int` | Removes every item matching the predicate; returns the count removed. Uses `HashSet<T>.RemoveWhere` as a fast path for `HashSet<T>` consumers; safe for every other `ICollection<T>`. |
+| `ReplaceAll<T>(this ICollection<T>, IEnumerable<T>)` | `void` | Clears the collection then appends every item from the new sequence. |
+| `AddIfNotContains<T>(this ICollection<T>, T)` | `bool` | Adds the item only if it isn't already present; returns whether the add happened. Uses `ISet<T>.Add` as a fast path for set consumers (single lookup). |
+| `AddIfNotContains<T>(this ICollection<T>, IEnumerable<T>)` | `int` | Bulk overload; returns the count actually added. |
+| `IsEmpty<T>(this ICollection<T>)` | `bool` | `true` when `Count == 0`. Typically `O(1)` for standard `ICollection<T>` implementations. |
+| `IsNotEmpty<T>(this ICollection<T>)` | `bool` | `true` when `Count > 0`. |
+
+### Examples
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Wolfgang.Extensions.ICollection;
+
+// Works on any ICollection<T>, not just List<T>
+ICollection<string> set = new HashSet<string>(StringComparer.Ordinal) { "Alice" };
+set.AddRange(new[] { "Bob", "Alice", "Carol" });   // HashSet dedups → 3 items
+
+ICollection<int> linked = new LinkedList<int>();
+linked.AddRange(Enumerable.Range(1, 5));           // → 1..5
+
+// Predicate-gated bulk operations
+ICollection<int> evens = new List<int>();
+evens.AddRangeIf(Enumerable.Range(1, 20), n => n % 2 == 0); // → 2, 4, …, 20
+int removed = evens.RemoveWhere(n => n > 10);                // → 5
+
+// Set-aware AddIfNotContains
+int added = set.AddIfNotContains(new[] { "Bob", "Dave", "Erin" }); // → 2
+
+// Array as a source: int[] implements ICollection<int>
+int[] buffer = { 7, 8, 9 };
+buffer.IsEmpty();   // → false
+// buffer.AddRange(...) would throw NotSupportedException — arrays are fixed-size.
+```
+
+Self-aliasing is safe by construction: `list.AddRange(list)` snapshots the source before mutating; `list.ReplaceAll(list)` is a no-op; `list.RemoveRange(list)` empties the collection cleanly.
+
+---
+
+## 🎯 Target Frameworks
+
+| Framework | Versions |
+|-----------|----------|
+| .NET Standard | .NET Standard 2.0, .NET Standard 2.1 |
+| .NET | .NET 8.0, .NET 9.0, .NET 10.0 |
+
+---
+
+## 🔍 Code Quality & Static Analysis
+
+This project enforces **strict code quality standards** through **8 specialized analyzers**, an `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` Release gate, and custom async-first rules:
+
+### Analyzers in Use
+
+1. **Microsoft.CodeAnalysis.NetAnalyzers** — Built-in .NET analyzers for correctness and performance
+2. **Roslynator.Analyzers** — Advanced refactoring and code quality rules
+3. **AsyncFixer** — Async/await best practices and anti-pattern detection
+4. **Microsoft.VisualStudio.Threading.Analyzers** — Thread safety and async patterns
+5. **Microsoft.CodeAnalysis.BannedApiAnalyzers** — Prevents usage of banned synchronous APIs (see `BannedSymbols.txt`)
+6. **Meziantou.Analyzer** — Comprehensive code quality rules
+7. **SonarAnalyzer.CSharp** — Industry-standard code analysis
+8. **Microsoft.CodeAnalysis.PublicApiAnalyzers** — Tracks the public API surface via `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt`; surfaces additions/removals at compile time as a breaking-change review gate
+
+
+---
+
+## 🛠️ Building from Source
+
+### Prerequisites
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download) — required for the modern build / test / pack flow used by CI
+- Optional: [PowerShell Core](https://github.com/PowerShell/PowerShell) for formatting scripts
+
+### Build Steps
+
+```bash
+# Clone the repository
+git clone https://github.com/Chris-Wolfgang/ICollection-Extensions.git
+cd ICollection-Extensions
+
+# Restore dependencies
+dotnet restore
+
+# Build the solution
+dotnet build --configuration Release
+
+# Run tests
+dotnet test --configuration Release
+
+# Run code formatting (PowerShell Core)
+pwsh ./scripts/format.ps1
+```
+
+### Code Formatting
+
+This project uses `.editorconfig` and `dotnet format`:
+
+```bash
+# Format code
+dotnet format
+
+# Verify formatting (as CI does)
+dotnet format --verify-no-changes
+```
+
+See [docs/README-FORMATTING.md](docs/README-FORMATTING.md) for detailed formatting guidelines.
+
+### Building Documentation
+
+This project uses [DocFX](https://dotnet.github.io/docfx/) to generate API documentation:
+
+```bash
+# Install DocFX (one-time setup)
+dotnet tool install -g docfx
+
+# Generate API metadata and build documentation
+cd docfx_project
+docfx metadata  # Extract API metadata from source code
+docfx build     # Build HTML documentation
+
+# Documentation is generated in the docs/ folder at the repository root
+```
+
+The documentation is automatically built and deployed to GitHub Pages when changes are pushed to the `main` branch.
+
+**Local Preview:**
+```bash
+# Serve documentation locally (with live reload)
+cd docfx_project
+docfx build --serve
+
+# Open http://localhost:8080 in your browser
+```
+
+**Documentation Structure:**
+- `docfx_project/` - DocFX configuration and source files
+- `docs/` - Generated HTML documentation (published to GitHub Pages)
+- `docfx_project/index.md` - Main landing page content
+- `docfx_project/docs/` - Additional documentation articles
+- `docfx_project/api/` - Auto-generated API reference YAML files
+
+---
+
+
+## 🤝 Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
+- Code quality standards
+- Build and test instructions
+- Pull request guidelines
+- Analyzer configuration details
