@@ -47,6 +47,7 @@ public static class ICollectionExtensions
     /// <item><description>If the source collection is read-only, the Add method will throw a <see cref="NotSupportedException"/>.</description></item>
     /// <item><description>The method does not check for duplicates; duplicate handling depends on the underlying collection implementation.</description></item>
     /// <item><description>When <paramref name="source"/> is a <see cref="List{T}"/> and <paramref name="items"/> implements <see cref="ICollection{T}"/>, the list's capacity is pre-allocated to avoid repeated resizing.</description></item>
+    /// <item><description>Self-aliasing (passing the same instance for both <paramref name="source"/> and <paramref name="items"/>) is safe: <paramref name="items"/> is snapshotted before mutation, so the call effectively appends a copy of the current contents to the collection.</description></item>
     /// <item><description>This method is not thread-safe. If multiple threads access the collection concurrently, external synchronization is required.</description></item>
     /// </list>
     /// </para>
@@ -131,8 +132,10 @@ public static class ICollectionExtensions
     /// </para>
     /// <para>
     /// This method checks the <see cref="ICollection{T}.Count"/> property directly, providing
-    /// a clear, self-documenting emptiness check. The exact performance depends on the concrete
-    /// collection type, but is typically O(1) for common implementations.
+    /// a clear, self-documenting emptiness check. Typically <c>O(1)</c> for standard
+    /// <see cref="ICollection{T}"/> implementations; the <see cref="ICollection{T}.Count"/>
+    /// contract does not formally guarantee constant time, so a custom implementation could
+    /// be slower.
     /// </para>
     /// <para>
     /// <strong>Edge Cases and Behavior:</strong>
@@ -197,8 +200,10 @@ public static class ICollectionExtensions
     /// </para>
     /// <para>
     /// This method checks the <see cref="ICollection{T}.Count"/> property directly, providing
-    /// a clear, self-documenting emptiness check. The exact performance depends on the concrete
-    /// collection type, but is typically O(1) for common implementations.
+    /// a clear, self-documenting non-emptiness check. Typically <c>O(1)</c> for standard
+    /// <see cref="ICollection{T}"/> implementations; the <see cref="ICollection{T}.Count"/>
+    /// contract does not formally guarantee constant time, so a custom implementation could
+    /// be slower.
     /// </para>
     /// <para>
     /// <strong>Edge Cases and Behavior:</strong>
@@ -260,7 +265,11 @@ public static class ICollectionExtensions
     /// duplicates and the same value appears multiple times in
     /// <paramref name="items"/>, multiple occurrences are removed (one per
     /// call). Items in <paramref name="items"/> that are not present in
-    /// <paramref name="source"/> are silently skipped.
+    /// <paramref name="source"/> are silently skipped. Self-aliasing
+    /// (passing the same instance for both <paramref name="source"/> and
+    /// <paramref name="items"/>) is safe: <paramref name="items"/> is
+    /// snapshotted before mutation, so the call empties the collection
+    /// cleanly without tripping the mutate-during-enumerate contract.
     /// </remarks>
     public static void RemoveRange<T>(this ICollection<T> source, IEnumerable<T> items)
     {
@@ -309,6 +318,14 @@ public static class ICollectionExtensions
     /// <exception cref="NotSupportedException">
     /// Thrown if <paramref name="source"/> is read-only.
     /// </exception>
+    /// <remarks>
+    /// Self-aliasing (passing the same instance for both
+    /// <paramref name="source"/> and <paramref name="items"/>) is safe:
+    /// <paramref name="items"/> is snapshotted before mutation, so the
+    /// predicate sees a stable view and the matching items are appended
+    /// to the collection without tripping the mutate-during-enumerate
+    /// contract.
+    /// </remarks>
     public static void AddRangeIf<T>(
         this ICollection<T> source,
         IEnumerable<T> items,
@@ -428,7 +445,11 @@ public static class ICollectionExtensions
     /// <paramref name="items"/> throws midway through, the collection is
     /// left empty (or with whatever items were already appended). Callers
     /// that need atomic replacement should materialise the new contents
-    /// first.
+    /// first. Self-aliasing (passing the same instance for both
+    /// <paramref name="source"/> and <paramref name="items"/>) is safe:
+    /// <paramref name="items"/> is snapshotted before the <c>Clear</c>, so
+    /// the call is effectively a no-op rather than silently wiping the
+    /// collection.
     /// </remarks>
     public static void ReplaceAll<T>(this ICollection<T> source, IEnumerable<T> items)
     {
