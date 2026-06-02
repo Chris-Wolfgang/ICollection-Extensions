@@ -230,16 +230,17 @@ public class ICollectionExtensionTests
     public void AddRange_when_items_is_large_collection_adds_all_items()
     {
         // Arrange
+        const int LargeBatchCount = 10_000;
         ICollection<int> source = new List<int>();
-        var items = Enumerable.Range(1, 10000);
+        var items = Enumerable.Range(1, LargeBatchCount);
 
         // Act
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(10000, source.Count);
+        Assert.Equal(LargeBatchCount, source.Count);
         Assert.Equal(1, source.First());
-        Assert.Equal(10000, source.Last());
+        Assert.Equal(LargeBatchCount, source.Last());
     }
 
 
