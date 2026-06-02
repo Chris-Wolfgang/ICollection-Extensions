@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780271558696,
+  "lastUpdate": 1780362937944,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "BenchmarkDotNet": [
@@ -118,6 +118,66 @@ window.BENCHMARK_DATA = {
             "value": 0.3495696981747945,
             "unit": "ns",
             "range": "± 0.0017592185307739297"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4858c0cecb9280d4e46930a86eb9501f5ce53dc0",
+          "message": "Merge pull request #148 from Chris-Wolfgang/fix/build-hygiene\n\nRollup: build hygiene + test cleanup + XML docs + examples + canonical workflow tweaks",
+          "timestamp": "2026-06-01T21:12:50-04:00",
+          "tree_id": "d6e8c23933686079899e7be08b56100e9f9a23b9",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/4858c0cecb9280d4e46930a86eb9501f5ce53dc0"
+        },
+        "date": 1780362936869,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_fast_path_List_target",
+            "value": 1188.8000882466633,
+            "unit": "ns",
+            "range": "± 6.463009679706386"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_slow_path_LinkedList_target",
+            "value": 13458.017669677734,
+            "unit": "ns",
+            "range": "± 76.10448791900393"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_empty_collection",
+            "value": 0,
+            "unit": "ns",
+            "range": "± 0"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_nonempty_collection",
+            "value": 0.33591917902231216,
+            "unit": "ns",
+            "range": "± 0.0010359936303535589"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_empty_collection",
+            "value": 0,
+            "unit": "ns",
+            "range": "± 0"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_nonempty_collection",
+            "value": 0.35076095908880234,
+            "unit": "ns",
+            "range": "± 0.001444864997181056"
           }
         ]
       }
