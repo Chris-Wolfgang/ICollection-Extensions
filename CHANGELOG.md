@@ -19,6 +19,91 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [0.3.1] - 2026-06-01
+
+Polish release. The public API and runtime behavior are unchanged from
+v0.3.0; this round delivers documentation, examples, tests, benchmarks,
+and canonical workflow updates.
+
+### Added
+
+- `docs/DOCFX-VERSION-PICKER.md` — the canonical 210-line reference
+  for the docs-site version picker (companion to the
+  `docfx_project/public/version-picker.js` /
+  `docfx_project/versions.json` /
+  `.github/version-picker-template.html` triplet that was already
+  shipping).
+- `examples/Wolfgang.Extensions.ICollection.DotNet80.Example1/` and
+  `examples/Wolfgang.Extensions.ICollection.DotNet10.Example1/` —
+  runnable demonstration apps exercising every public extension
+  method against `List<T>`, `HashSet<T>`, `LinkedList<T>`, and
+  `Collection<T>`. The .NET 10 example uses C# 12 collection
+  expressions; the .NET 8 example uses traditional `new[]` syntax.
+- `RemoveWhere_when_source_is_HashSet_uses_native_RemoveWhere` test —
+  closes the previous Stryker `NoCoverage` gap on the HashSet
+  fast-path block.
+- Twelve fast/slow-path-paired benchmarks covering the six public
+  methods that were previously unbenchmarked: `RemoveRange`,
+  `AddRangeIf`, `RemoveWhere`, `ReplaceAll`,
+  `AddIfNotContains<T>(T)`, `AddIfNotContains<T>(IEnumerable<T>)`.
+  Brings benchmark coverage to 9 / 9 public methods. The
+  `_itemsToAdd` test array is now populated with distinct values
+  (`Enumerable.Range(0, Count).ToArray()`) so the HashSet fast-path
+  benchmarks measure a real `Count`-element set, not a single-element
+  deduplication.
+
+### Changed
+
+- XML documentation expanded across `AddRange` / `AddRangeIf` /
+  `RemoveRange` / `ReplaceAll` to describe the self-aliasing
+  `ReferenceEquals` snapshot guard (passing the same collection as
+  both `source` and `items` is now documented as safe).
+- `IsNotEmpty` remarks block — the phrase "self-documenting emptiness
+  check" was inaccurate (the method returns true when `Count > 0`);
+  corrected to "non-emptiness check".
+- README — analyzer count clarified to "8 analyzer rule sets (7
+  explicit `PackageReference`s plus the SDK's built-in
+  `NetAnalyzers`)" with each named.
+- `.github/copilot-instructions.md` — method descriptions resynced
+  with the v0.3.0 fast-path behavior.
+- `CHANGELOG` — the v0.3.0 release date corrected from `2026-05-30`
+  to `2026-05-31` (matches the actual `v0.3.0` tag timestamp).
+- `docfx_project/` — landing page, introduction, getting-started all
+  rewritten for v0.3.0+ content.
+- `.github/workflows/stryker.yaml` — switched to a Windows runner,
+  dropped the per-repo opt-in gate (`stryker-config.json` presence
+  is now the universal signal), comprehensive SDK install list
+  (`3.1.x` through `10.0.x`).
+- `.github/workflows/codeql.yaml` — bumped `github/codeql-action/init`
+  and `analyze` from `@v3` to `@v4` (Node.js 20 → 24 deprecation).
+- `src` and test csprojs — dropped redundant `<Copyright>` (test)
+  and `<Title>$(AssemblyName)</Title>` (src); both inherit from
+  `Directory.Build.props` / MSBuild defaults respectively.
+- `assets/icon.ico` — moved out of the src project directory; the
+  binary is retained as a fleet asset rather than a per-project
+  resource.
+
+### Fixed
+
+- Three Stryker mutation survivors on `ICollectionExtensions.cs`
+  reclassified as intentional via `// Stryker disable all : <reason>`
+  comments: the five redundant defensive null-check blocks
+  (`AddRangeIf` predicate / `RemoveWhere` source+predicate /
+  `ReplaceAll` items / `AddIfNotContains(IEnumerable<T>)` source) and
+  the two redundant optimization fast paths (`RemoveWhere`'s
+  `HashSet<T>` block, `AddIfNotContains<T>(T)`'s `ISet<T>` block).
+  Each annotation documents why the mutated form is observationally
+  indistinguishable from the original (the BCL / slow path throws
+  the same `ArgumentNullException` or produces the same final
+  state). Brings mutation score on `ICollectionExtensions.cs` to
+  100 % on the testable surface.
+- Mis-indented `EmptyStateCases` comment block in the test file —
+  re-aligned to the surrounding 4-space member indentation.
+- `AddRange_when_items_is_large_collection_adds_all_items` —
+  extracted the literal `10_000` into a named
+  `const int LargeBatchCount` so the value lives in one place and
+  the three assertions self-document.
+
 ## [0.3.0] - 2026-05-31
 
 ### Added
@@ -91,6 +176,7 @@ Initial public NuGet release.
 - README content packaged into the NuGet `.nupkg` so it renders on the
   package's nuget.org page.
 
-[Unreleased]: https://github.com/Chris-Wolfgang/ICollection-Extensions/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/Chris-Wolfgang/ICollection-Extensions/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/Chris-Wolfgang/ICollection-Extensions/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/Chris-Wolfgang/ICollection-Extensions/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Chris-Wolfgang/ICollection-Extensions/releases/tag/v0.2.0
