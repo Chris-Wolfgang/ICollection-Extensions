@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Wolfgang.Extensions.ICollection;
 
@@ -26,7 +27,12 @@ public class ICollectionExtensionsBenchmarks
     // op so the BDN ShortRun finishes quickly.
     private const int Count = 1024;
 
-    private readonly int[] _itemsToAdd = new int[Count];
+    // Populated with 0..Count-1 — unique values matter because several of
+    // the benchmarks below (notably the HashSet fast-path benchmarks) build
+    // a HashSet<int> from this array and would collapse to a single element
+    // if every entry were the default 0. Distinct values keep the set size
+    // at Count so the fast-path vs slow-path comparison is honest.
+    private readonly int[] _itemsToAdd = Enumerable.Range(0, Count).ToArray();
 
 
 
