@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780362937944,
+  "lastUpdate": 1780363992666,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "BenchmarkDotNet": [
@@ -178,6 +178,138 @@ window.BENCHMARK_DATA = {
             "value": 0.35076095908880234,
             "unit": "ns",
             "range": "± 0.001444864997181056"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d8cdf03c21faed7d790973fc6d6483ce537e3f55",
+          "message": "Merge pull request #157 from Chris-Wolfgang/stack/benchmark-coverage\n\nbenchmarks: cover the 6 missing public methods",
+          "timestamp": "2026-06-01T21:29:33-04:00",
+          "tree_id": "056cfc1b8bee3418b7f997648a58b0e65050dec4",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/d8cdf03c21faed7d790973fc6d6483ce537e3f55"
+        },
+        "date": 1780363991454,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_fast_path_List_target",
+            "value": 2581.645595550537,
+            "unit": "ns",
+            "range": "± 4.554548038595373"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_slow_path_LinkedList_target",
+            "value": 13138.30800374349,
+            "unit": "ns",
+            "range": "± 115.10855158363023"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_empty_collection",
+            "value": 0.0003443285822868347,
+            "unit": "ns",
+            "range": "± 0.00030829312113697356"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_nonempty_collection",
+            "value": 0.006571220854918162,
+            "unit": "ns",
+            "range": "± 0.00788155148576164"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_empty_collection",
+            "value": 0.0000144404669602712,
+            "unit": "ns",
+            "range": "± 0.00002501162246020942"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_nonempty_collection",
+            "value": 0.004632617036501567,
+            "unit": "ns",
+            "range": "± 0.006226291877450644"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_List_target",
+            "value": 44839.90928141276,
+            "unit": "ns",
+            "range": "± 59.4112460919562"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_LinkedList_target",
+            "value": 19199.86829630534,
+            "unit": "ns",
+            "range": "± 162.66838209619806"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_all_match",
+            "value": 3638.549067179362,
+            "unit": "ns",
+            "range": "± 13.432111562737981"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_none_match",
+            "value": 2029.6561101277669,
+            "unit": "ns",
+            "range": "± 42.95552395651018"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_fast_path_HashSet_target",
+            "value": 9702.036885579428,
+            "unit": "ns",
+            "range": "± 22.471177647473496"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_slow_path_List_target",
+            "value": 28370.751047770184,
+            "unit": "ns",
+            "range": "± 31.553236286012826"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_List_target",
+            "value": 2707.5427843729653,
+            "unit": "ns",
+            "range": "± 4.926887602947151"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_LinkedList_target",
+            "value": 30879.451090494793,
+            "unit": "ns",
+            "range": "± 307.18155114409217"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_fast_path_HashSet_target",
+            "value": 12752.000508626303,
+            "unit": "ns",
+            "range": "± 41.51292833872464"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_slow_path_List_target",
+            "value": 24714.898468017578,
+            "unit": "ns",
+            "range": "± 38.27995162883487"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_HashSet_target",
+            "value": 15207.835866292318,
+            "unit": "ns",
+            "range": "± 251.40876092598046"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_List_target",
+            "value": 27019.372884114582,
+            "unit": "ns",
+            "range": "± 60.29836998521603"
           }
         ]
       }
