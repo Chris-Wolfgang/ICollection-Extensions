@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780363992666,
+  "lastUpdate": 1780366055573,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "BenchmarkDotNet": [
@@ -310,6 +310,138 @@ window.BENCHMARK_DATA = {
             "value": 27019.372884114582,
             "unit": "ns",
             "range": "± 60.29836998521603"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "committer": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "distinct": true,
+          "id": "9b1b3d0d951b1abc8dfa5444ec96c7e4b7b98865",
+          "message": "Address Copilot on #158: fix DOCFX-VERSION-PICKER deploy flow + icon.ico CHANGELOG entry\n\nTwo findings:\n\n1. docs/DOCFX-VERSION-PICKER.md 'How it gets to gh-pages' diagram\n   claimed 'push to main / release tag' triggers docfx.yaml. In\n   reality docfx.yaml only has workflow_call (invoked by release.yaml\n   after a GitHub Release is published) and workflow_dispatch\n   (manual). Reworked the diagram to show the actual chain\n   (Release published → release.yaml → docfx.yaml) and added an\n   explicit note that a plain push to main does NOT redeploy docs.\n\n2. CHANGELOG [0.3.1] said 'assets/icon.ico — moved out of the src\n   project directory'. The icon is actually still at\n   src/.../icon.ico (referenced by <ApplicationIcon> and packed via\n   <Content Include='icon.ico'/>) — the assets/icon.ico is an\n   additional fleet-asset copy, not a relocation. Reworded the\n   bullet to describe the actual change accurately.",
+          "timestamp": "2026-06-01T22:03:35-04:00",
+          "tree_id": "ce98c522da9f7d755574b60f1e7abacb622d47da",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/9b1b3d0d951b1abc8dfa5444ec96c7e4b7b98865"
+        },
+        "date": 1780366053826,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_fast_path_List_target",
+            "value": 1137.3834438323975,
+            "unit": "ns",
+            "range": "± 4.753526819663082"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_slow_path_LinkedList_target",
+            "value": 13061.87538655599,
+            "unit": "ns",
+            "range": "± 105.48619534550512"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_empty_collection",
+            "value": 0.11459797248244286,
+            "unit": "ns",
+            "range": "± 0.0015375347061583843"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_nonempty_collection",
+            "value": 0.33570606634020805,
+            "unit": "ns",
+            "range": "± 0.0027583827731353233"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_empty_collection",
+            "value": 0,
+            "unit": "ns",
+            "range": "± 0"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_nonempty_collection",
+            "value": 0.35298336669802666,
+            "unit": "ns",
+            "range": "± 0.0014725378495719535"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_List_target",
+            "value": 49283.12422688802,
+            "unit": "ns",
+            "range": "± 103.81450397036946"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_LinkedList_target",
+            "value": 18666.505696614582,
+            "unit": "ns",
+            "range": "± 53.14806166334312"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_all_match",
+            "value": 3300.9564170837402,
+            "unit": "ns",
+            "range": "± 8.014784161832667"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_none_match",
+            "value": 995.8470331827799,
+            "unit": "ns",
+            "range": "± 2.4150101479894004"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_fast_path_HashSet_target",
+            "value": 10597.036692301432,
+            "unit": "ns",
+            "range": "± 33.506728722014294"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_slow_path_List_target",
+            "value": 34235.933766682945,
+            "unit": "ns",
+            "range": "± 139.39928002042654"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_List_target",
+            "value": 1247.0608558654785,
+            "unit": "ns",
+            "range": "± 20.610115796928596"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_LinkedList_target",
+            "value": 28630.81478881836,
+            "unit": "ns",
+            "range": "± 171.08137406748375"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_fast_path_HashSet_target",
+            "value": 9863.388061523438,
+            "unit": "ns",
+            "range": "± 74.66774753033384"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_slow_path_List_target",
+            "value": 34432.931884765625,
+            "unit": "ns",
+            "range": "± 103.58621304445742"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_HashSet_target",
+            "value": 12610.656168619791,
+            "unit": "ns",
+            "range": "± 111.11265159711196"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_List_target",
+            "value": 37013.573486328125,
+            "unit": "ns",
+            "range": "± 139.98686506801135"
           }
         ]
       }
