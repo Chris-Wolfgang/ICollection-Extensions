@@ -2,13 +2,13 @@
 
 ## Welcome to Wolfgang.Extensions.ICollection
 
-Wolfgang.Extensions.ICollection is a focused .NET library that provides extension methods for the `ICollection<T>` interface. The library aims to fill gaps in the .NET BCL by providing convenient bulk operation methods that are missing from the base `ICollection<T>` interface.
+Wolfgang.Extensions.ICollection is a focused .NET library that provides extension methods for the `ICollection<T>` interface. The library aims to fill gaps in the .NET BCL by providing convenient bulk operation methods, presence checks, and conditional add/remove primitives that are missing from the base `ICollection<T>` interface.
 
 ## The Problem
 
 While `List<T>` provides helpful methods like `AddRange()`, these methods are not available on the `ICollection<T>` interface that many collection types implement. This forces developers to either:
 
-1. Write repetitive foreach loops to add multiple items
+1. Write repetitive `foreach` loops to add, remove, filter, or test multiple items
 2. Cast collections to specific types (losing abstraction)
 3. Create their own extension methods in every project
 
@@ -18,51 +18,66 @@ This library provides well-tested, documented extension methods that work with a
 
 ## Core Philosophy
 
-- **Simplicity First** - Small, focused API that does one thing well
-- **Zero Dependencies** - No external dependencies to worry about
-- **Type Safety** - Fully generic methods that preserve type information
-- **Behavioral Consistency** - Respects the underlying collection's behavior and constraints
+- **Simplicity First** — Small, focused API that does the things the BCL leaves out
+- **Zero Dependencies** — No external runtime dependencies
+- **Type Safety** — Fully generic methods that preserve type information
+- **Behavioral Consistency** — Respects the underlying collection's behavior and constraints; uses native fast paths (`HashSet<T>.RemoveWhere`, `ISet<T>.Add`, `List<T>` capacity pre-allocation) when they exist
 
 ## Supported Collections
 
 The extension methods work with any type implementing `ICollection<T>`, including:
 
-- **List&lt;T&gt;** - Standard generic list
-- **HashSet&lt;T&gt;** - Unordered set of unique elements
-- **LinkedList&lt;T&gt;** - Doubly-linked list
-- **Collection&lt;T&gt;** - Base class for generic collections
-- **ObservableCollection&lt;T&gt;** - Collection with change notifications
-- **Custom implementations** - Any class implementing ICollection&lt;T&gt;
+- **`List<T>`** — Standard generic list (and the target of the `AddRange` capacity pre-allocation fast path)
+- **`HashSet<T>`** — Unordered set of unique elements (used by the `RemoveWhere` and `AddIfNotContains` fast paths)
+- **`SortedSet<T>`** — Sorted set (also covered by the `ISet<T>` fast path for `AddIfNotContains`)
+- **`LinkedList<T>`** — Doubly-linked list
+- **`Collection<T>`** — Base class for generic collections
+- **`ObservableCollection<T>`** — Collection with change notifications
+- **Arrays** — `T[]` implements `ICollection<T>` (read-only / fixed-size); query methods (`IsEmpty`, `IsNotEmpty`) work; mutating methods throw `NotSupportedException` cleanly
+- **Custom implementations** — Any class implementing `ICollection<T>`
 
 ## Target Frameworks
 
-Wolfgang.Extensions.ICollection supports multiple .NET platforms:
+Wolfgang.Extensions.ICollection supports a broad set of modern .NET TFMs:
 
-- **.NET Framework 4.6.2**
-- **.NET Standard 2.0** (provides compatibility with .NET Core 2.0+, .NET 5+, and newer .NET Framework versions)
-- **.NET 8.0**
-- **.NET 10.0**
-
-This broad compatibility ensures the library can be used in virtually any .NET project, from legacy applications to cutting-edge solutions.
+- **`.NET Standard 2.0`** — covers `.NET Framework 4.6.1+`, `.NET Core 2.0+`, Mono, Xamarin
+- **`.NET Standard 2.1`** — picks up the BCL improvements available since 2019
+- **`.NET 8.0`** — current LTS
+- **`.NET 9.0`** — latest released runtime
+- **`.NET 10.0`** — active LTS branch
 
 ## What's Included
 
-### AddRange Method
+### Bulk additions
 
-The primary extension method provided by this library is `AddRange<T>()`, which allows adding multiple items to any `ICollection<T>` in a single operation.
+- **`AddRange(this ICollection<T>, IEnumerable<T>)`** — appends every item; pre-allocates `List<T>` capacity when the source exposes `Count`.
+- **`AddRangeIf(this ICollection<T>, IEnumerable<T>, Func<T, bool>)`** — appends items that satisfy a predicate.
+- **`AddIfNotContains(this ICollection<T>, T) -> bool`** — adds a single item only if it's not already present; returns whether the add happened. Uses `ISet<T>.Add` as a single-lookup fast path for set consumers.
+- **`AddIfNotContains(this ICollection<T>, IEnumerable<T>) -> int`** — bulk overload; returns the count actually added.
 
-**Features:**
-- Null-safe (throws ArgumentNullException for null parameters)
-- Works with any IEnumerable&lt;T&gt; source
-- Preserves collection-specific behaviors (e.g., HashSet deduplication)
-- Handles empty enumerables gracefully
+### Bulk removals
+
+- **`RemoveRange(this ICollection<T>, IEnumerable<T>)`** — removes one occurrence of each listed item.
+- **`RemoveWhere(this ICollection<T>, Func<T, bool>) -> int`** — removes every item matching the predicate; returns the count removed. Uses `HashSet<T>.RemoveWhere` as a fast path for `HashSet<T>` consumers; safe for every other `ICollection<T>`.
+- **`ReplaceAll(this ICollection<T>, IEnumerable<T>)`** — clears the collection then appends every item from the new sequence.
+
+### Presence checks
+
+- **`IsEmpty(this ICollection<T>) -> bool`** — `true` when `Count == 0`.
+- **`IsNotEmpty(this ICollection<T>) -> bool`** — `true` when `Count > 0`.
+
+**Features common to every method:**
+
+- Null-safe (throws `ArgumentNullException` for null parameters)
+- Self-aliasing safe (`list.AddRange(list)` and friends are guarded against the BCL's mutate-during-enumerate contract)
+- Read-only-aware (throws `NotSupportedException` for read-only or fixed-size collections, surfacing the underlying type's own contract)
 - Fully documented with XML comments and examples
 
 ## Next Steps
 
-- **[Getting Started](getting-started.md)** - Install the package and write your first code
-- **[API Documentation](../api/index.html)** - Explore the complete API reference
-- **[GitHub Repository](https://github.com/Chris-Wolfgang/ICollection-Extensions)** - View source code and contribute
+- **[Getting Started](getting-started.md)** — Install the package and write your first code
+- **[API Documentation](../api/index.html)** — Explore the complete API reference
+- **[GitHub Repository](https://github.com/Chris-Wolfgang/ICollection-Extensions)** — View source code and contribute
 
 ## License
 

@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 
 namespace Wolfgang.Extensions.ICollection.Tests.Unit;
 
-// ReSharper disable once InconsistentNaming
 public class ICollectionExtensionTests
 {
     [Fact]
@@ -13,7 +12,7 @@ public class ICollectionExtensionTests
         var items = new List<string> { "item1", "item2" };
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentNullException>(() =>  source.AddRange(items));
+        var ex = Assert.Throws<ArgumentNullException>(() => source.AddRange(items));
         Assert.Equal("source", ex.ParamName);
     }
 
@@ -27,7 +26,7 @@ public class ICollectionExtensionTests
         IEnumerable<string> items = null!;
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentNullException>(() =>  source.AddRange(items));
+        var ex = Assert.Throws<ArgumentNullException>(() => source.AddRange(items));
         Assert.Equal("items", ex.ParamName);
     }
 
@@ -92,7 +91,7 @@ public class ICollectionExtensionTests
     {
         // Arrange
         var items = new List<string> { "item1", "item2" };
-        ICollection<string> source = new System.Collections.ObjectModel.ReadOnlyCollection<string>(new List<string> { "existing" });
+        ICollection<string> source = new ReadOnlyCollection<string>(new List<string> { "existing" });
 
         // Act & Assert
         Assert.Throws<NotSupportedException>(() => source.AddRange(items));
@@ -212,7 +211,7 @@ public class ICollectionExtensionTests
     public void AddRange_when_source_is_Collection_type_adds_all_items()
     {
         // Arrange
-        ICollection<string> source = new System.Collections.ObjectModel.Collection<string> { "item1" };
+        ICollection<string> source = new Collection<string> { "item1" };
         var items = new List<string> { "item2", "item3" };
 
         // Act
@@ -344,7 +343,10 @@ public class ICollectionExtensionTests
 
 
 
-    public static TheoryData<ICollection<int>, bool> IsEmptyCollectionTypeCases =>
+    // Cross-collection-type coverage: every standard ICollection<T>
+    // implementation, empty vs non-empty. Re-used by both IsEmpty and
+    // IsNotEmpty tests (the latter just inverts `expectedIsEmpty`).
+    public static TheoryData<ICollection<int>, bool> EmptyStateCases =>
         new()
         {
             { new List<int>(),                  true  },
@@ -358,16 +360,12 @@ public class ICollectionExtensionTests
         };
 
     [Theory]
-    [MemberData(nameof(IsEmptyCollectionTypeCases))]
+    [MemberData(nameof(EmptyStateCases))]
     public void IsEmpty_when_source_is_any_ICollection_implementation_returns_correct_result(
         ICollection<int> source,
-        bool expected)
+        bool expectedIsEmpty)
     {
-        // Act
-        var result = source.IsEmpty();
-
-        // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(expectedIsEmpty, source.IsEmpty());
     }
 
 
@@ -419,30 +417,13 @@ public class ICollectionExtensionTests
 
 
 
-    public static TheoryData<ICollection<int>, bool> IsNotEmptyCollectionTypeCases =>
-        new()
-        {
-            { new List<int>(),                  false },
-            { new List<int> { 1, 2, 3 },        true  },
-            { new HashSet<int>(),               false },
-            { new HashSet<int> { 1, 2, 3 },     true  },
-            { new LinkedList<int>(),            false },
-            { LinkedListWith(1, 2, 3),          true  },
-            { new Collection<int>(),            false },
-            { new Collection<int> { 1, 2, 3 },  true  },
-        };
-
     [Theory]
-    [MemberData(nameof(IsNotEmptyCollectionTypeCases))]
+    [MemberData(nameof(EmptyStateCases))]
     public void IsNotEmpty_when_source_is_any_ICollection_implementation_returns_correct_result(
         ICollection<int> source,
-        bool expected)
+        bool expectedIsEmpty)
     {
-        // Act
-        var result = source.IsNotEmpty();
-
-        // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(!expectedIsEmpty, source.IsNotEmpty());
     }
 
 
@@ -587,7 +568,7 @@ public class ICollectionExtensionTests
     public void RemoveRange_when_source_is_ReadOnly_throws_NotSupportedException()
     {
         ICollection<int> source =
-            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+            new ReadOnlyCollection<int>(new List<int> { 1, 2 });
         Assert.Throws<NotSupportedException>(() => source.RemoveRange(new[] { 1 }));
     }
 
@@ -695,6 +676,24 @@ public class ICollectionExtensionTests
         var removed = source.RemoveWhere(n => n % 2 == 0);
         Assert.Equal(3, removed);
         Assert.Equal(new[] { 1, 3, 5 }, source);
+    }
+
+
+
+    [Fact]
+    public void RemoveWhere_when_source_is_HashSet_uses_native_RemoveWhere()
+    {
+        // HashSet<T> hits the fast path that delegates to
+        // HashSet<T>.RemoveWhere(Predicate<T>) — skipping the temp-list
+        // allocation the generic path takes. Behaviour parity is the
+        // contract: same removal count, same final contents.
+        var set = new HashSet<int> { 1, 2, 3, 4, 5 };
+        ICollection<int> source = set;
+        var removed = source.RemoveWhere(n => n % 2 == 0);
+        Assert.Equal(2, removed);
+        // Order-independent: HashSet<T> enumeration order is not guaranteed,
+        // so compare via SetEquals rather than sequence equality.
+        Assert.True(set.SetEquals(new[] { 1, 3, 5 }));
     }
 
 
@@ -885,7 +884,7 @@ public class ICollectionExtensionTests
     public void AddRangeIf_when_source_is_ReadOnly_throws_NotSupportedException()
     {
         ICollection<int> source =
-            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 0 });
+            new ReadOnlyCollection<int>(new List<int> { 0 });
         Assert.Throws<NotSupportedException>(
             () => source.AddRangeIf(new[] { 1, 2, 3 }, _ => true));
     }
@@ -896,7 +895,7 @@ public class ICollectionExtensionTests
     public void RemoveWhere_when_source_is_ReadOnly_throws_NotSupportedException()
     {
         ICollection<int> source =
-            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+            new ReadOnlyCollection<int>(new List<int> { 1, 2 });
         Assert.Throws<NotSupportedException>(() => source.RemoveWhere(_ => true));
     }
 
@@ -906,7 +905,7 @@ public class ICollectionExtensionTests
     public void ReplaceAll_when_source_is_ReadOnly_throws_NotSupportedException()
     {
         ICollection<int> source =
-            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+            new ReadOnlyCollection<int>(new List<int> { 1, 2 });
         Assert.Throws<NotSupportedException>(() => source.ReplaceAll(new[] { 9 }));
     }
 
@@ -916,7 +915,7 @@ public class ICollectionExtensionTests
     public void AddIfNotContains_single_when_source_is_ReadOnly_throws_NotSupportedException()
     {
         ICollection<int> source =
-            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+            new ReadOnlyCollection<int>(new List<int> { 1, 2 });
         Assert.Throws<NotSupportedException>(() => source.AddIfNotContains(3));
     }
 
@@ -926,7 +925,7 @@ public class ICollectionExtensionTests
     public void AddIfNotContains_many_when_source_is_ReadOnly_throws_NotSupportedException()
     {
         ICollection<int> source =
-            new System.Collections.ObjectModel.ReadOnlyCollection<int>(new List<int> { 1, 2 });
+            new ReadOnlyCollection<int>(new List<int> { 1, 2 });
         Assert.Throws<NotSupportedException>(
             () => source.AddIfNotContains(new[] { 3, 4 }));
     }

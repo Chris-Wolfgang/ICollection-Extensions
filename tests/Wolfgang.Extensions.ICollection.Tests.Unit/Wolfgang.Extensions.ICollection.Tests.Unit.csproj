@@ -8,8 +8,6 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
 
-        <Copyright>Copyright 2026 Chris Wolfgang</Copyright>
-
         <!-- PublicApiAnalyzers is wired into Directory.Build.props (A1/CI3
              canonical), but only library projects under src/ should be
              subjected to public-API tracking. The `Update="..."
