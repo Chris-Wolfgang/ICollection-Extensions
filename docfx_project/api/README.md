@@ -19,5 +19,4 @@ When you run `docfx docfx_project/docfx.json` from the repository root, DocFX wi
 ## Template Placeholders
 
 The `index.md` file uses the following template placeholder:
-- `Wolfgang.Extensions.ICollection` - Will be replaced with your project name
-
+- `{{PROJECT_NAME}}` - Will be replaced with your project name
