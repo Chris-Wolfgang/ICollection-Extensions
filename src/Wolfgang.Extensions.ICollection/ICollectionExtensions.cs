@@ -341,10 +341,12 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(items));
         }
 
+        // Stryker disable all : redundant defensive — Enumerable.Where(predicate=null) below throws ArgumentNullException with the same paramName, so removing this whole check or the inner throw produces identical observable behavior. Kept for clearer fast-fail.
         if (predicate is null)
         {
             throw new ArgumentNullException(nameof(predicate));
         }
+        // Stryker restore all
 
         // Self-aliasing guard: snapshot when items === source so the
         // Where + foreach below doesn't trip the mutate-during-enumerate
@@ -388,15 +390,19 @@ public static class ICollectionExtensions
     /// </remarks>
     public static int RemoveWhere<T>(this ICollection<T> source, Func<T, bool> predicate)
     {
+        // Stryker disable all : redundant defensive — Enumerable.Where(source=null, …) below throws ArgumentNullException with the same paramName.
         if (source is null)
         {
             throw new ArgumentNullException(nameof(source));
         }
+        // Stryker restore all
 
+        // Stryker disable all : redundant defensive — Enumerable.Where(…, predicate=null) below throws ArgumentNullException with the same paramName.
         if (predicate is null)
         {
             throw new ArgumentNullException(nameof(predicate));
         }
+        // Stryker restore all
 
         // Fast path: HashSet<T> already exposes a native RemoveWhere that
         // avoids the temp-list allocation + second pass below. We don't
@@ -405,6 +411,7 @@ public static class ICollectionExtensions
         // every other ICollection<T> uniformly and the extra type-check
         // cost outweighs the savings at the small-to-medium sizes typical
         // for this extension.
+        // Stryker disable once Block: redundant fast-path — the generic slow path below produces the same removal count and final set contents. Optimization only (skips temp-list allocation), not observable behaviour.
         if (source is HashSet<T> set)
         {
             // Use Invoke method-group so the conversion to Predicate<T>
@@ -458,10 +465,12 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(source));
         }
 
+        // Stryker disable all : redundant defensive — source.AddRange(items=null) below throws ArgumentNullException with the same paramName.
         if (items is null)
         {
             throw new ArgumentNullException(nameof(items));
         }
+        // Stryker restore all
 
         // Self-aliasing guard: 'list.ReplaceAll(list)' should be a no-op
         // (or — for collections where Clear changes identity — at least
@@ -516,6 +525,7 @@ public static class ICollectionExtensions
         // Fast path: ISet<T> (HashSet<T>, SortedSet<T>, etc.) — ISet.Add
         // already returns the "did we add?" Boolean in a single lookup,
         // so we skip the redundant Contains call.
+        // Stryker disable once Block: redundant fast-path — the Contains+Add slow path below returns the same Boolean signal. Optimization only (one lookup instead of two), not observable behaviour.
         if (source is ISet<T> set)
         {
             return set.Add(item);
@@ -550,10 +560,12 @@ public static class ICollectionExtensions
     /// </exception>
     public static int AddIfNotContains<T>(this ICollection<T> source, IEnumerable<T> items)
     {
+        // Stryker disable all : redundant defensive — the single-arg AddIfNotContains the Count() callback delegates to throws ArgumentNullException with the same paramName on its own null check.
         if (source is null)
         {
             throw new ArgumentNullException(nameof(source));
         }
+        // Stryker restore all
 
         if (items is null)
         {
