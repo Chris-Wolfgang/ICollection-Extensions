@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/docfx_project/docs/introduction.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/docfx_project/docs/introduction.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -74,11 +74,11 @@
 <h1 id="introduction">Introduction</h1>
 
 <h2 id="welcome-to-wolfgangextensionsicollection">Welcome to Wolfgang.Extensions.ICollection</h2>
-<p>Wolfgang.Extensions.ICollection is a focused .NET library that provides extension methods for the <code>ICollection&lt;T&gt;</code> interface. The library aims to fill gaps in the .NET BCL by providing convenient bulk operation methods that are missing from the base <code>ICollection&lt;T&gt;</code> interface.</p>
+<p>Wolfgang.Extensions.ICollection is a focused .NET library that provides extension methods for the <code>ICollection&lt;T&gt;</code> interface. The library aims to fill gaps in the .NET BCL by providing convenient bulk operation methods, presence checks, and conditional add/remove primitives that are missing from the base <code>ICollection&lt;T&gt;</code> interface.</p>
 <h2 id="the-problem">The Problem</h2>
 <p>While <code>List&lt;T&gt;</code> provides helpful methods like <code>AddRange()</code>, these methods are not available on the <code>ICollection&lt;T&gt;</code> interface that many collection types implement. This forces developers to either:</p>
 <ol>
-<li>Write repetitive foreach loops to add multiple items</li>
+<li>Write repetitive <code>foreach</code> loops to add, remove, filter, or test multiple items</li>
 <li>Cast collections to specific types (losing abstraction)</li>
 <li>Create their own extension methods in every project</li>
 </ol>
@@ -86,46 +86,63 @@
 <p>This library provides well-tested, documented extension methods that work with any <code>ICollection&lt;T&gt;</code> implementation, maintaining the abstraction level while providing the convenience of bulk operations.</p>
 <h2 id="core-philosophy">Core Philosophy</h2>
 <ul>
-<li><strong>Simplicity First</strong> - Small, focused API that does one thing well</li>
-<li><strong>Zero Dependencies</strong> - No external dependencies to worry about</li>
-<li><strong>Type Safety</strong> - Fully generic methods that preserve type information</li>
-<li><strong>Behavioral Consistency</strong> - Respects the underlying collection's behavior and constraints</li>
+<li><strong>Simplicity First</strong> — Small, focused API that does the things the BCL leaves out</li>
+<li><strong>Zero Dependencies</strong> — No external runtime dependencies</li>
+<li><strong>Type Safety</strong> — Fully generic methods that preserve type information</li>
+<li><strong>Behavioral Consistency</strong> — Respects the underlying collection's behavior and constraints; uses native fast paths (<code>HashSet&lt;T&gt;.RemoveWhere</code>, <code>ISet&lt;T&gt;.Add</code>, <code>List&lt;T&gt;</code> capacity pre-allocation) when they exist</li>
 </ul>
 <h2 id="supported-collections">Supported Collections</h2>
 <p>The extension methods work with any type implementing <code>ICollection&lt;T&gt;</code>, including:</p>
 <ul>
-<li><strong>List&lt;T&gt;</strong> - Standard generic list</li>
-<li><strong>HashSet&lt;T&gt;</strong> - Unordered set of unique elements</li>
-<li><strong>LinkedList&lt;T&gt;</strong> - Doubly-linked list</li>
-<li><strong>Collection&lt;T&gt;</strong> - Base class for generic collections</li>
-<li><strong>ObservableCollection&lt;T&gt;</strong> - Collection with change notifications</li>
-<li><strong>Custom implementations</strong> - Any class implementing ICollection&lt;T&gt;</li>
+<li><strong><code>List&lt;T&gt;</code></strong> — Standard generic list (and the target of the <code>AddRange</code> capacity pre-allocation fast path)</li>
+<li><strong><code>HashSet&lt;T&gt;</code></strong> — Unordered set of unique elements (used by the <code>RemoveWhere</code> and <code>AddIfNotContains</code> fast paths)</li>
+<li><strong><code>SortedSet&lt;T&gt;</code></strong> — Sorted set (also covered by the <code>ISet&lt;T&gt;</code> fast path for <code>AddIfNotContains</code>)</li>
+<li><strong><code>LinkedList&lt;T&gt;</code></strong> — Doubly-linked list</li>
+<li><strong><code>Collection&lt;T&gt;</code></strong> — Base class for generic collections</li>
+<li><strong><code>ObservableCollection&lt;T&gt;</code></strong> — Collection with change notifications</li>
+<li><strong>Arrays</strong> — <code>T[]</code> implements <code>ICollection&lt;T&gt;</code> (read-only / fixed-size); query methods (<code>IsEmpty</code>, <code>IsNotEmpty</code>) work; mutating methods throw <code>NotSupportedException</code> cleanly</li>
+<li><strong>Custom implementations</strong> — Any class implementing <code>ICollection&lt;T&gt;</code></li>
 </ul>
 <h2 id="target-frameworks">Target Frameworks</h2>
-<p>Wolfgang.Extensions.ICollection supports multiple .NET platforms:</p>
+<p>Wolfgang.Extensions.ICollection supports a broad set of modern .NET TFMs:</p>
 <ul>
-<li><strong>.NET Framework 4.6.2</strong></li>
-<li><strong>.NET Standard 2.0</strong> (provides compatibility with .NET Core 2.0+, .NET 5+, and newer .NET Framework versions)</li>
-<li><strong>.NET 8.0</strong></li>
-<li><strong>.NET 10.0</strong></li>
+<li><strong><code>.NET Standard 2.0</code></strong> — covers <code>.NET Framework 4.6.1+</code>, <code>.NET Core 2.0+</code>, Mono, Xamarin</li>
+<li><strong><code>.NET Standard 2.1</code></strong> — picks up the BCL improvements available since 2019</li>
+<li><strong><code>.NET 8.0</code></strong> — current LTS</li>
+<li><strong><code>.NET 9.0</code></strong> — latest released runtime</li>
+<li><strong><code>.NET 10.0</code></strong> — active LTS branch</li>
 </ul>
-<p>This broad compatibility ensures the library can be used in virtually any .NET project, from legacy applications to cutting-edge solutions.</p>
 <h2 id="whats-included">What's Included</h2>
-<h3 id="addrange-method">AddRange Method</h3>
-<p>The primary extension method provided by this library is <code>AddRange&lt;T&gt;()</code>, which allows adding multiple items to any <code>ICollection&lt;T&gt;</code> in a single operation.</p>
-<p><strong>Features:</strong></p>
+<h3 id="bulk-additions">Bulk additions</h3>
 <ul>
-<li>Null-safe (throws ArgumentNullException for null parameters)</li>
-<li>Works with any IEnumerable&lt;T&gt; source</li>
-<li>Preserves collection-specific behaviors (e.g., HashSet deduplication)</li>
-<li>Handles empty enumerables gracefully</li>
+<li><strong><code>AddRange(this ICollection&lt;T&gt;, IEnumerable&lt;T&gt;)</code></strong> — appends every item; pre-allocates <code>List&lt;T&gt;</code> capacity when the source exposes <code>Count</code>.</li>
+<li><strong><code>AddRangeIf(this ICollection&lt;T&gt;, IEnumerable&lt;T&gt;, Func&lt;T, bool&gt;)</code></strong> — appends items that satisfy a predicate.</li>
+<li><strong><code>AddIfNotContains(this ICollection&lt;T&gt;, T) -&gt; bool</code></strong> — adds a single item only if it's not already present; returns whether the add happened. Uses <code>ISet&lt;T&gt;.Add</code> as a single-lookup fast path for set consumers.</li>
+<li><strong><code>AddIfNotContains(this ICollection&lt;T&gt;, IEnumerable&lt;T&gt;) -&gt; int</code></strong> — bulk overload; returns the count actually added.</li>
+</ul>
+<h3 id="bulk-removals">Bulk removals</h3>
+<ul>
+<li><strong><code>RemoveRange(this ICollection&lt;T&gt;, IEnumerable&lt;T&gt;)</code></strong> — removes one occurrence of each listed item.</li>
+<li><strong><code>RemoveWhere(this ICollection&lt;T&gt;, Func&lt;T, bool&gt;) -&gt; int</code></strong> — removes every item matching the predicate; returns the count removed. Uses <code>HashSet&lt;T&gt;.RemoveWhere</code> as a fast path for <code>HashSet&lt;T&gt;</code> consumers; safe for every other <code>ICollection&lt;T&gt;</code>.</li>
+<li><strong><code>ReplaceAll(this ICollection&lt;T&gt;, IEnumerable&lt;T&gt;)</code></strong> — clears the collection then appends every item from the new sequence.</li>
+</ul>
+<h3 id="presence-checks">Presence checks</h3>
+<ul>
+<li><strong><code>IsEmpty(this ICollection&lt;T&gt;) -&gt; bool</code></strong> — <code>true</code> when <code>Count == 0</code>.</li>
+<li><strong><code>IsNotEmpty(this ICollection&lt;T&gt;) -&gt; bool</code></strong> — <code>true</code> when <code>Count &gt; 0</code>.</li>
+</ul>
+<p><strong>Features common to every method:</strong></p>
+<ul>
+<li>Null-safe (throws <code>ArgumentNullException</code> for null parameters)</li>
+<li>Self-aliasing safe (<code>list.AddRange(list)</code> and friends are guarded against the BCL's mutate-during-enumerate contract)</li>
+<li>Read-only-aware (throws <code>NotSupportedException</code> for read-only or fixed-size collections, surfacing the underlying type's own contract)</li>
 <li>Fully documented with XML comments and examples</li>
 </ul>
 <h2 id="next-steps">Next Steps</h2>
 <ul>
-<li><strong><a href="getting-started.html">Getting Started</a></strong> - Install the package and write your first code</li>
-<li><strong><a href="../api/index.html">API Documentation</a></strong> - Explore the complete API reference</li>
-<li><strong><a href="https://github.com/Chris-Wolfgang/ICollection-Extensions">GitHub Repository</a></strong> - View source code and contribute</li>
+<li><strong><a href="getting-started.html">Getting Started</a></strong> — Install the package and write your first code</li>
+<li><strong><a href="../api/index.html">API Documentation</a></strong> — Explore the complete API reference</li>
+<li><strong><a href="https://github.com/Chris-Wolfgang/ICollection-Extensions">GitHub Repository</a></strong> — View source code and contribute</li>
 </ul>
 <h2 id="license">License</h2>
 <p>This project is licensed under the MIT License, making it free to use in both open-source and commercial projects.</p>
@@ -133,7 +150,7 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/docfx_project/docs/introduction.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/docfx_project/docs/introduction.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>

@@ -290,7 +290,7 @@ var assemblies = [
   {
     "name": "Wolfgang.Extensions.ICollection",
     "classes": [
-      { "name": "Wolfgang.Extensions.ICollection.ICollectionExtensions", "rp": "Wolfgang.Extensions.ICollection_ICollectionExtensions.html", "cl": 68, "ucl": 1, "cal": 69, "tl": 548, "cb": 57, "tb": 58, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "Wolfgang.Extensions.ICollection.ICollectionExtensions", "rp": "Wolfgang.Extensions.ICollection_ICollectionExtensions.html", "cl": 69, "ucl": 0, "cal": 69, "tl": 581, "cb": 58, "tb": 58, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
 

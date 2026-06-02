@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Chris-Wolfgang/ICollection-Extensions/new/main/apiSpec/new?filename=Wolfgang_Extensions_ICollection_ICollectionExtensions.md&amp;value=---%0Auid%3A%20Wolfgang.Extensions.ICollection.ICollectionExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/Chris-Wolfgang/ICollection-Extensions/new/v0.3.1/apiSpec/new?filename=Wolfgang_Extensions_ICollection_ICollectionExtensions.md&amp;value=---%0Auid%3A%20Wolfgang.Extensions.ICollection.ICollectionExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -75,7 +75,7 @@
 
 
   <h1 id="Wolfgang_Extensions_ICollection_ICollectionExtensions" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions" class="text-break">
-Class ICollectionExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Class ICollectionExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -143,7 +143,7 @@ Class ICollectionExtensions  <a class="header-action link-secondary" title="View
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_AddIfNotContains__1_System_Collections_Generic_ICollection___0__System_Collections_Generic_IEnumerable___0__" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.AddIfNotContains``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
   AddIfNotContains&lt;T&gt;(ICollection&lt;T&gt;, IEnumerable&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L530"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L561"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds each item from <code class="paramref">items</code> to
@@ -203,7 +203,7 @@ in <code class="paramref">source</code>, or repeated within
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_AddIfNotContains__1_System_Collections_Generic_ICollection___0____0_" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.AddIfNotContains``1(System.Collections.Generic.ICollection{``0},``0)">
   AddIfNotContains&lt;T&gt;(ICollection&lt;T&gt;, T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L488"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L518"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds <code class="paramref">item</code> to <code class="paramref">source</code> if it is
@@ -275,7 +275,7 @@ extension generalises the behaviour using
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_AddRangeIf__1_System_Collections_Generic_ICollection___0__System_Collections_Generic_IEnumerable___0__System_Func___0_System_Boolean__" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRangeIf``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
   AddRangeIf&lt;T&gt;(ICollection&lt;T&gt;, IEnumerable&lt;T&gt;, Func&lt;T, bool&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L312"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L329"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds every item from <code class="paramref">items</code> to
@@ -315,6 +315,14 @@ that should be added.</p>
 
 
 
+  <h4 class="section" id="Wolfgang_Extensions_ICollection_ICollectionExtensions_AddRangeIf__1_System_Collections_Generic_ICollection___0__System_Collections_Generic_IEnumerable___0__System_Func___0_System_Boolean___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Self-aliasing (passing the same instance for both
+<code class="paramref">source</code> and <code class="paramref">items</code>) is safe:
+<code class="paramref">items</code> is snapshotted before mutation, so the
+predicate sees a stable view and the matching items are appended
+to the collection without tripping the mutate-during-enumerate
+contract.</p>
+</div>
 
   <h4 class="section">Exceptions</h4>
   <dl class="parameters">
@@ -333,7 +341,7 @@ that should be added.</p>
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_AddRange__1_System_Collections_Generic_ICollection___0__System_Collections_Generic_IEnumerable___0__" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.AddRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
   AddRange&lt;T&gt;(ICollection&lt;T&gt;, IEnumerable&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Add all the specified items to the source collection.</p>
@@ -396,7 +404,7 @@ adds them one by one to the <code class="paramref">source</code> collection usin
 </p>
 <p>
 <strong>Edge Cases and Behavior:</strong>
-<ul><li>If <code class="paramref">items</code> is an empty enumerable, no items are added and the source collection remains unchanged.</li><li>If the source collection has constraints (e.g., unique items in HashSet), the Add method's behavior is preserved.</li><li>If the source collection is read-only, the Add method will throw a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a>.</li><li>The method does not check for duplicates; duplicate handling depends on the underlying collection implementation.</li><li>When <code class="paramref">source</code> is a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List&lt;T&gt;</a> and <code class="paramref">items</code> implements <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>, the list's capacity is pre-allocated to avoid repeated resizing.</li><li>This method is not thread-safe. If multiple threads access the collection concurrently, external synchronization is required.</li></ul>
+<ul><li>If <code class="paramref">items</code> is an empty enumerable, no items are added and the source collection remains unchanged.</li><li>If the source collection has constraints (e.g., unique items in HashSet), the Add method's behavior is preserved.</li><li>If the source collection is read-only, the Add method will throw a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a>.</li><li>The method does not check for duplicates; duplicate handling depends on the underlying collection implementation.</li><li>When <code class="paramref">source</code> is a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List&lt;T&gt;</a> and <code class="paramref">items</code> implements <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>, the list's capacity is pre-allocated to avoid repeated resizing.</li><li>Self-aliasing (passing the same instance for both <code class="paramref">source</code> and <code class="paramref">items</code>) is safe: <code class="paramref">items</code> is snapshotted before mutation, so the call effectively appends a copy of the current contents to the collection.</li><li>This method is not thread-safe. If multiple threads access the collection concurrently, external synchronization is required.</li></ul>
 
 </div>
 
@@ -416,7 +424,7 @@ adds them one by one to the <code class="paramref">source</code> collection usin
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_IsEmpty__1_System_Collections_Generic_ICollection___0__" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.IsEmpty``1(System.Collections.Generic.ICollection{``0})">
   IsEmpty&lt;T&gt;(ICollection&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L169"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the collection contains no elements.</p>
@@ -478,8 +486,10 @@ This extension method provides a cleaner, more readable alternative to checking
 </p>
 <p>
 This method checks the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1.count">Count</a> property directly, providing
-a clear, self-documenting emptiness check. The exact performance depends on the concrete
-collection type, but is typically O(1) for common implementations.
+a clear, self-documenting emptiness check. Typically <code>O(1)</code> for standard
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a> implementations; the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1.count">Count</a>
+contract does not formally guarantee constant time, so a custom implementation could
+be slower.
 </p>
 <p>
 <strong>Edge Cases and Behavior:</strong>
@@ -500,7 +510,7 @@ collection type, but is typically O(1) for common implementations.
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_IsNotEmpty__1_System_Collections_Generic_ICollection___0__" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.IsNotEmpty``1(System.Collections.Generic.ICollection{``0})">
   IsNotEmpty&lt;T&gt;(ICollection&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L232"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L237"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the collection contains one or more elements.</p>
@@ -562,8 +572,10 @@ This extension method provides a cleaner, more readable alternative to checking
 </p>
 <p>
 This method checks the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1.count">Count</a> property directly, providing
-a clear, self-documenting emptiness check. The exact performance depends on the concrete
-collection type, but is typically O(1) for common implementations.
+a clear, self-documenting non-emptiness check. Typically <code>O(1)</code> for standard
+<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a> implementations; the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1.count">Count</a>
+contract does not formally guarantee constant time, so a custom implementation could
+be slower.
 </p>
 <p>
 <strong>Edge Cases and Behavior:</strong>
@@ -584,7 +596,7 @@ collection type, but is typically O(1) for common implementations.
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_RemoveRange__1_System_Collections_Generic_ICollection___0__System_Collections_Generic_IEnumerable___0__" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.RemoveRange``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
   RemoveRange&lt;T&gt;(ICollection&lt;T&gt;, IEnumerable&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L265"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L274"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Removes one occurrence of each item in <code class="paramref">items</code>
@@ -625,7 +637,11 @@ from <code class="paramref">source</code>.</p>
 duplicates and the same value appears multiple times in
 <code class="paramref">items</code>, multiple occurrences are removed (one per
 call). Items in <code class="paramref">items</code> that are not present in
-<code class="paramref">source</code> are silently skipped.</p>
+<code class="paramref">source</code> are silently skipped. Self-aliasing
+(passing the same instance for both <code class="paramref">source</code> and
+<code class="paramref">items</code>) is safe: <code class="paramref">items</code> is
+snapshotted before mutation, so the call empties the collection
+cleanly without tripping the mutate-during-enumerate contract.</p>
 </div>
 
   <h4 class="section">Exceptions</h4>
@@ -644,7 +660,7 @@ call). Items in <code class="paramref">items</code> that are not present in
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_RemoveWhere__1_System_Collections_Generic_ICollection___0__System_Func___0_System_Boolean__" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.RemoveWhere``1(System.Collections.Generic.ICollection{``0},System.Func{``0,System.Boolean})">
   RemoveWhere&lt;T&gt;(ICollection&lt;T&gt;, Func&lt;T, bool&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L372"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L391"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Removes every item from <code class="paramref">source</code> for which
@@ -712,7 +728,7 @@ is null.</p>
 
   <h3 id="Wolfgang_Extensions_ICollection_ICollectionExtensions_ReplaceAll__1_System_Collections_Generic_ICollection___0__System_Collections_Generic_IEnumerable___0__" data-uid="Wolfgang.Extensions.ICollection.ICollectionExtensions.ReplaceAll``1(System.Collections.Generic.ICollection{``0},System.Collections.Generic.IEnumerable{``0})">
   ReplaceAll&lt;T&gt;(ICollection&lt;T&gt;, IEnumerable&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L433"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L461"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Clears <code class="paramref">source</code> and then adds every item from
@@ -752,7 +768,11 @@ is null.</p>
 <code class="paramref">items</code> throws midway through, the collection is
 left empty (or with whatever items were already appended). Callers
 that need atomic replacement should materialise the new contents
-first.</p>
+first. Self-aliasing (passing the same instance for both
+<code class="paramref">source</code> and <code class="paramref">items</code>) is safe:
+<code class="paramref">items</code> is snapshotted before the <code>Clear</code>, so
+the call is effectively a no-op rather than silently wiping the
+collection.</p>
 </div>
 
   <h4 class="section">Exceptions</h4>
@@ -771,7 +791,7 @@ first.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/src/Wolfgang.Extensions.ICollection/ICollectionExtensions.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

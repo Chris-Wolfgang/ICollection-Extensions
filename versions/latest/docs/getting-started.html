@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/docfx_project/docs/getting-started.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/docfx_project/docs/getting-started.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -100,21 +100,36 @@
 <p>First, add the namespace to your C# file:</p>
 <pre><code class="lang-csharp">using Wolfgang.Extensions.ICollection;
 </code></pre>
-<h3 id="2-use-addrange-on-any-icollectiont">2. Use AddRange on Any ICollection&lt;T&gt;</h3>
-<p>Now you can use <code>AddRange()</code> on any collection implementing <code>ICollection&lt;T&gt;</code>:</p>
-<pre><code class="lang-csharp">// With List&lt;T&gt;
-ICollection&lt;string&gt; names = new List&lt;string&gt;();
+<h3 id="2-bulk-additions">2. Bulk Additions</h3>
+<p><code>AddRange</code> works on any <code>ICollection&lt;T&gt;</code> — <code>List&lt;T&gt;</code>, <code>HashSet&lt;T&gt;</code>, <code>LinkedList&lt;T&gt;</code>, <code>Collection&lt;T&gt;</code>, <code>ObservableCollection&lt;T&gt;</code>, and any custom implementation:</p>
+<pre><code class="lang-csharp">ICollection&lt;string&gt; names = new List&lt;string&gt;();
 names.AddRange(new[] { &quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot; });
 
-// With HashSet&lt;T&gt;
 ICollection&lt;int&gt; numbers = new HashSet&lt;int&gt;();
-numbers.AddRange(new[] { 1, 2, 3, 4, 5 });
+numbers.AddRange(new[] { 1, 2, 3, 4, 5 });    // HashSet dedups → unique items only
 
-// With LinkedList&lt;T&gt;
 ICollection&lt;double&gt; values = new LinkedList&lt;double&gt;();
 values.AddRange(new[] { 1.5, 2.5, 3.5 });
 </code></pre>
-<h3 id="3-check-if-a-collection-is-empty-or-has-items">3. Check If a Collection Is Empty or Has Items</h3>
+<p>For predicate-gated bulk add, use <code>AddRangeIf</code>:</p>
+<pre><code class="lang-csharp">ICollection&lt;int&gt; evens = new List&lt;int&gt;();
+evens.AddRangeIf(Enumerable.Range(1, 20), n =&gt; n % 2 == 0);   // → 2, 4, …, 20
+</code></pre>
+<p>For &quot;add only if not already present&quot;, use <code>AddIfNotContains</code>:</p>
+<pre><code class="lang-csharp">ICollection&lt;int&gt; seen = new List&lt;int&gt; { 1, 2, 3 };
+bool addedThree = seen.AddIfNotContains(3);   // → false (already present)
+bool addedFour  = seen.AddIfNotContains(4);   // → true; collection now { 1, 2, 3, 4 }
+int  addedMany  = seen.AddIfNotContains(new[] { 4, 5, 6 });   // → 2 (only 5 and 6 were new)
+</code></pre>
+<p><code>HashSet&lt;T&gt;</code> and <code>SortedSet&lt;T&gt;</code> get a single-lookup fast path that uses <code>ISet&lt;T&gt;.Add</code> directly (and honours the set's own <code>IEqualityComparer&lt;T&gt;</code>).</p>
+<h3 id="3-bulk-removals">3. Bulk Removals</h3>
+<pre><code class="lang-csharp">ICollection&lt;int&gt; nums = new List&lt;int&gt; { 1, 2, 3, 4, 5, 6 };
+nums.RemoveRange(new[] { 1, 6 });               // → 2, 3, 4, 5
+int removed = nums.RemoveWhere(n =&gt; n &gt; 3);     // → 2 (collection now { 2, 3 })
+nums.ReplaceAll(new[] { 10, 20, 30 });          // → 10, 20, 30
+</code></pre>
+<p><code>RemoveWhere</code> uses <code>HashSet&lt;T&gt;.RemoveWhere</code> as a fast path for <code>HashSet&lt;T&gt;</code> consumers; other implementations get a safe materialise-then-mutate pattern that never trips the BCL's mutate-during-enumerate contract.</p>
+<h3 id="4-presence-checks">4. Presence Checks</h3>
 <p>Use <code>IsEmpty()</code> and <code>IsNotEmpty()</code> for cleaner, more readable emptiness checks:</p>
 <pre><code class="lang-csharp">ICollection&lt;string&gt; names = new List&lt;string&gt;();
 
@@ -133,8 +148,7 @@ if (names.IsNotEmpty())
 }
 </code></pre>
 <blockquote>
-<p><strong>Readability note:</strong> <code>IsEmpty()</code> and <code>IsNotEmpty()</code> use <code>ICollection&lt;T&gt;.Count</code> directly (O(1)),
-providing a clearer, self-documenting alternative to <code>!Enumerable.Any()</code>.</p>
+<p><strong>Readability note:</strong> <code>IsEmpty()</code> and <code>IsNotEmpty()</code> use <code>ICollection&lt;T&gt;.Count</code> directly (typically <code>O(1)</code> for standard <code>ICollection&lt;T&gt;</code> implementations), providing a clearer, self-documenting alternative to <code>!Enumerable.Any()</code>.</p>
 </blockquote>
 <h2 id="common-scenarios">Common Scenarios</h2>
 <h3 id="scenario-1-adding-items-from-multiple-sources">Scenario 1: Adding Items from Multiple Sources</h3>
@@ -145,15 +159,15 @@ public class DataAggregator
     public ICollection&lt;Product&gt; GetAllProducts()
     {
         ICollection&lt;Product&gt; allProducts = new List&lt;Product&gt;();
-        
+
         // Add products from different sources
         allProducts.AddRange(GetDatabaseProducts());
         allProducts.AddRange(GetCachedProducts());
         allProducts.AddRange(GetApiProducts());
-        
+
         return allProducts;
     }
-    
+
     private IEnumerable&lt;Product&gt; GetDatabaseProducts() { /* ... */ }
     private IEnumerable&lt;Product&gt; GetCachedProducts() { /* ... */ }
     private IEnumerable&lt;Product&gt; GetApiProducts() { /* ... */ }
@@ -167,12 +181,8 @@ public class NumberProcessor
 {
     public ICollection&lt;int&gt; GetEvenNumbers(int max)
     {
-        var evenNumbers = Enumerable.Range(1, max)
-                                   .Where(n =&gt; n % 2 == 0);
-        
         ICollection&lt;int&gt; result = new List&lt;int&gt;();
-        result.AddRange(evenNumbers);
-        
+        result.AddRangeIf(Enumerable.Range(1, max), n =&gt; n % 2 == 0);
         return result;
     }
 }
@@ -183,78 +193,93 @@ public class NumberProcessor
 public class ReportBuilder
 {
     private ICollection&lt;string&gt; _reportLines = new List&lt;string&gt;();
-    
+
     public void AddHeader()
     {
-        _reportLines.AddRange(new[] 
-        { 
+        _reportLines.AddRange(new[]
+        {
             &quot;===================&quot;,
             &quot;  Monthly Report   &quot;,
             &quot;===================&quot;
         });
     }
-    
+
     public void AddSection(string title, IEnumerable&lt;string&gt; data)
     {
         _reportLines.AddRange(new[] { &quot;&quot;, $&quot;## {title}&quot;, &quot;&quot; });
         _reportLines.AddRange(data);
     }
-    
+
     public IEnumerable&lt;string&gt; GetReport() =&gt; _reportLines;
 }
 </code></pre>
-<h3 id="scenario-4-using-with-different-collection-types">Scenario 4: Using with Different Collection Types</h3>
+<h3 id="scenario-4-set-aware-deduplication">Scenario 4: Set-Aware Deduplication</h3>
 <pre><code class="lang-csharp">using Wolfgang.Extensions.ICollection;
-using System.Collections.ObjectModel;
 
-public class CollectionExamples
+public class TagAggregator
 {
-    public void DemonstrateWithHashSet()
+    public ICollection&lt;string&gt; CollectUniqueTags(IEnumerable&lt;IEnumerable&lt;string&gt;&gt; tagLists)
     {
-        // HashSet automatically handles duplicates
-        ICollection&lt;int&gt; uniqueNumbers = new HashSet&lt;int&gt; { 1, 2, 3 };
-        uniqueNumbers.AddRange(new[] { 3, 4, 5, 5 }); // Duplicates ignored
-        // Result: 1, 2, 3, 4, 5
+        // HashSet&lt;T&gt; typed as ICollection&lt;T&gt; so the extension binds AND
+        // the ISet&lt;T&gt;.Add fast path kicks in for AddIfNotContains.
+        ICollection&lt;string&gt; unique = new HashSet&lt;string&gt;(StringComparer.OrdinalIgnoreCase);
+        foreach (var tags in tagLists)
+        {
+            unique.AddIfNotContains(tags);
+        }
+        return unique;
     }
-    
-    public void DemonstrateWithObservableCollection()
+}
+</code></pre>
+<h3 id="scenario-5-replacing-the-contents-of-an-observable-collection">Scenario 5: Replacing the Contents of an Observable Collection</h3>
+<pre><code class="lang-csharp">using System.Collections.ObjectModel;
+using Wolfgang.Extensions.ICollection;
+
+public class ViewModel
+{
+    public ObservableCollection&lt;string&gt; Items { get; } = new();
+
+    public void Refresh(IEnumerable&lt;string&gt; newItems)
     {
-        // ObservableCollection raises change notifications
-        var observable = new ObservableCollection&lt;string&gt;();
-        observable.CollectionChanged += (s, e) =&gt; 
-            Console.WriteLine($&quot;Items added: {e.NewItems?.Count ?? 0}&quot;);
-        
-        ICollection&lt;string&gt; collection = observable;
-        collection.AddRange(new[] { &quot;A&quot;, &quot;B&quot;, &quot;C&quot; });
-        // Notifications are raised for each item
+        // ReplaceAll: clear + re-populate. The UI binding sees the full
+        // turnover (one Reset + one Add-per-item, or one Add range
+        // depending on the implementation).
+        ICollection&lt;string&gt; bindable = Items;
+        bindable.ReplaceAll(newItems);
     }
 }
 </code></pre>
 <h2 id="error-handling">Error Handling</h2>
-<p>The <code>AddRange</code> method performs validation and throws exceptions in these cases:</p>
+<p>All methods perform argument validation and surface the target collection's own contract:</p>
 <pre><code class="lang-csharp">using Wolfgang.Extensions.ICollection;
+using System.Collections.ObjectModel;
 
 // ArgumentNullException if source is null
-ICollection&lt;string&gt; nullCollection = null;
-nullCollection.AddRange(new[] { &quot;item&quot; }); // Throws ArgumentNullException
+ICollection&lt;string&gt;? nullCollection = null;
+nullCollection!.AddRange(new[] { &quot;item&quot; });   // Throws ArgumentNullException(&quot;source&quot;)
 
 // ArgumentNullException if items is null
 ICollection&lt;string&gt; collection = new List&lt;string&gt;();
-collection.AddRange(null); // Throws ArgumentNullException
+collection.AddRange(items: null!);             // Throws ArgumentNullException(&quot;items&quot;)
 
-// NotSupportedException if collection is read-only
+// NotSupportedException if collection is read-only (ReadOnlyCollection&lt;T&gt;, T[], etc.)
 ICollection&lt;int&gt; readOnly = new ReadOnlyCollection&lt;int&gt;(new[] { 1, 2, 3 });
-readOnly.AddRange(new[] { 4, 5 }); // Throws NotSupportedException
+readOnly.AddRange(new[] { 4, 5 });             // Throws NotSupportedException
+
+ICollection&lt;int&gt; array = new int[5];
+array.RemoveRange(new[] { 1 });                // Same — arrays are fixed-size
+
+// ArgumentNullException if predicate is null (AddRangeIf / RemoveWhere)
+collection.RemoveWhere(predicate: null!);      // Throws ArgumentNullException(&quot;predicate&quot;)
 </code></pre>
 <h2 id="important-considerations">Important Considerations</h2>
 <h3 id="thread-safety">Thread Safety</h3>
-<p>The extension methods (<code>AddRange</code>, <code>IsEmpty</code>, <code>IsNotEmpty</code>) are <strong>not thread-safe</strong>. If you need to access collections from multiple threads:</p>
+<p>The extension methods are <strong>not thread-safe</strong>. If you need to access collections from multiple threads:</p>
 <pre><code class="lang-csharp">using Wolfgang.Extensions.ICollection;
 
 ICollection&lt;int&gt; collection = new List&lt;int&gt;();
 var lockObject = new object();
 
-// Thread-safe usage
 lock (lockObject)
 {
     collection.AddRange(itemsFromThreadA);
@@ -265,30 +290,32 @@ lock (lockObject)
     collection.AddRange(itemsFromThreadB);
 }
 </code></pre>
+<h3 id="self-aliasing">Self-Aliasing</h3>
+<p>Passing the same collection as both <code>source</code> and <code>items</code> (e.g. <code>list.AddRange(list)</code>) is safe for every mutating method that takes an <code>IEnumerable&lt;T&gt;</code> — each method snapshots <code>items</code> via <code>ReferenceEquals</code> before mutating, so the call doesn't trip the BCL's mutate-during-enumerate contract:</p>
+<ul>
+<li><code>list.AddRange(list)</code> — appends a copy of the current contents</li>
+<li><code>list.AddRangeIf(list, pred)</code> — appends the items in the current contents that satisfy the predicate</li>
+<li><code>list.RemoveRange(list)</code> — empties the collection</li>
+<li><code>list.ReplaceAll(list)</code> — no-op (snapshot is restored after <code>Clear</code>)</li>
+</ul>
 <h3 id="performance">Performance</h3>
-<p>For very large collections, consider the performance characteristics:</p>
-<pre><code class="lang-csharp">using Wolfgang.Extensions.ICollection;
-
-// For List&lt;T&gt;, this is efficient
-ICollection&lt;int&gt; list = new List&lt;int&gt;(capacity: 10000);
-list.AddRange(Enumerable.Range(1, 10000)); // O(n)
-
-// For HashSet&lt;T&gt;, duplicate checking occurs for each item
-ICollection&lt;int&gt; hashSet = new HashSet&lt;int&gt;();
-hashSet.AddRange(Enumerable.Range(1, 10000)); // O(n) with hash checks
-</code></pre>
+<p>The methods include fast paths where it matters:</p>
+<ul>
+<li><strong><code>AddRange</code></strong> pre-allocates <code>List&lt;T&gt;.Capacity</code> when the source exposes <code>Count</code>, avoiding the amortised-doubling growth path</li>
+<li><strong><code>RemoveWhere</code></strong> delegates to <code>HashSet&lt;T&gt;.RemoveWhere(Predicate&lt;T&gt;)</code> when the receiver is a <code>HashSet&lt;T&gt;</code> (skips the temp-list allocation)</li>
+<li><strong><code>AddIfNotContains(T)</code></strong> delegates to <code>ISet&lt;T&gt;.Add</code> when the receiver is any <code>ISet&lt;T&gt;</code> (single lookup instead of <code>Contains</code> + <code>Add</code>)</li>
+</ul>
+<p>Otherwise the cost is the obvious shape: O(n) over the input, with each per-item cost matching the target collection's own <code>Add</code> / <code>Remove</code> / <code>Contains</code>.</p>
 <h3 id="empty-collections">Empty Collections</h3>
 <p>Adding an empty enumerable is safe and does nothing:</p>
-<pre><code class="lang-csharp">using Wolfgang.Extensions.ICollection;
-
-ICollection&lt;string&gt; collection = new List&lt;string&gt; { &quot;existing&quot; };
-collection.AddRange(Enumerable.Empty&lt;string&gt;()); // No exception, collection unchanged
+<pre><code class="lang-csharp">ICollection&lt;string&gt; collection = new List&lt;string&gt; { &quot;existing&quot; };
+collection.AddRange(Enumerable.Empty&lt;string&gt;());   // No exception, collection unchanged
 </code></pre>
 <h2 id="next-steps">Next Steps</h2>
 <ul>
-<li><strong><a href="../api/index.html">API Documentation</a></strong> - Explore detailed API documentation</li>
-<li><strong><a href="introduction.html">Introduction</a></strong> - Learn more about the library's design</li>
-<li><strong><a href="https://github.com/Chris-Wolfgang/ICollection-Extensions">GitHub Repository</a></strong> - View source code and examples</li>
+<li><strong><a href="../api/index.html">API Documentation</a></strong> — Explore detailed API documentation</li>
+<li><strong><a href="introduction.html">Introduction</a></strong> — Learn more about the library's design</li>
+<li><strong><a href="https://github.com/Chris-Wolfgang/ICollection-Extensions">GitHub Repository</a></strong> — View source code and examples</li>
 </ul>
 <h2 id="getting-help">Getting Help</h2>
 <p>If you encounter issues or have questions:</p>
@@ -301,7 +328,7 @@ collection.AddRange(Enumerable.Empty&lt;string&gt;()); // No exception, collecti
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/main/docfx_project/docs/getting-started.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/Chris-Wolfgang/ICollection-Extensions/blob/v0.3.1/docfx_project/docs/getting-started.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>
