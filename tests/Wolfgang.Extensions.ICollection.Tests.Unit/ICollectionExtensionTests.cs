@@ -681,6 +681,24 @@ public class ICollectionExtensionTests
 
 
     [Fact]
+    public void RemoveWhere_when_source_is_HashSet_uses_native_RemoveWhere()
+    {
+        // HashSet<T> hits the fast path that delegates to
+        // HashSet<T>.RemoveWhere(Predicate<T>) — skipping the temp-list
+        // allocation the generic path takes. Behaviour parity is the
+        // contract: same removal count, same final contents.
+        var set = new HashSet<int> { 1, 2, 3, 4, 5 };
+        ICollection<int> source = set;
+        var removed = source.RemoveWhere(n => n % 2 == 0);
+        Assert.Equal(2, removed);
+        // Order-independent: HashSet<T> enumeration order is not guaranteed,
+        // so compare via SetEquals rather than sequence equality.
+        Assert.True(set.SetEquals(new[] { 1, 3, 5 }));
+    }
+
+
+
+    [Fact]
     public void RemoveWhere_returns_zero_when_nothing_matches()
     {
         ICollection<int> source = new List<int> { 1, 3, 5 };
