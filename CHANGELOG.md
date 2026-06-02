@@ -79,9 +79,12 @@ and canonical workflow updates.
 - `src` and test csprojs — dropped redundant `<Copyright>` (test)
   and `<Title>$(AssemblyName)</Title>` (src); both inherit from
   `Directory.Build.props` / MSBuild defaults respectively.
-- `assets/icon.ico` — moved out of the src project directory; the
-  binary is retained as a fleet asset rather than a per-project
-  resource.
+- `assets/icon.ico` — fleet-asset copy of the icon added alongside
+  the existing `src/Wolfgang.Extensions.ICollection/icon.ico` (which
+  is still referenced by `<ApplicationIcon>` in the csproj and
+  packed into the `.nupkg` via the `<Content Include="icon.ico" />`
+  ItemGroup). The new `assets/` copy mirrors `assets/icon.png` for
+  fleet-wide consistency.
 
 ### Fixed
 
