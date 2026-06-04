@@ -1,7 +1,7 @@
 Summary
-  Generated on: 6/2/2026 - 2:13:51 AM
-  Coverage date: 6/2/2026 - 2:13:46 AM - 6/2/2026 - 2:13:49 AM
-  Parser: MultiReport (3x Cobertura)
+  Generated on: 6/4/2026 - 1:30:33 AM
+  Coverage date: 6/4/2026 - 1:30:31 AM
+  Parser: Cobertura
   Assemblies: 1
   Classes: 1
   Files: 1
