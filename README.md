@@ -119,14 +119,14 @@ Self-aliasing is safe by construction: `list.AddRange(list)` snapshots the sourc
 
 ---
 
-## 🎯 Target Frameworks
+## 🎯 Supported Frameworks
 
-| Framework | Versions |
-|-----------|----------|
-| .NET Standard | .NET Standard 2.0, .NET Standard 2.1 |
-| .NET | .NET 8.0, .NET 9.0, .NET 10.0 |
+This library targets:
 
----
+- **.NET Standard:** 2.0, 2.1
+- **.NET:** 8.0, 9.0, 10.0
+
+See the [NuGet package page](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/) for the authoritative per-TFM compatibility matrix.
 
 ## 🔍 Code Quality & Static Analysis
 
