@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788621260214,
+  "lastUpdate": 1789615372019,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "BenchmarkDotNet": [
@@ -838,6 +838,138 @@ window.BENCHMARK_DATA = {
             "value": 38714.02755737305,
             "unit": "ns",
             "range": "± 231.69872432566112"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "321c12f173485340ff01d112464b789fd393a8ea",
+          "message": "ci: pin every workflow action to a commit SHA with an exact # vX.Y.Z comment (#235)\n\nRan repo-template's scripts/pin-actions.ps1 -PinTags: tag references become\nSHA pins and major-only comments (# v7) become the exact tag on the pinned\ncommit (# v7.0.1), so zizmor's ref-version-mismatch stops firing when the\nmajor tag moves on. Only the ref/comment text changed. Dependabot keeps the\nprecision it finds, so this stays converted.\n\n4 already exact, 40 line(s) rewritten, 39 tag reference(s), 0 pinned SHA(s) with no tag\n\nRefs Chris-Wolfgang/repo-template#447\n\nCo-authored-by: Chris Wolfgang <cwolfgan@ptd.net>\nCo-authored-by: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-16T23:19:10-04:00",
+          "tree_id": "36cca4d309c8ff8701fc45603989adc4a0e9eafa",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/321c12f173485340ff01d112464b789fd393a8ea"
+        },
+        "date": 1789615370697,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_fast_path_List_target",
+            "value": 1205.9031066894531,
+            "unit": "ns",
+            "range": "± 13.383807024170288"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_slow_path_LinkedList_target",
+            "value": 13378.764439900717,
+            "unit": "ns",
+            "range": "± 408.21797829456966"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_empty_collection",
+            "value": 0.0010537455479303996,
+            "unit": "ns",
+            "range": "± 0.0018251408272649575"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_nonempty_collection",
+            "value": 0.30560848116874695,
+            "unit": "ns",
+            "range": "± 0.003842824259944743"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_empty_collection",
+            "value": 0.03904416784644127,
+            "unit": "ns",
+            "range": "± 0.03424079481146526"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_nonempty_collection",
+            "value": 0.3314150497317314,
+            "unit": "ns",
+            "range": "± 0.06709371064334294"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_List_target",
+            "value": 49028.89604695638,
+            "unit": "ns",
+            "range": "± 83.44310812337919"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_LinkedList_target",
+            "value": 18627.71288553874,
+            "unit": "ns",
+            "range": "± 166.20787840888366"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_all_match",
+            "value": 3653.0591049194336,
+            "unit": "ns",
+            "range": "± 38.12637146721216"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_none_match",
+            "value": 979.8745708465576,
+            "unit": "ns",
+            "range": "± 3.308166694554562"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_fast_path_HashSet_target",
+            "value": 10905.31337483724,
+            "unit": "ns",
+            "range": "± 145.48671606035296"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_slow_path_List_target",
+            "value": 34731.60516357422,
+            "unit": "ns",
+            "range": "± 165.2005592866473"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_List_target",
+            "value": 1245.1898708343506,
+            "unit": "ns",
+            "range": "± 2.1214709608237357"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_LinkedList_target",
+            "value": 27942.059244791668,
+            "unit": "ns",
+            "range": "± 177.57051740103316"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_fast_path_HashSet_target",
+            "value": 9924.887903849283,
+            "unit": "ns",
+            "range": "± 248.00425426958947"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_slow_path_List_target",
+            "value": 34533.72985839844,
+            "unit": "ns",
+            "range": "± 113.07440880936956"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_HashSet_target",
+            "value": 13186.240463256836,
+            "unit": "ns",
+            "range": "± 93.24449959452382"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_List_target",
+            "value": 37550.46643066406,
+            "unit": "ns",
+            "range": "± 57.44219414687198"
           }
         ]
       }
