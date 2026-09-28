@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790115747196,
+  "lastUpdate": 1790603109984,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "BenchmarkDotNet": [
@@ -1102,6 +1102,138 @@ window.BENCHMARK_DATA = {
             "value": 37697.54026285807,
             "unit": "ns",
             "range": "± 181.24751929826175"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "05d575c715c2d27b661ba1dd0e444b9dd840388a",
+          "message": "fix(code-scanning): remove redundant usings in benchmarks (#273)\n\n* fix(code-scanning): remove redundant using directives\n\nThe library enabled ImplicitUsings only on net8.0+, so InspectCode's\nnet8.0 slice flagged the explicit System / System.Collections.Generic /\nSystem.Linq usings as redundant, while netstandard2.0/2.1 still need\nthem. Drop the conditional ImplicitUsings block so every TFM compiles\nfrom the same explicit usings. In the benchmarks project, remove the\nunused `using System;` and the `using Wolfgang.Extensions.ICollection;`\nthat the enclosing child namespace already brings into scope.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* revert: restore net8.0+ ImplicitUsings in the library project\n\nDropping the conditional ImplicitUsings did not clear InspectCode's\nRedundantUsingDirective findings on ICollectionExtensions.cs (reproduced\nlocally with jb inspectcode). Deleting those usings breaks every TFM\n(80 errors: CS0307, `ICollection<T>` resolves to the enclosing\nWolfgang.Extensions.ICollection namespace), so the findings are false\npositives and the csproj change was not needed. This PR now only cleans\nup the benchmarks file.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-28T09:41:05-04:00",
+          "tree_id": "36ef5e84b5a47c085935729702b8021193fd97f8",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/05d575c715c2d27b661ba1dd0e444b9dd840388a"
+        },
+        "date": 1790603107538,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_fast_path_List_target",
+            "value": 1027.9054018656414,
+            "unit": "ns",
+            "range": "± 46.750936888392765"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_slow_path_LinkedList_target",
+            "value": 11697.502329508463,
+            "unit": "ns",
+            "range": "± 212.3444388663467"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_empty_collection",
+            "value": 0,
+            "unit": "ns",
+            "range": "± 0"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_nonempty_collection",
+            "value": 0.00023442630966504416,
+            "unit": "ns",
+            "range": "± 0.00020702255457280384"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_empty_collection",
+            "value": 0.00022330693900585175,
+            "unit": "ns",
+            "range": "± 0.00038677896404081956"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_nonempty_collection",
+            "value": 0.007107571388284366,
+            "unit": "ns",
+            "range": "± 0.011340844954110465"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_List_target",
+            "value": 43056.58917236328,
+            "unit": "ns",
+            "range": "± 145.48090724333815"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_LinkedList_target",
+            "value": 15848.196584065756,
+            "unit": "ns",
+            "range": "± 104.07595965767723"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_all_match",
+            "value": 2638.1303367614746,
+            "unit": "ns",
+            "range": "± 19.24316109085092"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_none_match",
+            "value": 773.6833759943644,
+            "unit": "ns",
+            "range": "± 0.7490044487566678"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_fast_path_HashSet_target",
+            "value": 8426.279396057129,
+            "unit": "ns",
+            "range": "± 45.11485535335765"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_slow_path_List_target",
+            "value": 25712.084554036457,
+            "unit": "ns",
+            "range": "± 38.1644264339195"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_List_target",
+            "value": 1106.7001450856526,
+            "unit": "ns",
+            "range": "± 23.618022404345737"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_LinkedList_target",
+            "value": 25441.06657918294,
+            "unit": "ns",
+            "range": "± 779.5123782711004"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_fast_path_HashSet_target",
+            "value": 7637.863057454427,
+            "unit": "ns",
+            "range": "± 98.2303109240275"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_slow_path_List_target",
+            "value": 27211.814565022785,
+            "unit": "ns",
+            "range": "± 78.41865641420883"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_HashSet_target",
+            "value": 11657.881368001303,
+            "unit": "ns",
+            "range": "± 152.9161811791308"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_List_target",
+            "value": 27569.609049479168,
+            "unit": "ns",
+            "range": "± 91.91982644705845"
           }
         ]
       }
