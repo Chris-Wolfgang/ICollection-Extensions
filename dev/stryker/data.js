@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790490383119,
+  "lastUpdate": 1791101483544,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "Mutation score": [
@@ -21,6 +21,33 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/771490fc6a35119011cbc360d6dd3f12e638a56d"
         },
         "date": 1790490379451,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "Mutation score",
+            "value": 100,
+            "unit": "%"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang",
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "b862d0e8889adc103b565c6e94a3ca328e8c00cd",
+          "message": "chore: explicit usings on every TFM (no implicit/global usings in multi-TFM projects) (#276)\n\nRemove ImplicitUsings (src net8+/net9/net10 slices, tests all TFMs) and the\n<Using Include=\"Xunit\" /> global using from the test project, and declare the\nusings each file needs explicitly, so the directives are required on every TFM\nand single-slice InspectCode analysis stops flagging them as redundant.\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-09-28T14:02:26Z",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/b862d0e8889adc103b565c6e94a3ca328e8c00cd"
+        },
+        "date": 1791101480151,
         "tool": "customBiggerIsBetter",
         "benches": [
           {
