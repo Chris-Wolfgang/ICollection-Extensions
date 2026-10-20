@@ -99,6 +99,11 @@ jobs:
       #                          approver would force admin-bypass on every PR.
       #   CIIBestPracticesID   — bestpractices.dev badge is an external
       #                          registration, not something CI can earn.
+      #   FuzzingID            — Scorecard has no .NET fuzzing detector (it looks for
+      #                          OSS-Fuzz, ClusterFuzzLite, Go native, atheris, Jazzer,
+      #                          QuickCheck and OneFuzz); CsCheck/SharpFuzz tests are
+      #                          invisible to it, so the alert cannot be cleared by
+      #                          adding fuzz tests. Fuzzing work itself is tracked in #165.
       #   PinnedDependenciesID / nugetCommand, RESTORE commands only —
       #                          `dotnet restore` / `nuget restore` /
       #                          `msbuild /t:restore` without --locked-mode.
@@ -133,7 +138,7 @@ jobs:
       - name: Filter suppressed findings from SARIF
         shell: bash
         env:
-          SUPPRESSED_RULES: 'CodeReviewID CIIBestPracticesID'
+          SUPPRESSED_RULES: 'CodeReviewID CIIBestPracticesID FuzzingID'
           # PinnedDependenciesID message substrings suppressed everywhere, but
           # only when the finding's snippet is a restore command (see the
           # comment block above).
