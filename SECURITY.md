@@ -74,3 +74,19 @@ Facts a maintainer would need at 2am if the release identity is compromised. Gen
 - **Owner**: @Chris-Wolfgang.
 - **Downstream consumers**: no dependents are known within the Wolfgang.* packages; unknown external consumers may exist on nuget.org.
 - **Package coordinates for unlisting**: `Wolfgang.Extensions.ICollection` — https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/.
+
+## Verifying a release
+
+Each release publishes two supply-chain artifacts that let a consumer check what they downloaded.
+
+- **Build provenance (SLSA attestation).** `release.yaml` attests every `.nupkg` before it is pushed to nuget.org, binding the package's SHA-256 digest to this repository, the commit and the workflow run. Download the package from nuget.org (or the GitHub Release) and verify it with the GitHub CLI:
+
+  ```bash
+  gh attestation verify Wolfgang.Extensions.ICollection.<version>.nupkg     --repo Chris-Wolfgang/ICollection-Extensions     --signer-workflow Chris-Wolfgang/ICollection-Extensions/.github/workflows/release.yaml
+  ```
+
+  A non-zero exit means the file was not produced by that workflow in this repository.
+  Only releases cut after the attestation step was added carry one: `gh attestation verify` finds no attestation for 0.3.1 (checked 2026-10-20), which predates it.
+- **SBOM.** A CycloneDX software bill of materials, `Wolfgang.Extensions.ICollection.bom.json`, is attached to each GitHub Release next to the `.nupkg`. It lists the package's dependency graph. It is published alongside the package but is not itself covered by the attestation, so treat it as an inventory, not as proof.
+
+Package *signing* (`nuget verify -Signatures`) is not available yet: it needs a code-signing certificate and is tracked in #216. Until then the attestation above is the way to verify provenance.
