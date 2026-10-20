@@ -1,6 +1,11 @@
+// InspectCode reports these three usings as redundant (alerts 10-12), but all are required: deleting them
+// fails the build on every target framework with CS0307 on ICollection<T>, because the namespace
+// Wolfgang.Extensions.ICollection shares its name with the type.
+// ReSharper disable RedundantUsingDirective
 using System;
 using System.Collections.Generic;
 using System.Linq;
+// ReSharper restore RedundantUsingDirective
 
 namespace Wolfgang.Extensions.ICollection;
 
