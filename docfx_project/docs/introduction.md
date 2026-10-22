@@ -42,15 +42,15 @@ Wolfgang.Extensions.ICollection supports a broad set of modern .NET TFMs:
 
 - **`.NET Standard 2.0`** — covers `.NET Framework 4.6.1+`, `.NET Core 2.0+`, Mono, Xamarin
 - **`.NET Standard 2.1`** — picks up the BCL improvements available since 2019
-- **`.NET 8.0`** — current LTS
-- **`.NET 9.0`** — latest released runtime
-- **`.NET 10.0`** — active LTS branch
+- **`.NET 8.0`** — LTS
+- **`.NET 9.0`** — STS; Microsoft support ended in May 2026 (the target is still shipped, and `net8.0` assets would serve it anyway)
+- **`.NET 10.0`** — LTS, the latest release
 
 ## What's Included
 
 ### Bulk additions
 
-- **`AddRange(this ICollection<T>, IEnumerable<T>)`** — appends every item; pre-allocates `List<T>` capacity when the source exposes `Count`.
+- **`AddRange(this ICollection<T>, IEnumerable<T>)`** — appends every item; pre-allocates capacity when the target is a `List<T>` and `items` exposes `Count` (implements `ICollection<T>`).
 - **`AddRangeIf(this ICollection<T>, IEnumerable<T>, Func<T, bool>)`** — appends items that satisfy a predicate.
 - **`AddIfNotContains(this ICollection<T>, T) -> bool`** — adds a single item only if it's not already present; returns whether the add happened. Uses `ISet<T>.Add` as a single-lookup fast path for set consumers.
 - **`AddIfNotContains(this ICollection<T>, IEnumerable<T>) -> int`** — bulk overload; returns the count actually added.
