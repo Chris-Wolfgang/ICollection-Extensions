@@ -24,10 +24,10 @@ public static class ICollectionExtensions
     /// The type of items in the collection.
     /// </typeparam>
     /// <exception cref="ArgumentNullException">
-    /// Thrown if source or items is null.
+    /// Thrown if <paramref name="source"/> or <paramref name="items"/> is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if the collection is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and <paramref name="items"/> is not empty.
     /// </exception>
     /// <remarks>
     /// <para>
@@ -155,7 +155,7 @@ public static class ICollectionExtensions
     /// empty = names.IsEmpty(); // false
     ///
     /// // Use in conditional logic
-    /// ICollection&lt;int&gt; results = GetResults();
+    /// ICollection&lt;int&gt; results = new List&lt;int&gt;();
     /// if (results.IsEmpty())
     /// {
     ///     Console.WriteLine("No results found.");
@@ -221,10 +221,10 @@ public static class ICollectionExtensions
     /// bool hasItems = names.IsNotEmpty(); // true
     ///
     /// // Use in conditional logic
-    /// ICollection&lt;int&gt; results = GetResults();
+    /// ICollection&lt;int&gt; results = new List&lt;int&gt; { 1, 2, 3 };
     /// if (results.IsNotEmpty())
     /// {
-    ///     ProcessResults(results);
+    ///     Console.WriteLine($"Found {results.Count} results.");
     /// }
     ///
     /// // Works with any ICollection&lt;T&gt; implementation
@@ -316,7 +316,8 @@ public static class ICollectionExtensions
     /// <paramref name="predicate"/> is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if <paramref name="source"/> is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and at least one item in
+    /// <paramref name="items"/> matches <paramref name="predicate"/>.
     /// </exception>
     /// <remarks>
     /// Self-aliasing (passing the same instance for both
@@ -326,10 +327,12 @@ public static class ICollectionExtensions
     /// to the collection without tripping the mutate-during-enumerate
     /// contract.
     /// </remarks>
-    public static void AddRangeIf<T>(
+    public static void AddRangeIf<T>
+    (
         this ICollection<T> source,
         IEnumerable<T> items,
-        Func<T, bool> predicate)
+        Func<T, bool> predicate
+    )
     {
         if (source is null)
         {
@@ -378,7 +381,8 @@ public static class ICollectionExtensions
     /// is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if <paramref name="source"/> is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and at least one item matches
+    /// <paramref name="predicate"/>.
     /// </exception>
     /// <remarks>
     /// Matching items are materialised into a temporary list before
@@ -501,7 +505,8 @@ public static class ICollectionExtensions
     /// Thrown if <paramref name="source"/> is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if <paramref name="source"/> is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and <paramref name="item"/> is not
+    /// already present.
     /// </exception>
     /// <remarks>
     /// Containment is determined by the target collection's own
@@ -556,8 +561,18 @@ public static class ICollectionExtensions
     /// Thrown if <paramref name="source"/> or <paramref name="items"/> is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if <paramref name="source"/> is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and at least one item in
+    /// <paramref name="items"/> is not already present.
     /// </exception>
+    /// <remarks>
+    /// Each item is added through the single-item
+    /// <see cref="AddIfNotContains{T}(ICollection{T}, T)"/>, so containment follows the same
+    /// rules (the collection's own <see cref="ICollection{T}.Contains"/>, or
+    /// <see cref="ISet{T}.Add"/> for sets). Self-aliasing (passing the same instance for both
+    /// <paramref name="source"/> and <paramref name="items"/>) is safe: every item is already
+    /// present, so no <c>Add</c> happens while <paramref name="items"/> is being enumerated,
+    /// the collection is left unchanged and the call returns <c>0</c>.
+    /// </remarks>
     public static int AddIfNotContains<T>(this ICollection<T> source, IEnumerable<T> items)
     {
         // Stryker disable all : redundant defensive — the single-arg AddIfNotContains the Count() callback delegates to throws ArgumentNullException with the same paramName on its own null check.
