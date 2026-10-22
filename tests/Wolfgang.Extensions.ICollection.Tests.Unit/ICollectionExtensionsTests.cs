@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Wolfgang.Extensions.ICollection.Tests.Unit;
 
-public class ICollectionExtensionTests
+public class ICollectionExtensionsTests
 {
     [Fact]
     public void AddRange_when_source_is_null_throws_ArgumentNullException()
@@ -47,9 +47,7 @@ public class ICollectionExtensionTests
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(3, source.Count);
-        Assert.Contains("item1", source);
-        Assert.Contains("item2", source);
+        Assert.Equal(new[] { "item1", "item2", "item3" }, source);
         Assert.Contains("item3", source);
     }
 
@@ -82,9 +80,7 @@ public class ICollectionExtensionTests
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(3, source.Count);
-        Assert.Contains("item1", source);
-        Assert.Contains("item2", source);
+        Assert.Equal(new[] { "item1", "item2", "item3" }, source);
         Assert.Contains("item3", source);
     }
 
@@ -128,9 +124,7 @@ public class ICollectionExtensionTests
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(6, source.Count);
-        Assert.Contains(4, source);
-        Assert.Contains(5, source);
+        Assert.Equal(new[] { 1, 2, 3, 4, 5, 6 }, source);
         Assert.Contains(6, source);
     }
 
@@ -147,10 +141,7 @@ public class ICollectionExtensionTests
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(4, source.Count);
-        Assert.Contains("item1", source);
-        Assert.Contains("item2", source);
-        Assert.Contains(null, source);
+        Assert.Equal(new[] { "item1", "item2", null, "item3" }, source);
         Assert.Contains("item3", source);
     }
 
@@ -204,8 +195,7 @@ public class ICollectionExtensionTests
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(2, source.Count);
-        Assert.Contains("existing", source);
+        Assert.Equal(new[] { "existing", "single" }, source);
         Assert.Contains("single", source);
     }
 
@@ -222,9 +212,7 @@ public class ICollectionExtensionTests
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(3, source.Count);
-        Assert.Contains("item1", source);
-        Assert.Contains("item2", source);
+        Assert.Equal(new[] { "item1", "item2", "item3" }, source);
         Assert.Contains("item3", source);
     }
 
@@ -261,9 +249,7 @@ public class ICollectionExtensionTests
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(3, source.Count);
-        Assert.Contains("item1", source);
-        Assert.Contains("item2", source);
+        Assert.Equal(new[] { "item1", "item2", "item3" }, source);
         Assert.Contains("item3", source);
     }
 
@@ -280,9 +266,7 @@ public class ICollectionExtensionTests
         source.AddRange(items);
 
         // Assert
-        Assert.Equal(6, source.Count);
-        Assert.Contains(4, source);
-        Assert.Contains(5, source);
+        Assert.Equal(new[] { 1, 2, 3, 4, 5, 6 }, source);
         Assert.Contains(6, source);
     }
 
@@ -362,6 +346,8 @@ public class ICollectionExtensionTests
             { LinkedListWith(1, 2, 3),          false },
             { new Collection<int>(),            true  },
             { new Collection<int> { 1, 2, 3 },  false },
+            { Array.Empty<int>(),               true  },
+            { new[] { 1, 2, 3 },                false },
         };
 
     [Theory]
@@ -487,22 +473,6 @@ public class ICollectionExtensionTests
 
 
     // =========================================================================
-    // Helpers
-    // =========================================================================
-
-    private static LinkedList<T> LinkedListWith<T>(params T[] items)
-    {
-        var list = new LinkedList<T>();
-        foreach (var item in items)
-        {
-            list.AddLast(item);
-        }
-        return list;
-    }
-
-
-
-    // =========================================================================
     // RemoveRange tests
     // =========================================================================
 
@@ -527,7 +497,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void RemoveRange_removes_each_listed_item()
+    public void RemoveRange_when_items_are_present_removes_each_listed_item()
     {
         ICollection<int> source = new List<int> { 1, 2, 3, 4, 5 };
         source.RemoveRange(new[] { 2, 4 });
@@ -537,7 +507,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void RemoveRange_silently_skips_items_not_present()
+    public void RemoveRange_when_items_are_not_present_skips_them()
     {
         ICollection<int> source = new List<int> { 1, 2, 3 };
         source.RemoveRange(new[] { 7, 8, 9 });
@@ -547,7 +517,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void RemoveRange_removes_one_occurrence_per_item_in_items()
+    public void RemoveRange_when_items_repeat_removes_one_occurrence_per_item()
     {
         ICollection<int> source = new List<int> { 1, 2, 2, 2, 3 };
         source.RemoveRange(new[] { 2, 2 });
@@ -617,7 +587,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddRangeIf_adds_only_items_matching_predicate()
+    public void AddRangeIf_when_some_items_match_adds_only_matching_items()
     {
         ICollection<int> source = new List<int>();
         source.AddRangeIf(new[] { 1, 2, 3, 4, 5, 6 }, n => n % 2 == 0);
@@ -627,7 +597,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddRangeIf_with_always_false_predicate_adds_nothing()
+    public void AddRangeIf_when_no_item_matches_adds_nothing()
     {
         ICollection<int> source = new List<int> { 0 };
         source.AddRangeIf(new[] { 1, 2, 3 }, _ => false);
@@ -685,7 +655,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void RemoveWhere_returns_count_of_removed_items()
+    public void RemoveWhere_when_items_match_returns_count_of_removed_items()
     {
         ICollection<int> source = new List<int> { 1, 2, 3, 4, 5, 6 };
         var removed = source.RemoveWhere(n => n % 2 == 0);
@@ -708,13 +678,13 @@ public class ICollectionExtensionTests
         Assert.Equal(2, removed);
         // Order-independent: HashSet<T> enumeration order is not guaranteed,
         // so compare via SetEquals rather than sequence equality.
-        Assert.True(set.SetEquals(new[] { 1, 3, 5 }));
+        Assert.Equal(new HashSet<int> { 1, 3, 5 }, set);
     }
 
 
 
     [Fact]
-    public void RemoveWhere_returns_zero_when_nothing_matches()
+    public void RemoveWhere_when_nothing_matches_returns_zero()
     {
         ICollection<int> source = new List<int> { 1, 3, 5 };
         var removed = source.RemoveWhere(n => n % 2 == 0);
@@ -725,7 +695,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void RemoveWhere_handles_removing_every_item()
+    public void RemoveWhere_when_every_item_matches_removes_all_items()
     {
         ICollection<int> source = new List<int> { 1, 2, 3 };
         var removed = source.RemoveWhere(_ => true);
@@ -770,7 +740,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void ReplaceAll_clears_and_repopulates()
+    public void ReplaceAll_when_items_has_values_clears_and_repopulates()
     {
         ICollection<string> source = new List<string> { "old1", "old2", "old3" };
         source.ReplaceAll(new[] { "new1", "new2" });
@@ -780,7 +750,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void ReplaceAll_with_empty_items_just_clears()
+    public void ReplaceAll_when_items_is_empty_clears_source()
     {
         ICollection<int> source = new List<int> { 1, 2, 3 };
         source.ReplaceAll(Array.Empty<int>());
@@ -817,7 +787,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddIfNotContains_single_returns_true_when_item_was_added()
+    public void AddIfNotContains_single_when_item_is_absent_adds_it_and_returns_true()
     {
         ICollection<int> source = new List<int> { 1, 2 };
         var added = source.AddIfNotContains(3);
@@ -828,7 +798,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddIfNotContains_single_returns_false_when_item_already_present()
+    public void AddIfNotContains_single_when_item_is_present_returns_false()
     {
         ICollection<int> source = new List<int> { 1, 2, 3 };
         var added = source.AddIfNotContains(2);
@@ -839,7 +809,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddIfNotContains_single_uses_ISet_Add_when_source_is_HashSet()
+    public void AddIfNotContains_single_when_source_is_HashSet_uses_ISet_Add()
     {
         // HashSet<T> is ISet<T> — the extension's ISet fast path should
         // delegate to set.Add (one lookup) instead of Contains+Add (two).
@@ -852,7 +822,7 @@ public class ICollectionExtensionTests
         Assert.False(source.AddIfNotContains(2));
         // Order-independent: HashSet<T> enumeration order is not guaranteed,
         // so compare set contents via SetEquals rather than sequence equality.
-        Assert.True(set.SetEquals(new[] { 1, 2, 3 }));
+        Assert.Equal(new HashSet<int> { 1, 2, 3 }, set);
     }
 
 
@@ -902,7 +872,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddIfNotContains_many_returns_count_of_items_added()
+    public void AddIfNotContains_many_when_some_items_are_new_returns_count_of_items_added()
     {
         ICollection<int> source = new List<int> { 1, 2 };
         var added = source.AddIfNotContains(new[] { 2, 3, 4 });
@@ -913,7 +883,7 @@ public class ICollectionExtensionTests
 
 
     [Fact]
-    public void AddIfNotContains_many_dedupes_within_items_after_first_addition()
+    public void AddIfNotContains_many_when_items_repeat_adds_each_value_once()
     {
         ICollection<int> source = new List<int>();
         var added = source.AddIfNotContains(new[] { 1, 1, 2, 2, 3 });
@@ -975,5 +945,75 @@ public class ICollectionExtensionTests
             new ReadOnlyCollection<int>(new List<int> { 1, 2 });
         Assert.Throws<NotSupportedException>(
             () => source.AddIfNotContains(new[] { 3, 4 }));
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_when_items_is_same_instance_as_source_returns_zero_and_leaves_source_unchanged()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        var added = source.AddIfNotContains(source);
+        Assert.Equal(0, added);
+        Assert.Equal(new[] { 1, 2, 3 }, source);
+    }
+
+
+
+    [Fact]
+    public void ReplaceAll_when_items_throws_midway_leaves_source_partially_filled()
+    {
+        ICollection<int> source = new List<int> { 7, 8, 9 };
+        var ex = Assert.Throws<InvalidOperationException>(() => source.ReplaceAll(ThrowsAfterFirst(1)));
+        Assert.Equal("boom", ex.Message);
+        Assert.Equal(new[] { 1 }, source);
+    }
+
+
+
+    [Fact]
+    public void RemoveWhere_when_source_is_SortedSet_takes_generic_path_and_removes_matches()
+    {
+        var set = new SortedSet<int> { 1, 2, 3, 4, 5 };
+        ICollection<int> source = set;
+        var removed = source.RemoveWhere(n => n % 2 == 0);
+        Assert.Equal(2, removed);
+        Assert.Equal(new[] { 1, 3, 5 }, set);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_single_when_source_is_SortedSet_uses_ISet_Add()
+    {
+        var set = new SortedSet<int> { 3, 1 };
+        ICollection<int> source = set;
+        Assert.True(source.AddIfNotContains(2));
+        Assert.False(source.AddIfNotContains(3));
+        Assert.Equal(new[] { 1, 2, 3 }, set);
+    }
+
+
+
+    // =========================================================================
+    // Helpers
+    // =========================================================================
+
+    private static LinkedList<T> LinkedListWith<T>(params T[] items)
+    {
+        var list = new LinkedList<T>();
+        foreach (var item in items)
+        {
+            list.AddLast(item);
+        }
+        return list;
+    }
+
+
+
+    private static IEnumerable<int> ThrowsAfterFirst(int first)
+    {
+        yield return first;
+        throw new InvalidOperationException("boom");
     }
 }
