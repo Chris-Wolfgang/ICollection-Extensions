@@ -58,9 +58,9 @@ You can contribute in several ways:
 
 This project maintains **extremely high code quality standards** through multiple layers of static analysis and automated enforcement.
 
-### The 7 Analyzers
+### The 8 Analyzers
 
-All code is analyzed by these tools during build:
+All code is analyzed by these tools during build (7 explicit `PackageReference`s in `Directory.Build.props` plus the SDK's built-in NetAnalyzers):
 
 1. **Microsoft.CodeAnalysis.NetAnalyzers** (Built-in .NET SDK)
    - Correctness, performance, and security rules
@@ -95,6 +95,10 @@ All code is analyzed by these tools during build:
    - Industry-standard code analysis
    - Security vulnerability detection
    - Code smell identification
+
+8. **Microsoft.CodeAnalysis.PublicApiAnalyzers**
+   - Tracks the public API surface in `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt`
+   - Surfaces API additions and removals at compile time (RS0016/RS0017) as a breaking-change review gate
 
 ### Async-First Enforcement
 
@@ -177,8 +181,11 @@ dotnet build --configuration Release
 # Run all unit tests
 dotnet test --configuration Release
 
-# Run with coverage (if configured)
-dotnet test --collect:"XPlat Code Coverage"
+# Run with coverage (settings in coverlet.runsettings, as CI uses)
+dotnet test --configuration Release --settings coverlet.runsettings --collect:"XPlat Code Coverage"
+
+# Or run the full local gate (build, tests, coverage, DevSkim, gitleaks)
+pwsh ./scripts/build-pr.ps1
 ```
 
 ### Code Formatting
