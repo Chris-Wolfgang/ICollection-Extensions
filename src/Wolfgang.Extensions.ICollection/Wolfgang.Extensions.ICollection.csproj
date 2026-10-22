@@ -21,6 +21,14 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<PackageIcon>icon.png</PackageIcon>
+
+		<!-- Package validation: `dotnet pack` compares this package with the last version published
+		     to nuget.org and fails on an unintentional binary/source break, or on a TFM that was
+		     dropped. Keep the baseline at the LAST PUBLISHED version (not the version being built):
+		     bump it in the post-release follow-up once the new version is on the NuGet CDN. To ship
+		     an intentional break, record it in CompatibilitySuppressions.xml next to this file. -->
+		<EnablePackageValidation>true</EnablePackageValidation>
+		<PackageValidationBaselineVersion>0.3.1</PackageValidationBaselineVersion>
 	</PropertyGroup>
 
 	<!-- Trim / Native AOT: the library uses no reflection or dynamic code, so declare it safe for
