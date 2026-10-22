@@ -1,0 +1,43 @@
+name: "Concurrency Stress Test"
+
+# Weekly, scaled-up run of tests/Wolfgang.Extensions.ICollection.Tests.Concurrency (#170). The
+# PR stages run that project at 100 rounds; this raises it to 5,000 (or the dispatch input) so
+# rare interleavings get a real chance to show up.
+
+on:
+  schedule:
+    - cron: '0 4 * * 1'  # weekly Monday 04:00 UTC
+  workflow_dispatch:
+    inputs:
+      stress_iterations:
+        description: 'Rounds per test (overrides the default)'
+        required: false
+        default: '5000'
+
+permissions:
+  contents: read
+
+jobs:
+  stress:
+    name: "Concurrency stress (STRESS_ITERATIONS-scaled)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68  # v6.0.0
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Run concurrency stress tests
+        env:
+          STRESS_ITERATIONS: ${{ github.event.inputs.stress_iterations || '5000' }}
+        run: >
+          dotnet test
+          tests/Wolfgang.Extensions.ICollection.Tests.Concurrency/Wolfgang.Extensions.ICollection.Tests.Concurrency.csproj
+          --configuration Release
