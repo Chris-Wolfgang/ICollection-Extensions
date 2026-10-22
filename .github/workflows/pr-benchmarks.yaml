@@ -1,0 +1,134 @@
+name: "PR Benchmark Regression Check"
+
+# Forward-looking signal (#186), distinct from benchmarks.yaml: that one graphs the BDN trend on
+# every push to main (backward-looking, it surfaces a regression after it merges). This runs the
+# suite on the PR's HEAD and on its base, comments the delta table on the PR (replacing the
+# previous comment), and fails on an allocation regression of more than 50 % unless the PR
+# carries the `perf-impact-acknowledged` label. Time deltas are advisory only.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      # Only a library or benchmark change can move the numbers. Never make this a required
+      # check: a path-filtered workflow that does not run leaves the check "Expected" forever.
+      - 'src/**'
+      - 'benchmarks/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pr-benchmarks:
+    name: "Compare PR head vs base branch"
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      pull-requests: write  # to post/update the delta-table comment
+
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          path: head
+
+      - name: Checkout PR base
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68  # v6.0.0
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.x'
+
+      - name: Run benchmarks (PR head)
+        working-directory: head/benchmarks/Wolfgang.Extensions.ICollection.Benchmarks
+        run: dotnet run -c Release -- --filter "*" --job short --memory --exporters json
+
+      - name: Merge head reports
+        working-directory: head/benchmarks/Wolfgang.Extensions.ICollection.Benchmarks
+        run: |
+          shopt -s nullglob
+          reports=(BenchmarkDotNet.Artifacts/results/*-report-full-compressed.json)
+          if [ ${#reports[@]} -eq 0 ]; then
+            echo "::error::No BenchmarkDotNet JSON report found for PR head"
+            exit 1
+          fi
+          jq -s '{Title: "head", HostEnvironmentInfo: .[0].HostEnvironmentInfo, Benchmarks: [.[].Benchmarks[]]}' "${reports[@]}" > "$GITHUB_WORKSPACE/head-report.json"
+
+      - name: Run benchmarks (PR base)
+        working-directory: base/benchmarks/Wolfgang.Extensions.ICollection.Benchmarks
+        run: dotnet run -c Release -- --filter "*" --job short --memory --exporters json
+
+      - name: Merge base reports
+        working-directory: base/benchmarks/Wolfgang.Extensions.ICollection.Benchmarks
+        run: |
+          shopt -s nullglob
+          reports=(BenchmarkDotNet.Artifacts/results/*-report-full-compressed.json)
+          if [ ${#reports[@]} -eq 0 ]; then
+            echo "::error::No BenchmarkDotNet JSON report found for PR base"
+            exit 1
+          fi
+          jq -s '{Title: "base", HostEnvironmentInfo: .[0].HostEnvironmentInfo, Benchmarks: [.[].Benchmarks[]]}' "${reports[@]}" > "$GITHUB_WORKSPACE/base-report.json"
+
+      - name: Compare and render delta table
+        id: compare
+        run: |
+          # Exit-code contract with compare-pr-benchmarks.py:
+          #   0 = no regression, 3 = allocation regression beyond tolerance,
+          #   anything else = the script itself crashed. Distinguishing 3 from
+          #   generic failure matters: previously any crash (bad JSON, schema
+          #   drift) exited 1 and was treated as a "regression" — waivable via
+          #   the perf-impact-acknowledged label, silently masking a broken
+          #   comparison pipeline.
+          set +e
+          python3 head/benchmarks/compare-pr-benchmarks.py head-report.json base-report.json delta.md
+          rc=$?
+          set -e
+          case "$rc" in
+            0) echo "regressed=0" >> "$GITHUB_OUTPUT" ;;
+            3) echo "regressed=1" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "::error::compare-pr-benchmarks.py failed (exit $rc) — script failure, not a benchmark regression."
+              exit "$rc"
+              ;;
+          esac
+
+      - name: Post/update PR comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "$REPO" \
+            --body-file delta.md --edit-last --create-if-none
+
+      - name: Enforce the allocation-regression gate
+        if: steps.compare.outputs.regressed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          labels=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json labels --jq '.labels[].name')
+          if echo "$labels" | grep -qx 'perf-impact-acknowledged'; then
+            echo "Allocation regression detected but PR carries 'perf-impact-acknowledged' — not failing."
+            exit 0
+          fi
+          echo "::error::Allocation regression exceeds tolerance and PR is not labeled 'perf-impact-acknowledged'. See the delta-table comment. Add the label if this is an intentional trade-off."
+          exit 1
