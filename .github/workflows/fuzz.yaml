@@ -1,0 +1,60 @@
+name: "Continuous Fuzz"
+
+# Long-running counterpart of tests/Wolfgang.Extensions.ICollection.Tests.Fuzz (#165). The PR
+# stages run those CsCheck properties at 1,000 cases each; this weekly run scales them to
+# 100,000 cases / 5 minutes per property through FUZZ_ITERATIONS / FUZZ_TIME_SECONDS. A failure
+# files an issue; CsCheck's message carries a seed that replays the shrunk case locally
+# (set CsCheck_Seed).
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * 6'  # weekly Saturday 08:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    name: "Run fuzz properties (100,000 cases / 5 min per property)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      issues: write  # to file an issue on a fuzz-discovered failure
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68  # v6.0.0
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Run fuzz properties
+        env:
+          FUZZ_ITERATIONS: '100000'
+          FUZZ_TIME_SECONDS: '300'
+        run: >
+          dotnet test tests/Wolfgang.Extensions.ICollection.Tests.Fuzz/Wolfgang.Extensions.ICollection.Tests.Fuzz.csproj
+          --configuration Release
+          --logger "console;verbosity=detailed"
+
+      - name: File an issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REPO: ${{ github.repository }}
+        run: |
+          body=$(printf '%s\n\n%s\n\n%s\n' \
+            "The weekly \`fuzz.yaml\` run failed at 100,000 cases per property." \
+            "Run: ${RUN_URL}" \
+            "The log's CsCheck failure message includes a seed. Set \`CsCheck_Seed\` to that value and re-run the failing property locally to replay the shrunk case.")
+          gh issue create \
+            --repo "$REPO" \
+            --title "Continuous fuzz found a failing case ($(date -u +%Y-%m-%d))" \
+            --label "maintenance - testing" \
+            --body "$body"
