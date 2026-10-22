@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <!-- <Nullable>enable</Nullable> is inherited from Directory.Build.props
          (canonical fleet-wide default). Redefining it here would duplicate
