@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+
+    <!-- Sample consumer, not shipped: no public API to track (same suppression as benchmarks/). -->
+    <NoWarn>$(NoWarn);RS0016;RS0017;RS0024;RS0026;RS0027;RS0036;RS0037;RS0041</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
+  </ItemGroup>
+
+  <!-- Analyzer PackageReferences are centralized in Directory.Build.props -->
+
+</Project>
