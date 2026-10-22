@@ -20,14 +20,8 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<SignAssembly>False</SignAssembly>
 		<PackageIcon>icon.png</PackageIcon>
-		<ApplicationIcon>icon.ico</ApplicationIcon>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Content Include="icon.ico" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <None Include="..\..\assets\icon.png">
