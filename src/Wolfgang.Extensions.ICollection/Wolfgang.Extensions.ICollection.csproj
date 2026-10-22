@@ -23,6 +23,15 @@
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
 
+	<!-- Trim / Native AOT: the library uses no reflection or dynamic code, so declare it safe for
+	     trimmed and AOT-published consumers. The trim and AOT analyzers run on the net8.0+ targets
+	     (the properties are not supported on netstandard), and IL2xxx/IL3xxx warnings fail the
+	     Release build like every other warning. -->
+	<PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+		<IsAotCompatible>true</IsAotCompatible>
+		<IsTrimmable>true</IsTrimmable>
+	</PropertyGroup>
+
 	<ItemGroup>
 	  <None Include="..\..\assets\icon.png">
 	    <Pack>True</Pack>
