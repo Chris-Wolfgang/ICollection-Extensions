@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!-- One modern TFM: the stress tests check the library has no shared state; per-TFM
+		     behaviour is covered by the multi-TFM Tests.Unit project. -->
+		<TargetFramework>net10.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+
+		<!-- PublicApiAnalyzers is wired in by Directory.Build.props for library projects; tests
+		     carry no tracked public API (same suppression as the unit test project). -->
+		<NoWarn>$(NoWarn);RS0016;RS0017;RS0024;RS0026;RS0027;RS0036;RS0037;RS0041</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+		<PackageReference Include="coverlet.collector" Version="10.1.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
+	</ItemGroup>
+
+	<!-- Analyzer PackageReferences are centralized in Directory.Build.props -->
+
+</Project>
