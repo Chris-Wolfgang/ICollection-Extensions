@@ -65,6 +65,20 @@ Tell us in the report how you would like to be named.
 Your help is greatly appreciated!
 Responsible disclosure of security vulnerabilities helps protect our entire community.
 
+## OSSF Scorecard
+
+[`scorecard.yaml`](.github/workflows/scorecard.yaml) runs the
+[OSSF Scorecard](https://github.com/ossf/scorecard) weekly (Mondays 06:31 UTC) and on every push
+to `main`, scoring this repo's security posture (branch protection, pinned dependencies,
+dangerous-workflow patterns, vulnerability response time, etc.). Results publish to the
+[Scorecard viewer](https://scorecard.dev/viewer/?uri=github.com/Chris-Wolfgang/ICollection-Extensions)
+and the badge in `README.md`, and upload as SARIF to this repo's Security tab alongside CodeQL alerts.
+
+**Score floor: 7.5.** The initial baseline score is whatever the first published run reports; no run
+has published yet to snapshot. If a later run drops the score below 7.5, note it in `CHANGELOG.md`
+under `### Security` and open a maintenance issue for the regressed check; don't let it sit
+unaddressed.
+
 ## Release path & compromise scope
 
 Facts a maintainer would need at 2am if the release identity is compromised. Generic incident-response steps (rotating credentials, revoking OAuth apps, publishing advisories, unlisting NuGet packages) are not duplicated here — GitHub's and NuGet's own docs update faster than a checked-in runbook.
