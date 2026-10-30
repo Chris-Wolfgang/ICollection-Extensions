@@ -56,6 +56,7 @@
     <Project Path="src/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Aot/Wolfgang.Extensions.ICollection.Tests.Aot.csproj" />
     <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Unit/Wolfgang.Extensions.ICollection.Tests.Unit.csproj" />
   </Folder>
 </Solution>
