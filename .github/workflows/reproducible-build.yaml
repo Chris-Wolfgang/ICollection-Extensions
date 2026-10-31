@@ -1,7 +1,10 @@
 name: "Reproducible Build Verification"
 
-# Builds the same commit on ubuntu-latest and windows-latest and requires every shipped
-# assembly and its .pdb to be byte-identical across the two runners (#178). Directory.Build.props
+# Builds and packs the same commit on ubuntu-latest and windows-latest and requires every shipped
+# assembly, its .pdb, and the .nupkg / .snupkg to be byte-identical across the two runners (#178).
+# The packages are packed with SOURCE_DATE_EPOCH set to the commit time, which NuGet uses as the
+# zip entry timestamp (DeterministicTimestamp); without it each pack stamps the current time.
+# Directory.Build.props
 # sets ContinuousIntegrationBuild under CI (path-mapped, deterministic output) and SourceLink
 # embeds the same GitHub URL on both, so any difference is a real reproducibility break.
 # How a third party verifies a published package is documented separately (docs/REPRODUCIBLE-BUILD.md).
@@ -45,6 +48,18 @@ jobs:
         # Release builds in the modern SDK.
         run: dotnet build --no-restore --configuration Release
 
+      - name: Pack (SOURCE_DATE_EPOCH = commit time)
+        shell: bash
+        run: |
+          # NuGet's pack targets turn SOURCE_DATE_EPOCH into DeterministicTimestamp, the
+          # timestamp written on every zip entry. The commit time is the same on every runner.
+          SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
+          export SOURCE_DATE_EPOCH
+          echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
+          for proj in src/*/*.csproj; do
+            dotnet pack "$proj" --no-build --configuration Release --output packages
+          done
+
       - name: Hash per-TFM assemblies
         shell: pwsh
         run: |
@@ -70,6 +85,22 @@ jobs:
                 sha256 = (Get-FileHash -Path $asm.FullName -Algorithm SHA256).Hash
               }
             }
+          }
+
+          # The packages: a difference here with matching assemblies points at packing
+          # (file order, timestamps, nuspec metadata) rather than at the compiler.
+          $packages = Get-ChildItem -Path 'packages' -File -Include '*.nupkg', '*.snupkg' -Recurse
+          $hashes = @($hashes) + @(foreach ($pkg in $packages) {
+            [pscustomobject]@{
+              packageId = ($pkg.Name -replace '\.\d+\.\d+\.\d+.*$', '')
+              tfm  = 'package'
+              file = $pkg.Name
+              sha256 = (Get-FileHash -Path $pkg.FullName -Algorithm SHA256).Hash
+            }
+          })
+          if (-not $packages) {
+            Write-Error 'dotnet pack produced no .nupkg - nothing to compare.'
+            exit 1
           }
 
           $hashes | Sort-Object packageId, tfm, file | ConvertTo-Json -AsArray | Out-File -FilePath 'assembly-hashes-${{ matrix.os }}.json' -Encoding utf8
@@ -109,12 +140,12 @@ jobs:
 
           echo "Comparing $ubuntu against $windows"
           if diff <(jq -S 'sort_by(.packageId, .tfm, .file)' "$ubuntu") <(jq -S 'sort_by(.packageId, .tfm, .file)' "$windows"); then
-            echo "✅ Byte-identical assemblies and symbols across ubuntu-latest and windows-latest."
+            echo "✅ Byte-identical assemblies, symbols and packages across ubuntu-latest and windows-latest."
           else
             # If this fails, compare the per-TFM .pdb documents and referenced-assembly records
             # first. In sibling repos the inputs that differed between Linux and Windows were a
             # generated source written with a different newline and a different .NET Framework
             # reference assembly (IEnumerable-Extensions #533).
-            echo "::error::Assembly or symbol hashes diverge between ubuntu-latest and windows-latest — build is not reproducible across runners."
+            echo "::error::Assembly, symbol or package hashes diverge between ubuntu-latest and windows-latest — build is not reproducible across runners."
             exit 1
           fi
