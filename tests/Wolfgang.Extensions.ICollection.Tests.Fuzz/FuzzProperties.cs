@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using CsCheck;
 using Xunit;
 
@@ -16,6 +18,11 @@ namespace Wolfgang.Extensions.ICollection.Tests.Fuzz;
 /// <c>fuzz.yaml</c> run, through the <c>FUZZ_ITERATIONS</c> / <c>FUZZ_TIME_SECONDS</c> variables.
 /// CsCheck shrinks a failure to a minimal case and prints a seed; set <c>CsCheck_Seed</c> to
 /// replay it deterministically.
+/// </para>
+/// <para>
+/// Before its random cases, every property replays the seeds recorded for it in
+/// <c>replay/seeds.txt</c> (see <see cref="FuzzReplay"/>), so a failure found by the weekly run
+/// becomes a deterministic regression case once its seed is committed there.
 /// </para>
 /// <para>
 /// Every property returns a single expression, so a passing run executes every line (the test
@@ -37,47 +44,46 @@ public sealed class FuzzProperties
 
 
     [Fact]
-    public void AddRange_appends_items_in_order()
+    public async Task AddRange_appends_items_in_order()
     {
-        Pair.Sample
+        await CheckAsync
         (
+            Pair,
             t =>
             {
                 ICollection<int> source = new List<int>(t.Source);
                 source.AddRange(t.Items);
                 return source.SequenceEqual(t.Source.Concat(t.Items));
-            },
-            iter: FuzzIterations,
-            time: FuzzTimeSeconds
+            }
         );
     }
 
 
 
     [Fact]
-    public void AddRangeIf_appends_exactly_the_matching_items()
+    public async Task AddRangeIf_appends_exactly_the_matching_items()
     {
-        Pair.Select(Gen.Int[-20, 20]).Sample
+        await CheckAsync
         (
+            Pair.Select(Gen.Int[-20, 20]),
             t =>
             {
                 var ((sourceItems, items), threshold) = t;
                 ICollection<int> source = new List<int>(sourceItems);
                 source.AddRangeIf(items, n => n > threshold);
                 return source.SequenceEqual(sourceItems.Concat(items.Where(n => n > threshold)));
-            },
-            iter: FuzzIterations,
-            time: FuzzTimeSeconds
+            }
         );
     }
 
 
 
     [Fact]
-    public void RemoveRange_matches_removing_each_item_once()
+    public async Task RemoveRange_matches_removing_each_item_once()
     {
-        Pair.Sample
+        await CheckAsync
         (
+            Pair,
             t =>
             {
                 ICollection<int> source = new List<int>(t.Source);
@@ -85,19 +91,18 @@ public sealed class FuzzProperties
                 t.Items.ForEach(item => expected.Remove(item));
                 source.RemoveRange(t.Items);
                 return source.SequenceEqual(expected);
-            },
-            iter: FuzzIterations,
-            time: FuzzTimeSeconds
+            }
         );
     }
 
 
 
     [Fact]
-    public void RemoveWhere_matches_List_RemoveAll_on_both_paths()
+    public async Task RemoveWhere_matches_List_RemoveAll_on_both_paths()
     {
-        Items.Select(Gen.Int[-20, 20]).Sample
+        await CheckAsync
         (
+            Items.Select(Gen.Int[-20, 20]),
             t =>
             {
                 var (sourceItems, threshold) = t;
@@ -112,37 +117,35 @@ public sealed class FuzzProperties
                     && list.SequenceEqual(expectedList)
                     && set.RemoveWhere(n => n < threshold) == expectedSetCount
                     && expectedSet.SetEquals(set);
-            },
-            iter: FuzzIterations,
-            time: FuzzTimeSeconds
+            }
         );
     }
 
 
 
     [Fact]
-    public void ReplaceAll_leaves_exactly_the_new_items()
+    public async Task ReplaceAll_leaves_exactly_the_new_items()
     {
-        Pair.Sample
+        await CheckAsync
         (
+            Pair,
             t =>
             {
                 ICollection<int> source = new List<int>(t.Source);
                 source.ReplaceAll(t.Items);
                 return source.SequenceEqual(t.Items);
-            },
-            iter: FuzzIterations,
-            time: FuzzTimeSeconds
+            }
         );
     }
 
 
 
     [Fact]
-    public void AddIfNotContains_adds_each_new_value_once_and_counts_it()
+    public async Task AddIfNotContains_adds_each_new_value_once_and_counts_it()
     {
-        Pair.Sample
+        await CheckAsync
         (
+            Pair,
             t =>
             {
                 ICollection<int> list = new List<int>(t.Source);
@@ -153,28 +156,44 @@ public sealed class FuzzProperties
                     && list.SequenceEqual(t.Source.Concat(expectedAdded))
                     && set.AddIfNotContains(t.Items) == expectedAdded.Count
                     && new HashSet<int>(t.Source.Concat(expectedAdded)).SetEquals(set);
-            },
-            iter: FuzzIterations,
-            time: FuzzTimeSeconds
+            }
         );
     }
 
 
 
     [Fact]
-    public void IsEmpty_and_IsNotEmpty_agree_with_Count()
+    public async Task IsEmpty_and_IsNotEmpty_agree_with_Count()
     {
-        Items.Sample
+        await CheckAsync
         (
+            Items,
             items =>
             {
                 ICollection<int> source = new List<int>(items);
                 return source.IsEmpty() == (items.Count == 0)
                     && source.IsNotEmpty() == (items.Count > 0);
-            },
-            iter: FuzzIterations,
-            time: FuzzTimeSeconds
+            }
         );
+    }
+
+
+
+    private static async Task CheckAsync<T>
+    (
+        Gen<T> gen,
+        Func<T, bool> property,
+        [CallerMemberName] string name = ""
+    )
+    {
+        // Replay the committed corpus first (one deterministic case per seed), so a recorded
+        // regression fails with its own seed before any random case runs.
+        foreach (var seed in await FuzzReplay.SeedsForAsync(name))
+        {
+            gen.Sample(property, seed: seed, iter: 1);
+        }
+
+        gen.Sample(property, iter: FuzzIterations, time: FuzzTimeSeconds);
     }
 
 

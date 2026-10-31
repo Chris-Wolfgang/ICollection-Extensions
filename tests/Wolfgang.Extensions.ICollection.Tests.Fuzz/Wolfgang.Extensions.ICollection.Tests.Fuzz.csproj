@@ -27,6 +27,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- Replay corpus (#165): read at run time from next to the test assembly. -->
+		<None Include="replay\**" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\..\src\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
 	</ItemGroup>
 

@@ -1,0 +1,34 @@
+# Fuzz replay corpus for FuzzProperties (#165).
+#
+# Format: one "<property method name> <CsCheck seed>" pair per line; '#' starts a comment.
+# Every [Fact] in FuzzProperties replays its seeds (one deterministic case each) before its
+# random cases, on every run: the 1,000-case PR stages and the weekly 100,000-case fuzz.yaml.
+#
+# When fuzz.yaml finds a failure, it uploads the failing property and seed as the
+# `fuzz-replay` artifact and lists them in the issue it files. Fix the bug, then append that
+# line here so the case stays a deterministic regression test.
+#
+# The initial seeds were captured locally on 2026-10-30 from shrunk CsCheck cases chosen to
+# hit an edge of each property (overlap between source and items, duplicates, a threshold
+# that splits the input, the empty collection). The case each seed produces is noted.
+
+AddRange_appends_items_in_order eGzdRuvHS4h7
+# ([3, -3], [-3, 0])
+
+AddRangeIf_appends_exactly_the_matching_items brnQ3oUbF-v3
+# (([2], [-15, 14]), 0)
+
+RemoveRange_matches_removing_each_item_once 4g7kJ0lxx2Vj
+# ([17], [-11, 17, -11, -8])
+
+RemoveWhere_matches_List_RemoveAll_on_both_paths 0AiPZa8olBAg
+# ([14, 14, -13], -1)
+
+ReplaceAll_leaves_exactly_the_new_items 14-VzYdutM_7
+# ([13, -6], [-2])
+
+AddIfNotContains_adds_each_new_value_once_and_counts_it 30dUlrtRdpXq
+# ([7, 3, 4, -6, 4], [4, 8, -19, 8])
+
+IsEmpty_and_IsNotEmpty_agree_with_Count 87wT8QXJB6Ip
+# []
