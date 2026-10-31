@@ -13,8 +13,16 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- Library under test. By default the scenarios run against this commit's source. Pass
+       ShadowLibraryVersion=<version> to run the same scenarios against a published package
+       instead; shadow.yaml does both and compares the results (#166). Set it as an environment
+       variable rather than -p: so BenchmarkDotNet's own child build of this project sees it too. -->
+  <ItemGroup Condition="'$(ShadowLibraryVersion)' == ''">
     <ProjectReference Include="..\..\src\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(ShadowLibraryVersion)' != ''">
+    <PackageReference Include="Wolfgang.Extensions.ICollection" Version="[$(ShadowLibraryVersion)]" />
   </ItemGroup>
 
   <!-- Analyzer PackageReferences are centralized in Directory.Build.props -->
