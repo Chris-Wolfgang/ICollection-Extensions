@@ -627,7 +627,7 @@ jobs:
           }
           foreach ($pkg in Get-ChildItem -Path $packagesPath -File -Include '*.nupkg', '*.snupkg' -Recurse) {
             $artifacts += [ordered]@{
-              path   = $pkg.Name
+              path   = "nuget-packages/$($pkg.Name)"
               sha256 = (Get-FileHash -Path $pkg.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
             }
           }
