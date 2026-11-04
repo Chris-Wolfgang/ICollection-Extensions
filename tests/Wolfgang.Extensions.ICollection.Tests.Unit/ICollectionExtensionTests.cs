@@ -675,6 +675,16 @@ public class ICollectionExtensionTests
 
 
     [Fact]
+    public void RemoveWhere_when_source_is_HashSet_and_predicate_is_null_throws_ArgumentNullException()
+    {
+        ICollection<int> source = new HashSet<int> { 1, 2 };
+        var ex = Assert.Throws<ArgumentNullException>(() => source.RemoveWhere(null!));
+        Assert.Equal("predicate", ex.ParamName);
+    }
+
+
+
+    [Fact]
     public void RemoveWhere_returns_count_of_removed_items()
     {
         ICollection<int> source = new List<int> { 1, 2, 3, 4, 5, 6 };
@@ -745,6 +755,16 @@ public class ICollectionExtensionTests
         ICollection<int> source = new List<int>();
         var ex = Assert.Throws<ArgumentNullException>(() => source.ReplaceAll(null!));
         Assert.Equal("items", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void ReplaceAll_when_items_is_null_leaves_source_unchanged()
+    {
+        ICollection<int> source = new List<int> { 1, 2, 3 };
+        Assert.Throws<ArgumentNullException>(() => source.ReplaceAll(null!));
+        Assert.Equal(new[] { 1, 2, 3 }, source);
     }
 
 
@@ -843,6 +863,28 @@ public class ICollectionExtensionTests
         ICollection<int> source = null!;
         var ex = Assert.Throws<ArgumentNullException>(
             () => source.AddIfNotContains(new[] { 1, 2 }));
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_when_source_is_null_and_items_is_empty_throws_ArgumentNullException()
+    {
+        ICollection<int> source = null!;
+        var ex = Assert.Throws<ArgumentNullException>(
+            () => source.AddIfNotContains(Array.Empty<int>()));
+        Assert.Equal("source", ex.ParamName);
+    }
+
+
+
+    [Fact]
+    public void AddIfNotContains_many_when_source_and_items_are_null_reports_source()
+    {
+        ICollection<int> source = null!;
+        var ex = Assert.Throws<ArgumentNullException>(
+            () => source.AddIfNotContains((IEnumerable<int>)null!));
         Assert.Equal("source", ex.ParamName);
     }
 
