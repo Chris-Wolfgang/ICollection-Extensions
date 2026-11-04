@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790604393836,
+  "lastUpdate": 1793760880092,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "BenchmarkDotNet": [
@@ -1366,6 +1366,138 @@ window.BENCHMARK_DATA = {
             "value": 37732.69069417318,
             "unit": "ns",
             "range": "± 69.6778422046817"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "79077ca33c179e1270d18dfa5a5eedeb963527e4",
+          "message": "docs: reproducible-build manifest, SOURCE_DATE_EPOCH packing and third-party attestations (#187) (#368)\n\ndocs/REPRODUCIBLE-BUILD.md now describes the per-release\nreproducible-build-manifest.json (fields, and a jq | sha256sum -c check),\nsays to install the manifest's exact SDK, packs with SOURCE_DATE_EPOCH in\nUTC so a rebuilt .nupkg can match the GitHub Release asset byte for byte\n(nuget.org's copy carries a repository signature), and documents how a\nthird party writes, signs and uploads a rebuild-verification statement.\nThe \"Not yet provided\" section is replaced.\n\nCo-authored-by: Claude Fable 5.1 <noreply@anthropic.com>",
+          "timestamp": "2026-11-03T21:50:19-05:00",
+          "tree_id": "9ba01d101eee1081b5132837cc19f6306f4da063",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/79077ca33c179e1270d18dfa5a5eedeb963527e4"
+        },
+        "date": 1793760877935,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_fast_path_List_target",
+            "value": 1128.0346768697102,
+            "unit": "ns",
+            "range": "± 4.594524833114716"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_slow_path_LinkedList_target",
+            "value": 13274.283027648926,
+            "unit": "ns",
+            "range": "± 79.00926095766523"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_empty_collection",
+            "value": 0.0003398917615413666,
+            "unit": "ns",
+            "range": "± 0.0005887098000637323"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_nonempty_collection",
+            "value": 0.38443636521697044,
+            "unit": "ns",
+            "range": "± 0.003837263152675231"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_empty_collection",
+            "value": 0.0015199203044176102,
+            "unit": "ns",
+            "range": "± 0.002273501137241"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_nonempty_collection",
+            "value": 0.16104449952642122,
+            "unit": "ns",
+            "range": "± 0.003897028983443"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_List_target",
+            "value": 37534.41368611654,
+            "unit": "ns",
+            "range": "± 153.00646072270126"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_LinkedList_target",
+            "value": 18457.473083496094,
+            "unit": "ns",
+            "range": "± 92.83130036123426"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_all_match",
+            "value": 3193.7630500793457,
+            "unit": "ns",
+            "range": "± 9.73543523361419"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_none_match",
+            "value": 995.9074923197428,
+            "unit": "ns",
+            "range": "± 2.6093606572697117"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_fast_path_HashSet_target",
+            "value": 10519.769022623697,
+            "unit": "ns",
+            "range": "± 16.272693396446257"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_slow_path_List_target",
+            "value": 29311.087331136066,
+            "unit": "ns",
+            "range": "± 214.50024521537074"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_List_target",
+            "value": 1203.008337656657,
+            "unit": "ns",
+            "range": "± 4.964974906576133"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_LinkedList_target",
+            "value": 28272.550699869793,
+            "unit": "ns",
+            "range": "± 99.44290997654228"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_fast_path_HashSet_target",
+            "value": 9951.407043457031,
+            "unit": "ns",
+            "range": "± 78.5153046756068"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_slow_path_List_target",
+            "value": 34389.95139567057,
+            "unit": "ns",
+            "range": "± 67.30622363652043"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_HashSet_target",
+            "value": 12496.305867513021,
+            "unit": "ns",
+            "range": "± 61.161177193020556"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_List_target",
+            "value": 37375.073974609375,
+            "unit": "ns",
+            "range": "± 283.50428465118455"
           }
         ]
       }
