@@ -82,11 +82,14 @@ jobs:
           if [ -s fuzz-replay.txt ]; then
             seeds=$(cat fuzz-replay.txt)
           fi
-          body=$(printf '%s\n\n%s\n\n%s\n\n```\n%s\n```\n\n%s\n' \
+          fence=$(printf '\140\140\140')
+          body=$(printf '%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n\n%s\n' \
             "The weekly \`fuzz.yaml\` run failed at 100,000 cases per property." \
             "Run: ${RUN_URL} (artifact \`fuzz-replay\` holds the seeds and the full log)" \
             "Failing property / CsCheck seed pairs:" \
+            "$fence" \
             "$seeds" \
+            "$fence" \
             "Fix the bug, then append each line above to \`tests/Wolfgang.Extensions.ICollection.Tests.Fuzz/replay/seeds.txt\` so every later run replays the shrunk case first. To reproduce locally, set \`CsCheck_Seed\` to the seed and run that property.")
           gh issue create \
             --repo "$REPO" \
