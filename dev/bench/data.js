@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793815838520,
+  "lastUpdate": 1793915696485,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "BenchmarkDotNet": [
@@ -1630,6 +1630,138 @@ window.BENCHMARK_DATA = {
             "value": 27926.62939453125,
             "unit": "ns",
             "range": "± 21.020084864407572"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb3753c984ff6e988f0caec4d191713992284554",
+          "message": "perf(benchmarks): gate time regressions too; tolerances from the environment (#186) (#364)\n\n* perf(benchmarks): gate time regressions too; tolerances from the environment (#186)\n\ncompare-pr-benchmarks.py now fails (exit 3) when a benchmark is more than\nPERF_TIME_TOLERANCE slower (default 20 %) as well as when its allocations\ngrow more than PERF_ALLOC_TOLERANCE (default 50 %); both are configurable\nfrom the environment. A benchmark that starts allocating from a 0-byte base\nnow counts as an allocation regression instead of a 0 % delta. The\nperf-impact-acknowledged label still waives the failure (in the workflow).\n\nCo-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>\n\n* perf(benchmarks): only gate time above a PERF_TIME_FLOOR_NS noise floor (default 1 ns)\n\nSub-nanosecond benchmarks (IsEmpty/IsNotEmpty, JIT-folded) sit at timer resolution, so a 0.0 -> 0.1 ns move reads as +400 % or 'from 0' and failed the gate with 0.0 % allocation change.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Fable 5.1 <noreply@anthropic.com>",
+          "timestamp": "2026-11-05T16:48:16-05:00",
+          "tree_id": "c2b98673eb837c57a3c4ba821e4c74b0a7399245",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/bb3753c984ff6e988f0caec4d191713992284554"
+        },
+        "date": 1793915695151,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_fast_path_List_target",
+            "value": 1081.732421875,
+            "unit": "ns",
+            "range": "± 6.7753678295363375"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_slow_path_LinkedList_target",
+            "value": 11888.082885742188,
+            "unit": "ns",
+            "range": "± 178.50788700708625"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_empty_collection",
+            "value": 0,
+            "unit": "ns",
+            "range": "± 0"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_nonempty_collection",
+            "value": 0.00005602960785230001,
+            "unit": "ns",
+            "range": "± 0.00009704612752834373"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_empty_collection",
+            "value": 0,
+            "unit": "ns",
+            "range": "± 0"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_nonempty_collection",
+            "value": 0.013701856136322021,
+            "unit": "ns",
+            "range": "± 0.01602033990542949"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_List_target",
+            "value": 43496.5253499349,
+            "unit": "ns",
+            "range": "± 233.76653993554922"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_LinkedList_target",
+            "value": 16779.580627441406,
+            "unit": "ns",
+            "range": "± 240.0748123017282"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_all_match",
+            "value": 2701.6953252156577,
+            "unit": "ns",
+            "range": "± 8.20650940504978"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_none_match",
+            "value": 778.263341585795,
+            "unit": "ns",
+            "range": "± 9.273386638668049"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_fast_path_HashSet_target",
+            "value": 8405.77010599772,
+            "unit": "ns",
+            "range": "± 52.996084631539304"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_slow_path_List_target",
+            "value": 26166.07596842448,
+            "unit": "ns",
+            "range": "± 103.16749686081599"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_List_target",
+            "value": 1102.3132387797039,
+            "unit": "ns",
+            "range": "± 1.97164621088106"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_LinkedList_target",
+            "value": 25611.734934488934,
+            "unit": "ns",
+            "range": "± 850.0580344228956"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_fast_path_HashSet_target",
+            "value": 8061.738362630208,
+            "unit": "ns",
+            "range": "± 98.60138843397422"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_slow_path_List_target",
+            "value": 27327.276529947918,
+            "unit": "ns",
+            "range": "± 95.51697595911925"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_HashSet_target",
+            "value": 11731.369766235352,
+            "unit": "ns",
+            "range": "± 229.75182202769733"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_List_target",
+            "value": 27924.793650309246,
+            "unit": "ns",
+            "range": "± 76.98741332294847"
           }
         ]
       }
