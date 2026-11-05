@@ -74,6 +74,9 @@
     <Project Path="examples/Wolfgang.Extensions.ICollection.DotNet80.Example1/Wolfgang.Extensions.ICollection.DotNet80.Example1.csproj" />
     <Project Path="examples/Wolfgang.Extensions.ICollection.DotNet10.Example1/Wolfgang.Extensions.ICollection.DotNet10.Example1.csproj" />
   </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/ShadowWorkloads/ShadowWorkloads.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Wolfgang.Extensions.ICollection/Wolfgang.Extensions.ICollection.csproj" />
   </Folder>
