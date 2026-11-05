@@ -3,8 +3,9 @@ name: "Continuous Fuzz"
 # Long-running counterpart of tests/Wolfgang.Extensions.ICollection.Tests.Fuzz (#165). The PR
 # stages run those CsCheck properties at 1,000 cases each; this weekly run scales them to
 # 100,000 cases / 5 minutes per property through FUZZ_ITERATIONS / FUZZ_TIME_SECONDS. A failure
-# files an issue; CsCheck's message carries a seed that replays the shrunk case locally
-# (set CsCheck_Seed).
+# uploads the failing "<property> <seed>" pairs as the `fuzz-replay` artifact and files an issue
+# listing them; committing a pair to tests/.../Tests.Fuzz/replay/seeds.txt makes the shrunk case
+# a deterministic regression that every later run (PR stages included) replays first.
 
 on:
   workflow_dispatch:
@@ -37,10 +38,38 @@ jobs:
         env:
           FUZZ_ITERATIONS: '100000'
           FUZZ_TIME_SECONDS: '300'
-        run: >
-          dotnet test tests/Wolfgang.Extensions.ICollection.Tests.Fuzz/Wolfgang.Extensions.ICollection.Tests.Fuzz.csproj
-          --configuration Release
-          --logger "console;verbosity=detailed"
+        run: |
+          set -o pipefail
+          dotnet test tests/Wolfgang.Extensions.ICollection.Tests.Fuzz/Wolfgang.Extensions.ICollection.Tests.Fuzz.csproj \
+            --configuration Release \
+            --logger "console;verbosity=detailed" 2>&1 | tee fuzz.log
+
+      - name: Extract failing seeds for the replay corpus
+        if: failure()
+        # Pairs each "Failed ...FuzzProperties.<property>" line with the seed in the CsCheck
+        # message that follows it ('Set seed: "<seed>" ...'), in the replay corpus format.
+        run: |
+          awk '
+            /^ *Failed Wolfgang\.Extensions\.ICollection\.Tests\.Fuzz\.FuzzProperties\./ {
+              name = $2; sub(/.*\./, "", name); next
+            }
+            name != "" && match($0, /Set seed: "[^"]+"/) {
+              print name, substr($0, RSTART + 11, RLENGTH - 12); name = ""
+            }
+          ' fuzz.log > fuzz-replay.txt
+          echo "Failing property/seed pairs:"
+          cat fuzz-replay.txt
+
+      - name: Upload the replay seeds
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: fuzz-replay
+          path: |
+            fuzz-replay.txt
+            fuzz.log
+          retention-days: 90
+          if-no-files-found: warn
 
       - name: File an issue on failure
         if: failure()
@@ -49,10 +78,19 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           REPO: ${{ github.repository }}
         run: |
-          body=$(printf '%s\n\n%s\n\n%s\n' \
+          seeds="(none extracted; see the run log)"
+          if [ -s fuzz-replay.txt ]; then
+            seeds=$(cat fuzz-replay.txt)
+          fi
+          fence=$(printf '\140\140\140')
+          body=$(printf '%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n\n%s\n' \
             "The weekly \`fuzz.yaml\` run failed at 100,000 cases per property." \
-            "Run: ${RUN_URL}" \
-            "The log's CsCheck failure message includes a seed. Set \`CsCheck_Seed\` to that value and re-run the failing property locally to replay the shrunk case.")
+            "Run: ${RUN_URL} (artifact \`fuzz-replay\` holds the seeds and the full log)" \
+            "Failing property / CsCheck seed pairs:" \
+            "$fence" \
+            "$seeds" \
+            "$fence" \
+            "Fix the bug, then append each line above to \`tests/Wolfgang.Extensions.ICollection.Tests.Fuzz/replay/seeds.txt\` so every later run replays the shrunk case first. To reproduce locally, set \`CsCheck_Seed\` to the seed and run that property.")
           gh issue create \
             --repo "$REPO" \
             --title "Continuous fuzz found a failing case ($(date -u +%Y-%m-%d))" \
