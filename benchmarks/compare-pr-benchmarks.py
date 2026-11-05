@@ -9,6 +9,10 @@ Thresholds (fractions; configurable through the environment so the
 workflow, or a maintainer re-running it, can tune them per metric):
     PERF_TIME_TOLERANCE   time regression allowed   (default 0.20 = 20 % slower)
     PERF_ALLOC_TOLERANCE  allocation growth allowed (default 0.50 = 50 % more)
+    PERF_TIME_FLOOR_NS    time is only gated when the slower of the two means is at
+                          least this many ns (default 1.0); below it the run is at
+                          timer resolution and a relative delta is noise (a 0.0 ns
+                          method "regressing" to 0.1 ns is +400 %)
 
 Exit codes: 0 = every benchmark within both tolerances,
 3 = at least one benchmark's time or allocations regressed beyond its
@@ -29,6 +33,7 @@ import sys
 
 DEFAULT_TIME_TOLERANCE = 0.20  # 20% slower
 DEFAULT_ALLOC_TOLERANCE = 0.50  # 50% more allocated
+DEFAULT_TIME_FLOOR_NS = 1.0  # below this the mean is timer-resolution noise
 
 
 def tolerance(name: str, default: float) -> float:
@@ -77,6 +82,7 @@ def main() -> int:
 
     time_tolerance = tolerance("PERF_TIME_TOLERANCE", DEFAULT_TIME_TOLERANCE)
     alloc_tolerance = tolerance("PERF_ALLOC_TOLERANCE", DEFAULT_ALLOC_TOLERANCE)
+    time_floor_ns = tolerance("PERF_TIME_FLOOR_NS", DEFAULT_TIME_FLOOR_NS)
 
     head_path, base_path, output_path = sys.argv[1], sys.argv[2], sys.argv[3]
     head = load(head_path)
@@ -102,7 +108,8 @@ def main() -> int:
         time_delta = relative_delta(h["meanNanoseconds"], b["meanNanoseconds"])
         alloc_delta = relative_delta(h["allocatedBytes"], b["allocatedBytes"])
 
-        time_regressed = time_delta > time_tolerance
+        above_floor = max(h["meanNanoseconds"], b["meanNanoseconds"]) >= time_floor_ns
+        time_regressed = above_floor and time_delta > time_tolerance
         alloc_regressed = alloc_delta > alloc_tolerance
         if time_regressed or alloc_regressed:
             any_regression = True
