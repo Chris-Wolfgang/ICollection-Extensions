@@ -79,6 +79,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/AotSmoke/AotSmoke.csproj" />
+    <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Concurrency/Wolfgang.Extensions.ICollection.Tests.Concurrency.csproj" />
     <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.DocExamples/Wolfgang.Extensions.ICollection.Tests.DocExamples.csproj" />
     <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Fuzz/Wolfgang.Extensions.ICollection.Tests.Fuzz.csproj" />
     <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Unit/Wolfgang.Extensions.ICollection.Tests.Unit.csproj" />
