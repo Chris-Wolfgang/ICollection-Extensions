@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<PublishAot>true</PublishAot>
+		<PublishTrimmed>true</PublishTrimmed>
+		<IsPackable>false</IsPackable>
+		<!-- A throwaway consumer for the AOT/trim smoke (#175), not a test project: it is
+		     published and run by .github/workflows/aot-smoke.yaml, and the PR test stages skip
+		     it because it has no IsTestProject. Not shipped, so it opts out of the
+		     warnings-as-errors bar Directory.Build.props applies in Release; trim/AOT warnings
+		     from the LIBRARY still fail the library's own build (IsAotCompatible). -->
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<NoWarn>$(NoWarn);RS0016;RS0017;RS0024;RS0026;RS0027;RS0036;RS0037;RS0041</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Wolfgang.Extensions.ICollection\Wolfgang.Extensions.ICollection.csproj" />
+	</ItemGroup>
+
+</Project>
