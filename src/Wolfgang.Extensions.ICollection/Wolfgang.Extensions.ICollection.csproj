@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
-		<LangVersion>latest</LangVersion>
 		<Version>0.3.1</Version>
 		<!-- Pin AssemblyVersion to a fixed binding-stability baseline so consumers
 		     do not need to recompile / add binding redirects on every minor/patch
@@ -21,14 +20,25 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<SignAssembly>False</SignAssembly>
 		<PackageIcon>icon.png</PackageIcon>
-		<ApplicationIcon>icon.ico</ApplicationIcon>
+
+		<!-- Package validation: `dotnet pack` compares this package with the last version published
+		     to nuget.org and fails on an unintentional binary/source break, or on a TFM that was
+		     dropped. Keep the baseline at the LAST PUBLISHED version (not the version being built):
+		     bump it in the post-release follow-up once the new version is on the NuGet CDN. To ship
+		     an intentional break, record it in CompatibilitySuppressions.xml next to this file. -->
+		<EnablePackageValidation>true</EnablePackageValidation>
+		<PackageValidationBaselineVersion>0.3.1</PackageValidationBaselineVersion>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <Content Include="icon.ico" />
-	</ItemGroup>
+	<!-- Trim / Native AOT: the library uses no reflection or dynamic code, so declare it safe for
+	     trimmed and AOT-published consumers. The trim and AOT analyzers run on the net8.0+ targets
+	     (the properties are not supported on netstandard), and IL2xxx/IL3xxx warnings fail the
+	     Release build like every other warning. -->
+	<PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+		<IsAotCompatible>true</IsAotCompatible>
+		<IsTrimmable>true</IsTrimmable>
+	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Include="..\..\assets\icon.png">
