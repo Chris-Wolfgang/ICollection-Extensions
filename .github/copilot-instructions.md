@@ -34,7 +34,7 @@
 - Test names follow `MethodUnderTest_when_condition_expected_result`
 
 ## Test Conventions
-- xunit 2.9.3 across every TFM. `xunit.runner.visualstudio` is pinned **per TFM**: `[2.4.5]` for `netcoreapp3.1` and `net5.0` (the last versions of the runner compatible with those older runtimes), `[2.8.2]` for every other TFM (`net462`/`net47`/`net471`/`net472`/`net48`/`net481` and `net6.0` through `net10.0`). NEVER bump to xunit v3 — incompatible with our xunit v2 surface.
+- xunit 2.9.3 across every TFM. NEVER bump the `xunit` package to v3 — incompatible with our xunit v2 surface. That rule is about `xunit` itself, not the VS test adapter: `xunit.runner.visualstudio` is split by TFM slot — `3.0.1` (uncapped) on `net8.0`/`net9.0`/`net10.0` (runner 3.x runs xunit v2 tests), `[2.8.2]` on `net462`–`net481`, `net6.0` and `net7.0`, and `[2.4.5]` on `netcoreapp3.1` and `net5.0` (2.8.2 has no discovery adapter there). The exact pins on the older slots stop Dependabot moving them to 3.x, which drops those frameworks.
 - One assertion per logical case; prefer `[Theory]` + `MemberData` when the same shape repeats across collection types
 
 ## Target Frameworks
