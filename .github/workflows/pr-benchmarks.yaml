@@ -3,8 +3,9 @@ name: "PR Benchmark Regression Check"
 # Forward-looking signal (#186), distinct from benchmarks.yaml: that one graphs the BDN trend on
 # every push to main (backward-looking, it surfaces a regression after it merges). This runs the
 # suite on the PR's HEAD and on its base, comments the delta table on the PR (replacing the
-# previous comment), and fails on an allocation regression of more than 50 % unless the PR
-# carries the `perf-impact-acknowledged` label. Time deltas are advisory only.
+# previous comment), and fails when a benchmark is more than 20 % slower or allocates more than
+# 50 % more (PERF_TIME_TOLERANCE / PERF_ALLOC_TOLERANCE below) unless the PR carries the
+# `perf-impact-acknowledged` label.
 
 on:
   pull_request:
@@ -22,6 +23,11 @@ concurrency:
 
 permissions:
   contents: read
+
+env:
+  # Regression thresholds, as fractions, read by benchmarks/compare-pr-benchmarks.py.
+  PERF_TIME_TOLERANCE: '0.20'
+  PERF_ALLOC_TOLERANCE: '0.50'
 
 jobs:
   pr-benchmarks:
@@ -90,7 +96,7 @@ jobs:
         id: compare
         run: |
           # Exit-code contract with compare-pr-benchmarks.py:
-          #   0 = no regression, 3 = allocation regression beyond tolerance,
+          #   0 = no regression, 3 = time or allocation regression beyond tolerance,
           #   anything else = the script itself crashed. Distinguishing 3 from
           #   generic failure matters: previously any crash (bad JSON, schema
           #   drift) exited 1 and was treated as a "regression" — waivable via
@@ -118,7 +124,7 @@ jobs:
           gh pr comment "$PR_NUMBER" --repo "$REPO" \
             --body-file delta.md --edit-last --create-if-none
 
-      - name: Enforce the allocation-regression gate
+      - name: Enforce the regression gate
         if: steps.compare.outputs.regressed == '1'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -127,8 +133,8 @@ jobs:
         run: |
           labels=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json labels --jq '.labels[].name')
           if echo "$labels" | grep -qx 'perf-impact-acknowledged'; then
-            echo "Allocation regression detected but PR carries 'perf-impact-acknowledged' — not failing."
+            echo "Regression detected but PR carries 'perf-impact-acknowledged' — not failing."
             exit 0
           fi
-          echo "::error::Allocation regression exceeds tolerance and PR is not labeled 'perf-impact-acknowledged'. See the delta-table comment. Add the label if this is an intentional trade-off."
+          echo "::error::A time or allocation regression exceeds tolerance and the PR is not labeled 'perf-impact-acknowledged'. See the delta-table comment. Re-run first if only time regressed (shared-runner noise); add the label if this is an intentional trade-off."
           exit 1
