@@ -7,17 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
+<!-- Not edited by hand: `scripts/changelog.ps1 assemble` builds each release section from
+     changelog/unreleased/ fragments (see changelog/unreleased/README.md). -->
 
 ## [0.3.1] - 2026-06-01
 
@@ -27,12 +18,13 @@ and canonical workflow updates.
 
 ### Added
 
-- `docs/DOCFX-VERSION-PICKER.md` — the canonical 210-line reference
+- `docs/DOCFX-VERSION-PICKER.md` — the canonical reference
   for the docs-site version picker (companion to the
   `docfx_project/public/version-picker.js` /
   `docfx_project/versions.json` /
   `.github/version-picker-template.html` triplet that was already
-  shipping).
+  shipping; the template file has since been removed in favour of
+  inline HTML in the workflows).
 - `examples/Wolfgang.Extensions.ICollection.DotNet80.Example1/` and
   `examples/Wolfgang.Extensions.ICollection.DotNet10.Example1/` —
   runnable demonstration apps exercising every public extension
@@ -88,9 +80,9 @@ and canonical workflow updates.
 
 ### Fixed
 
-- Three Stryker mutation survivors on `ICollectionExtensions.cs`
-  reclassified as intentional via `// Stryker disable all : <reason>`
-  comments: the five redundant defensive null-check blocks
+- Stryker mutation survivors on `ICollectionExtensions.cs`
+  reclassified as intentional via `// Stryker disable` comments at
+  seven sites: the five redundant defensive null-check blocks
   (`AddRangeIf` predicate / `RemoveWhere` source+predicate /
   `ReplaceAll` items / `AddIfNotContains(IEnumerable<T>)` source) and
   the two redundant optimization fast paths (`RemoveWhere`'s
@@ -162,7 +154,7 @@ and canonical workflow updates.
   changing the assembly's binding identity and forcing .NET Framework
   consumers onto binding redirects.
 
-## [0.2.0] - 2026-05-01
+## [0.2.0] - 2026-05-02
 
 Initial public NuGet release.
 

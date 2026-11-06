@@ -1,6 +1,11 @@
+// InspectCode reports these three usings as redundant (alerts 10-12), but all are required: deleting them
+// fails the build on every target framework with CS0307 on ICollection<T>, because the namespace
+// Wolfgang.Extensions.ICollection shares its name with the type.
+// ReSharper disable RedundantUsingDirective
 using System;
 using System.Collections.Generic;
 using System.Linq;
+// ReSharper restore RedundantUsingDirective
 
 namespace Wolfgang.Extensions.ICollection;
 
@@ -24,10 +29,10 @@ public static class ICollectionExtensions
     /// The type of items in the collection.
     /// </typeparam>
     /// <exception cref="ArgumentNullException">
-    /// Thrown if source or items is null.
+    /// Thrown if <paramref name="source"/> or <paramref name="items"/> is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if the collection is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and <paramref name="items"/> is not empty.
     /// </exception>
     /// <remarks>
     /// <para>
@@ -155,7 +160,7 @@ public static class ICollectionExtensions
     /// empty = names.IsEmpty(); // false
     ///
     /// // Use in conditional logic
-    /// ICollection&lt;int&gt; results = GetResults();
+    /// ICollection&lt;int&gt; results = new List&lt;int&gt;();
     /// if (results.IsEmpty())
     /// {
     ///     Console.WriteLine("No results found.");
@@ -221,10 +226,10 @@ public static class ICollectionExtensions
     /// bool hasItems = names.IsNotEmpty(); // true
     ///
     /// // Use in conditional logic
-    /// ICollection&lt;int&gt; results = GetResults();
+    /// ICollection&lt;int&gt; results = new List&lt;int&gt; { 1, 2, 3 };
     /// if (results.IsNotEmpty())
     /// {
-    ///     ProcessResults(results);
+    ///     Console.WriteLine($"Found {results.Count} results.");
     /// }
     ///
     /// // Works with any ICollection&lt;T&gt; implementation
@@ -316,7 +321,8 @@ public static class ICollectionExtensions
     /// <paramref name="predicate"/> is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if <paramref name="source"/> is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and at least one item in
+    /// <paramref name="items"/> matches <paramref name="predicate"/>.
     /// </exception>
     /// <remarks>
     /// Self-aliasing (passing the same instance for both
@@ -326,10 +332,12 @@ public static class ICollectionExtensions
     /// to the collection without tripping the mutate-during-enumerate
     /// contract.
     /// </remarks>
-    public static void AddRangeIf<T>(
+    public static void AddRangeIf<T>
+    (
         this ICollection<T> source,
         IEnumerable<T> items,
-        Func<T, bool> predicate)
+        Func<T, bool> predicate
+    )
     {
         if (source is null)
         {
@@ -341,12 +349,15 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(items));
         }
 
-        // Stryker disable all : redundant defensive — Enumerable.Where(predicate=null) below throws ArgumentNullException with the same paramName, so removing this whole check or the inner throw produces identical observable behavior. Kept for clearer fast-fail.
         if (predicate is null)
+        // Stryker disable once all : equivalent — AddRangeIf is eager, and Enumerable.Where(predicate: null)
+        // below throws ArgumentNullException("predicate") at call time even for an empty items, so dropping
+        // this block changes nothing observable. The CONDITION is not disabled: negating it throws for every
+        // valid predicate, which the happy-path tests catch.
         {
+            // Stryker disable once all : equivalent — same reasoning as the block above.
             throw new ArgumentNullException(nameof(predicate));
         }
-        // Stryker restore all
 
         // Self-aliasing guard: snapshot when items === source so the
         // Where + foreach below doesn't trip the mutate-during-enumerate
@@ -378,7 +389,8 @@ public static class ICollectionExtensions
     /// is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if <paramref name="source"/> is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and at least one item matches
+    /// <paramref name="predicate"/>.
     /// </exception>
     /// <remarks>
     /// Matching items are materialised into a temporary list before
@@ -390,19 +402,22 @@ public static class ICollectionExtensions
     /// </remarks>
     public static int RemoveWhere<T>(this ICollection<T> source, Func<T, bool> predicate)
     {
-        // Stryker disable all : redundant defensive — Enumerable.Where(source=null, …) below throws ArgumentNullException with the same paramName.
         if (source is null)
+        // Stryker disable once all : equivalent — a null source is not a HashSet<T>, so it reaches
+        // Enumerable.Where(source: null, ...) below, which throws ArgumentNullException("source").
+        // The CONDITION is not disabled: negating it throws for every valid source.
         {
+            // Stryker disable once all : equivalent — same reasoning as the block above.
             throw new ArgumentNullException(nameof(source));
         }
-        // Stryker restore all
 
-        // Stryker disable all : redundant defensive — Enumerable.Where(…, predicate=null) below throws ArgumentNullException with the same paramName.
+        // Not disabled: without this guard a HashSet<T> source reaches the fast path below, where
+        // `predicate.Invoke` on a null predicate throws a different exception (covered by
+        // RemoveWhere_when_source_is_HashSet_and_predicate_is_null_throws_ArgumentNullException).
         if (predicate is null)
         {
             throw new ArgumentNullException(nameof(predicate));
         }
-        // Stryker restore all
 
         // Fast path: HashSet<T> already exposes a native RemoveWhere that
         // avoids the temp-list allocation + second pass below. We don't
@@ -465,12 +480,13 @@ public static class ICollectionExtensions
             throw new ArgumentNullException(nameof(source));
         }
 
-        // Stryker disable all : redundant defensive — source.AddRange(items=null) below throws ArgumentNullException with the same paramName.
+        // Not disabled: without this guard source.Clear() runs before AddRange rejects the null
+        // items, so the caller's collection is wiped (covered by
+        // ReplaceAll_when_items_is_null_leaves_source_unchanged).
         if (items is null)
         {
             throw new ArgumentNullException(nameof(items));
         }
-        // Stryker restore all
 
         // Self-aliasing guard: 'list.ReplaceAll(list)' should be a no-op
         // (or — for collections where Clear changes identity — at least
@@ -501,7 +517,8 @@ public static class ICollectionExtensions
     /// Thrown if <paramref name="source"/> is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if <paramref name="source"/> is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and <paramref name="item"/> is not
+    /// already present.
     /// </exception>
     /// <remarks>
     /// Containment is determined by the target collection's own
@@ -556,16 +573,27 @@ public static class ICollectionExtensions
     /// Thrown if <paramref name="source"/> or <paramref name="items"/> is null.
     /// </exception>
     /// <exception cref="NotSupportedException">
-    /// Thrown if <paramref name="source"/> is read-only.
+    /// Thrown if <paramref name="source"/> is read-only and at least one item in
+    /// <paramref name="items"/> is not already present.
     /// </exception>
+    /// <remarks>
+    /// Each item is added through the single-item
+    /// <see cref="AddIfNotContains{T}(ICollection{T}, T)"/>, so containment follows the same
+    /// rules (the collection's own <see cref="ICollection{T}.Contains"/>, or
+    /// <see cref="ISet{T}.Add"/> for sets). Self-aliasing (passing the same instance for both
+    /// <paramref name="source"/> and <paramref name="items"/>) is safe: every item is already
+    /// present, so no <c>Add</c> happens while <paramref name="items"/> is being enumerated,
+    /// the collection is left unchanged and the call returns <c>0</c>.
+    /// </remarks>
     public static int AddIfNotContains<T>(this ICollection<T> source, IEnumerable<T> items)
     {
-        // Stryker disable all : redundant defensive — the single-arg AddIfNotContains the Count() callback delegates to throws ArgumentNullException with the same paramName on its own null check.
+        // Not disabled: without this guard an empty items never invokes the single-item overload,
+        // so a null source returns 0 instead of throwing (covered by
+        // AddIfNotContains_many_when_source_is_null_and_items_is_empty_throws_ArgumentNullException).
         if (source is null)
         {
             throw new ArgumentNullException(nameof(source));
         }
-        // Stryker restore all
 
         if (items is null)
         {
