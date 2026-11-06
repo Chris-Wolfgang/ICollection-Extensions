@@ -1,10 +1,10 @@
 # Wolfgang.Extensions.ICollection
 
-A collection of extension methods for types that implement `ICollection<T>` in .Net
+A collection of extension methods for types that implement `ICollection<T>` in .NET
 
 [![NuGet](https://img.shields.io/nuget/v/Wolfgang.Extensions.ICollection.svg?logo=nuget&label=NuGet)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection)
 [![NuGet downloads](https://img.shields.io/nuget/dt/Wolfgang.Extensions.ICollection.svg?logo=nuget&label=downloads)](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection)
-[![PR build](https://img.shields.io/github/actions/workflow/status/Chris-Wolfgang/ICollection-Extensions/pr.yaml?event=pull_request_target&label=PR%20build&logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions/actions/workflows/pr.yaml)
+[![PR build](https://img.shields.io/github/actions/workflow/status/Chris-Wolfgang/ICollection-Extensions/pr.yaml?event=push&label=PR%20build&logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions/actions/workflows/pr.yaml)
 [![Release](https://img.shields.io/github/actions/workflow/status/Chris-Wolfgang/ICollection-Extensions/release.yaml?label=release&logo=github)](https://github.com/Chris-Wolfgang/ICollection-Extensions/actions/workflows/release.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-Multi--Targeted-purple.svg)](https://dotnet.microsoft.com/)
@@ -181,7 +181,7 @@ This project uses `.editorconfig` and `dotnet format`:
 # Format code
 dotnet format
 
-# Verify formatting (as CI does)
+# Verify formatting (a local check; the PR workflow does not run it)
 dotnet format --verify-no-changes
 ```
 
@@ -200,10 +200,10 @@ cd docfx_project
 docfx metadata  # Extract API metadata from source code
 docfx build     # Build HTML documentation
 
-# Documentation is generated in the docs/ folder at the repository root
+# The site is generated in docfx_project/_site/
 ```
 
-The documentation is automatically built and deployed to GitHub Pages when changes are pushed to the `main` branch.
+The documentation is built and deployed to GitHub Pages when a release is published (`release.yaml` calls `docfx.yaml`), or on a manual run of the **Deploy DocFX Pages** workflow (`docfx.yaml`). A push to `main` does not redeploy it (see [docs/DOCFX-VERSION-PICKER.md](docs/DOCFX-VERSION-PICKER.md)).
 
 **Local Preview:**
 ```bash
@@ -216,7 +216,8 @@ docfx build --serve
 
 **Documentation Structure:**
 - `docfx_project/` - DocFX configuration and source files
-- `docs/` - Generated HTML documentation (published to GitHub Pages)
+- `docfx_project/_site/` - Generated HTML documentation (published to GitHub Pages; not committed)
+- `docs/` - Hand-written repository guides (formatting, workflow security, release setup)
 - `docfx_project/index.md` - Main landing page content
 - `docfx_project/docs/` - Additional documentation articles
 - `docfx_project/api/` - Auto-generated API reference YAML files
