@@ -64,3 +64,43 @@ Tell us in the report how you would like to be named.
 
 Your help is greatly appreciated!
 Responsible disclosure of security vulnerabilities helps protect our entire community.
+
+## OSSF Scorecard
+
+[`scorecard.yaml`](.github/workflows/scorecard.yaml) runs the
+[OSSF Scorecard](https://github.com/ossf/scorecard) weekly (Mondays 06:31 UTC) and on every push
+to `main`, scoring this repo's security posture (branch protection, pinned dependencies,
+dangerous-workflow patterns, vulnerability response time, etc.). Results publish to the
+[Scorecard viewer](https://scorecard.dev/viewer/?uri=github.com/Chris-Wolfgang/ICollection-Extensions)
+and the badge in `README.md`, and upload as SARIF to this repo's Security tab alongside CodeQL alerts.
+
+**Score floor: 7.5.** The initial baseline score is whatever the first published run reports; no run
+has published yet to snapshot. If a later run drops the score below 7.5, note it in `CHANGELOG.md`
+under `### Security` and open a maintenance issue for the regressed check; don't let it sit
+unaddressed.
+
+## Release path & compromise scope
+
+Facts a maintainer would need at 2am if the release identity is compromised. Generic incident-response steps (rotating credentials, revoking OAuth apps, publishing advisories, unlisting NuGet packages) are not duplicated here — GitHub's and NuGet's own docs update faster than a checked-in runbook.
+
+- **Release path**: OIDC / NuGet Trusted Publishing via `NuGet/login` in `.github/workflows/release.yaml`. The workflow mints an ephemeral push token per run via OIDC — the release path does not depend on a long-lived API key stored in GitHub secrets or on the NuGet account. During an incident, check the NuGet account for any long-lived API keys anyway (they can be created outside of CI) and delete anything you don't recognize.
+- **Fallback**: none. If Trusted Publishing is compromised, the incident is at the GitHub-account level (the OIDC identity is `Chris-Wolfgang/ICollection-Extensions`).
+- **Owner**: @Chris-Wolfgang.
+- **Downstream consumers**: no dependents are known within the Wolfgang.* packages; unknown external consumers may exist on nuget.org.
+- **Package coordinates for unlisting**: `Wolfgang.Extensions.ICollection` — https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/.
+
+## Verifying a release
+
+Each release publishes two supply-chain artifacts that let a consumer check what they downloaded.
+
+- **Build provenance (SLSA attestation).** `release.yaml` attests every `.nupkg` before it is pushed to nuget.org, binding the package's SHA-256 digest to this repository, the commit and the workflow run. Download the package from nuget.org (or the GitHub Release) and verify it with the GitHub CLI:
+
+  ```bash
+  gh attestation verify Wolfgang.Extensions.ICollection.<version>.nupkg     --repo Chris-Wolfgang/ICollection-Extensions     --signer-workflow Chris-Wolfgang/ICollection-Extensions/.github/workflows/release.yaml
+  ```
+
+  A non-zero exit means the file was not produced by that workflow in this repository.
+  Only releases cut after the attestation step was added carry one: `gh attestation verify` finds no attestation for 0.3.1 (checked 2026-10-20), which predates it.
+- **SBOM.** A CycloneDX software bill of materials, `Wolfgang.Extensions.ICollection.bom.json`, is attached to each GitHub Release next to the `.nupkg`. It lists the package's dependency graph. It is published alongside the package but is not itself covered by the attestation, so treat it as an inventory, not as proof.
+
+Package *signing* (`nuget verify -Signatures`) is not available yet: it needs a code-signing certificate and is tracked in #216. Until then the attestation above is the way to verify provenance.

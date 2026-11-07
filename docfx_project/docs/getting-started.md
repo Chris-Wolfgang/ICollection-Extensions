@@ -290,7 +290,7 @@ Passing the same collection as both `source` and `items` (e.g. `list.AddRange(li
 
 The methods include fast paths where it matters:
 
-- **`AddRange`** pre-allocates `List<T>.Capacity` when the source exposes `Count`, avoiding the amortised-doubling growth path
+- **`AddRange`** pre-allocates `List<T>.Capacity` when the target is a `List<T>` and `items` exposes `Count` (implements `ICollection<T>`), avoiding the amortised-doubling growth path
 - **`RemoveWhere`** delegates to `HashSet<T>.RemoveWhere(Predicate<T>)` when the receiver is a `HashSet<T>` (skips the temp-list allocation)
 - **`AddIfNotContains(T)`** delegates to `ISet<T>.Add` when the receiver is any `ISet<T>` (single lookup instead of `Contains` + `Add`)
 
