@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793915696485,
+  "lastUpdate": 1794011873079,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "BenchmarkDotNet": [
@@ -1762,6 +1762,138 @@ window.BENCHMARK_DATA = {
             "value": 27924.793650309246,
             "unit": "ns",
             "range": "± 76.98741332294847"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com",
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e86b3e2a29c465114cf38fc7531c44228f26e8e4",
+          "message": "chore(pack): stop requiring licence acceptance for the MIT package (#370)\n\nPackageRequireLicenseAcceptance=True makes Visual Studio show an\naccept-licence prompt on install. MIT does not require acceptance, so the\nprompt is only friction.\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-06T19:33:45-05:00",
+          "tree_id": "e19e5a15aed58f3935e55fba2696f9b580edc5e5",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/e86b3e2a29c465114cf38fc7531c44228f26e8e4"
+        },
+        "date": 1794011871521,
+        "tool": "benchmarkdotnet",
+        "benches": [
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_fast_path_List_target",
+            "value": 1261.7124449412029,
+            "unit": "ns",
+            "range": "± 11.182099570687695"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRange_slow_path_LinkedList_target",
+            "value": 14302.178939819336,
+            "unit": "ns",
+            "range": "± 36.93204622777824"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_empty_collection",
+            "value": 0.0037181290487448373,
+            "unit": "ns",
+            "range": "± 0.0037721145412664345"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsEmpty_on_nonempty_collection",
+            "value": 0.30464956164360046,
+            "unit": "ns",
+            "range": "± 0.0011318346243046184"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_empty_collection",
+            "value": 0,
+            "unit": "ns",
+            "range": "± 0"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.IsNotEmpty_on_nonempty_collection",
+            "value": 0.2991253522535165,
+            "unit": "ns",
+            "range": "± 0.008229010199332112"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_List_target",
+            "value": 37446.92514038086,
+            "unit": "ns",
+            "range": "± 171.74252858071875"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveRange_LinkedList_target",
+            "value": 19280.377298990887,
+            "unit": "ns",
+            "range": "± 66.33320761333088"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_all_match",
+            "value": 3280.6547470092773,
+            "unit": "ns",
+            "range": "± 46.238307713288215"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddRangeIf_none_match",
+            "value": 978.9371255238851,
+            "unit": "ns",
+            "range": "± 2.5731898753648363"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_fast_path_HashSet_target",
+            "value": 10874.372578938803,
+            "unit": "ns",
+            "range": "± 30.882336161164865"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.RemoveWhere_slow_path_List_target",
+            "value": 29144.88498433431,
+            "unit": "ns",
+            "range": "± 44.0766706488778"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_List_target",
+            "value": 1250.3068523406982,
+            "unit": "ns",
+            "range": "± 25.90543127678512"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.ReplaceAll_LinkedList_target",
+            "value": 30446.458201090496,
+            "unit": "ns",
+            "range": "± 243.0269175848687"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_fast_path_HashSet_target",
+            "value": 10519.050420125326,
+            "unit": "ns",
+            "range": "± 46.698372733982474"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_single_slow_path_List_target",
+            "value": 34787.27225748698,
+            "unit": "ns",
+            "range": "± 29.215170481171956"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_HashSet_target",
+            "value": 13151.635503133139,
+            "unit": "ns",
+            "range": "± 520.3011528395259"
+          },
+          {
+            "name": "Wolfgang.Extensions.ICollection.Benchmarks.ICollectionExtensionsBenchmarks.AddIfNotContains_many_List_target",
+            "value": 37706.07804361979,
+            "unit": "ns",
+            "range": "± 538.4626459042905"
           }
         ]
       }
