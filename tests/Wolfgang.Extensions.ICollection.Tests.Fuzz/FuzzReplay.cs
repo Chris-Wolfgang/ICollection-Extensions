@@ -14,10 +14,6 @@ namespace Wolfgang.Extensions.ICollection.Tests.Fuzz;
 /// </summary>
 internal static class FuzzReplay
 {
-    private static readonly Lazy<Task<IReadOnlyList<ReplaySeed>>> Corpus = new(LoadAsync);
-
-
-
     /// <summary>
     /// Gets the path of the corpus file copied next to the test assembly.
     /// </summary>
@@ -26,9 +22,10 @@ internal static class FuzzReplay
 
 
     /// <summary>
-    /// Returns every seed in the corpus.
+    /// Returns every seed in the corpus. The file is small and read only by the fuzz properties'
+    /// setup, so it is read on each call rather than cached behind a shared task.
     /// </summary>
-    internal static Task<IReadOnlyList<ReplaySeed>> AllAsync() => Corpus.Value;
+    internal static Task<IReadOnlyList<ReplaySeed>> AllAsync() => LoadAsync();
 
 
 
@@ -36,7 +33,7 @@ internal static class FuzzReplay
     /// Returns the seeds recorded for <paramref name="property"/>, in file order.
     /// </summary>
     internal static async Task<IReadOnlyList<string>> SeedsForAsync(string property) =>
-        (await Corpus.Value)
+        (await LoadAsync())
             .Where(entry => string.Equals(entry.Property, property, StringComparison.Ordinal))
             .Select(entry => entry.Seed)
             .ToList();
