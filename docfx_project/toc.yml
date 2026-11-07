@@ -1,5 +1,6 @@
 - name: Documentation
   href: docs/toc.yml
+  homepage: docs/index.md
 - name: API Reference
   href: api/toc.yml
   homepage: api/index.md
