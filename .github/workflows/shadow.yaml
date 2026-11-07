@@ -1,22 +1,48 @@
 name: "Shadow Testing (realistic workloads)"
 
 # Nightly run of samples/ShadowWorkloads (#166): realistic consumer scenarios measured with
-# BenchmarkDotNet and compared with docs/shadow-baseline.json by compare.py. Allocation
-# regressions of more than 50 % fail the run; latency is reported as an advisory warning.
+# BenchmarkDotNet, run twice in the same job, against this commit and against a baseline release
+# (the latest stable package on nuget.org unless one is given), and compared by compare.py.
+# Same runner, same job, so latency is comparable: by default a scenario fails on more than 20 %
+# latency or 50 % allocation regression (thresholds are configurable per metric). Shared runners
+# are noisy, so a regression is only reported when a second, fresh pair of runs reproduces it.
+# A reproduced regression fails the run and opens (or comments on) a tracking issue.
 
 on:
   schedule:
     - cron: '0 3 * * *'  # nightly at 03:00 UTC
   workflow_dispatch:
+    inputs:
+      baseline-version:
+        description: 'Published package version to compare against (blank = latest stable on nuget.org)'
+        required: false
+        default: ''
+      latency-tolerance:
+        description: 'Allowed latency regression as a fraction (0.20 = 20 %)'
+        required: false
+        default: '0.20'
+      allocation-tolerance:
+        description: 'Allowed allocation regression as a fraction (0.50 = 50 %)'
+        required: false
+        default: '0.50'
 
 permissions:
   contents: read
 
 jobs:
   shadow:
-    name: "Run shadow workloads + compare against baseline"
+    name: "Run shadow workloads: this commit vs baseline release"
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      issues: write  # to open or comment on the regression issue
+
+    env:
+      # compare.py reads these; a scheduled run has no inputs and uses the defaults.
+      SHADOW_LATENCY_TOLERANCE: ${{ inputs.latency-tolerance || '0.20' }}
+      SHADOW_ALLOCATION_TOLERANCE: ${{ inputs.allocation-tolerance || '0.50' }}
+      SHADOW_LATENCY_MODE: gate
 
     steps:
       - name: Checkout repository
@@ -34,20 +60,111 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run shadow workload scenarios
-        working-directory: samples/ShadowWorkloads
-        run: dotnet run --configuration Release -- --filter '*' --exporters json
+      - name: Resolve the baseline release
+        id: baseline
+        env:
+          REQUESTED: ${{ inputs.baseline-version }}
+        run: |
+          set -euo pipefail
+          version="${REQUESTED:-}"
+          if [ -z "$version" ]; then
+            version=$(curl -fsSL https://api.nuget.org/v3-flatcontainer/wolfgang.extensions.icollection/index.json \
+              | jq -r '[.versions[] | select(test("-") | not)] | last')
+          fi
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Baseline version '$version' is not a stable x.y.z version."
+            exit 1
+          fi
+          echo "Baseline release: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      - name: Compare against baseline
-        # The json exporter writes one *-report-full-compressed.json per benchmark class under
-        # results/; compare.py globs and merges them.
+      - name: Run and compare (a regression must reproduce on a second pair of runs)
+        id: compare
         working-directory: samples/ShadowWorkloads
-        run: python3 compare.py BenchmarkDotNet.Artifacts/results ../../docs/shadow-baseline.json
+        env:
+          BASELINE_VERSION: ${{ steps.baseline.outputs.version }}
+          OUT: ${{ runner.temp }}/shadow
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUT"
+
+          # $1 = output name, $2 = package version ('' = this commit's source). The version goes in
+          # as the ShadowLibraryVersion environment variable, so BenchmarkDotNet's child build of
+          # the project sees it too (a -p: switch would not reach that build).
+          run_side() {
+            if [ -n "$2" ]; then export ShadowLibraryVersion="$2"; else unset ShadowLibraryVersion; fi
+            dotnet run --configuration Release -- --filter '*' --exporters json \
+              --artifacts "$OUT/$1" 2>&1 | tee "$OUT/$1.log"
+            unset ShadowLibraryVersion
+            # Program.cs prints the library's informational version: prove each side ran the
+            # build it was meant to.
+            if [ -n "$2" ]; then
+              grep -q "^Library under test: $2+" "$OUT/$1.log" \
+                || { echo "::error::$1 did not run against package $2"; exit 1; }
+            else
+              grep -q "^Library under test: .*+${GITHUB_SHA}$" "$OUT/$1.log" \
+                || { echo "::error::$1 did not run against this commit (${GITHUB_SHA})"; exit 1; }
+            fi
+          }
+
+          # compare.py: 0 = within tolerance, 1 = regression, anything else = crash.
+          compare() {
+            set +e
+            python3 compare.py "$OUT/$1/results" "$OUT/$2/results" --report "$OUT/report.md"
+            rc=$?
+            set -e
+          }
+
+          run_side baseline-1 "$BASELINE_VERSION"
+          run_side head-1 ""
+          compare head-1 baseline-1
+          if [ "$rc" -eq 1 ]; then
+            echo "::notice::Regression on the first pair of runs; re-running both sides to rule out runner noise."
+            run_side baseline-2 "$BASELINE_VERSION"
+            run_side head-2 ""
+            compare head-2 baseline-2
+          fi
+
+          case "$rc" in
+            0) echo "regressed=0" >> "$GITHUB_OUTPUT" ;;
+            1) echo "regressed=1" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::compare.py failed (exit $rc) - a script failure, not a regression."; exit "$rc" ;;
+          esac
+
+      - name: Open or update the regression issue
+        if: steps.compare.outputs.regressed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          BASELINE_VERSION: ${{ steps.baseline.outputs.version }}
+          REPORT: ${{ runner.temp }}/shadow/report.md
+        run: |
+          set -euo pipefail
+          title="Shadow workloads regressed vs ${BASELINE_VERSION}"
+          body=$(printf '%s\n\n%s\n\n%s\n' \
+            "The nightly \`shadow.yaml\` run found a regression against package ${BASELINE_VERSION} that reproduced on a second pair of runs (commit ${GITHUB_SHA})." \
+            "Run: ${RUN_URL} (artifact \`shadow-workload-results\` holds both BDN runs)" \
+            "$(cat "$REPORT")")
+          existing=$(gh issue list --repo "$REPO" --state open --search "in:title \"${title}\"" \
+            --json number,title --jq "map(select(.title == \"${title}\")) | .[0].number // empty")
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$REPO" --body "$body"
+          else
+            gh issue create --repo "$REPO" --title "$title" --label "maintenance - performance" --body "$body"
+          fi
+
+      - name: Fail on a reproduced regression
+        if: steps.compare.outputs.regressed == '1'
+        run: |
+          echo "::error::Shadow workloads regressed beyond tolerance on two pairs of runs; see the issue and the report above."
+          exit 1
 
       - name: Upload BDN artifacts
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
           name: shadow-workload-results
-          path: samples/ShadowWorkloads/BenchmarkDotNet.Artifacts/
+          path: ${{ runner.temp }}/shadow/
           retention-days: 30
+          if-no-files-found: warn
