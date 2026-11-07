@@ -10,9 +10,10 @@ namespace ShadowWorkloads;
 /// Realistic consumer workloads for shadow testing (#166). Unlike the curated microbenchmarks in
 /// <c>benchmarks/</c>, each scenario strings several extension methods together the way an
 /// application would, so the numbers describe a workload rather than one call. They double as
-/// "real usage" documentation. <c>shadow.yaml</c> runs them nightly and compares them with
-/// <c>docs/shadow-baseline.json</c>: allocation is gated (more than 50 % regression fails),
-/// latency is advisory.
+/// "real usage" documentation. Together they call every public method. <c>shadow.yaml</c> runs
+/// them nightly twice, against this commit and against the latest published package (build with
+/// the <c>ShadowLibraryVersion</c> MSBuild property set), and <c>compare.py</c> fails the run when a
+/// scenario's latency or allocation regresses beyond its threshold.
 /// </summary>
 [MemoryDiagnoser]
 public class ShadowScenarios
@@ -28,6 +29,8 @@ public class ShadowScenarios
     private List<string> _localCache = [];
 
     private ICollection<int>[] _queues = [];
+
+    private string[] _subscriptionRequests = [];
 
 
 
@@ -54,6 +57,12 @@ public class ShadowScenarios
         _queues = Enumerable
             .Range(0, 1_000)
             .Select(i => i % 3 == 0 ? (ICollection<int>)Array.Empty<int>() : new List<int> { i })
+            .ToArray();
+
+        // 2,000 subscribe requests from 300 distinct clients: retries and reconnects repeat ids.
+        _subscriptionRequests = Enumerable
+            .Range(0, 2_000)
+            .Select(_ => "client-" + random.Next(300))
             .ToArray();
     }
 
@@ -108,6 +117,28 @@ public class ShadowScenarios
         cache.RemoveRange(local.Where(key => !remote.Contains(key)).ToList());
         cache.AddRangeIf(_remoteSnapshot, key => !local.Contains(key));
         return cache.Count;
+    }
+
+
+
+    /// <summary>
+    /// Subscriber registry: handle subscribe requests one at a time with the single-item
+    /// <c>AddIfNotContains</c>, ignoring repeats from retrying or reconnecting clients, on both
+    /// a <c>List</c> (linear Contains) and a <c>HashSet</c> (set fast path).
+    /// </summary>
+    [Benchmark]
+    public int Scenario_RegisterSubscribersOneAtATime()
+    {
+        ICollection<string> ordered = new List<string>();
+        ICollection<string> unique = new HashSet<string>(StringComparer.Ordinal);
+        var accepted = 0;
+        foreach (var client in _subscriptionRequests)
+        {
+            accepted += ordered.AddIfNotContains(client) ? 1 : 0;
+            accepted += unique.AddIfNotContains(client) ? 1 : 0;
+        }
+
+        return accepted;
     }
 
 
