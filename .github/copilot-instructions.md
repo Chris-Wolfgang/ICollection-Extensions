@@ -3,7 +3,7 @@
 ## Project Overview
 - **Package:** Wolfgang.Extensions.ICollection
 - **Namespace:** Wolfgang.Extensions.ICollection
-- **Purpose:** Extension methods for `System.Collections.Generic.ICollection<T>` — bulk add and emptiness checks that work across every concrete collection type, not just `List<T>`.
+- **Purpose:** Extension methods for `System.Collections.Generic.ICollection<T>` — bulk add/remove/replace, conditional and de-duplicating adds, and emptiness checks that work across every concrete collection type, not just `List<T>`.
 
 ## Key Types
 - `ICollectionExtensions` — static class with extension methods on `ICollection<T>`
