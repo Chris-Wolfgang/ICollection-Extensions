@@ -7,7 +7,8 @@
 #   whole core passes and is a required check like any other.
 # - Permissions: a called workflow may only use what the caller grants, so the two write scopes
 #   that inspectcode-upload declares are granted here at the top level.
-# - The ref after `@` pins which template version runs. A branch means "track"; a tag means "pin".
+# - The ref after `@` is a commit SHA because the fleet requires hash-pinned actions
+#   (zizmor/unpinned-uses); the trailing comment names the template branch it was taken from.
 
 name: PR Checks v3 (Gated)
 
@@ -26,7 +27,7 @@ on:
 
 jobs:
   core:
-    uses: Chris-Wolfgang/repo-template/.github/workflows/pr.yaml@demo/reusable-pr-workflow-call
+    uses: Chris-Wolfgang/repo-template/.github/workflows/pr.yaml@bfb5e92d4d45f9a701f538fd98bca756a3b34103 # demo/reusable-pr-workflow-call
     secrets: inherit
 
   # Example of a per-repo job that stays in this file and runs after the core.
