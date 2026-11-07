@@ -85,6 +85,7 @@
     <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Concurrency/Wolfgang.Extensions.ICollection.Tests.Concurrency.csproj" />
     <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.DocExamples/Wolfgang.Extensions.ICollection.Tests.DocExamples.csproj" />
     <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Fuzz/Wolfgang.Extensions.ICollection.Tests.Fuzz.csproj" />
+    <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Aot/Wolfgang.Extensions.ICollection.Tests.Aot.csproj" />
     <Project Path="tests/Wolfgang.Extensions.ICollection.Tests.Unit/Wolfgang.Extensions.ICollection.Tests.Unit.csproj" />
   </Folder>
 </Solution>
