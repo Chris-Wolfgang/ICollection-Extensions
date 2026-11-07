@@ -1,0 +1,21 @@
+{
+  "_comment": "Committed baseline for samples/ShadowWorkloads/compare.py (#166). Captured locally on 2026-10-22 with `dotnet run --configuration Release -- --filter '*' --exporters json` (BenchmarkDotNet 0.15.8, Windows 11 (10.0.26200.9711/25H2/2025Update/HudsonValley2), Intel Core i7-14700HX, .NET 10.0.13 (10.0.13, 10.0.1326.50504)). Allocation is the hard gate (more than 50% regression fails); latency is advisory only, because shared GitHub-hosted runner wall-clock is too noisy to fail on. Re-baseline from the first CI run if ubuntu-latest numbers differ materially.",
+  "scenarios": {
+    "Scenario_DedupeMessageIdsIntoHashSet": {
+      "meanNanoseconds": 276562.51,
+      "allocatedBytes": 261474
+    },
+    "Scenario_CartLoadPruneAndReprice": {
+      "meanNanoseconds": 25442.53,
+      "allocatedBytes": 23072
+    },
+    "Scenario_SyncLocalCacheWithRemoteSnapshot": {
+      "meanNanoseconds": 1623290.06,
+      "allocatedBytes": 120704
+    },
+    "Scenario_PollQueuesForWork": {
+      "meanNanoseconds": 3051.29,
+      "allocatedBytes": 0
+    }
+  }
+}
