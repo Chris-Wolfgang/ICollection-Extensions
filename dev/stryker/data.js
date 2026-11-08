@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792304688142,
+  "lastUpdate": 1794103457319,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "Mutation score": [
@@ -102,6 +102,33 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/7d4579976929e1bcf86205d7d6ec1b6ae3e2aba0"
         },
         "date": 1792304684642,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "Mutation score",
+            "value": 100,
+            "unit": "%"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang",
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "cb61a04adcd046135501c5dc2f0cf21614fa67f9",
+          "message": "ci(shadow): compare against the latest release in the same job; re-check, then file an issue (#166) (#363)\n\nshadow.yaml now resolves the baseline release (latest stable on nuget.org,\nor a workflow_dispatch input), runs samples/ShadowWorkloads against it\n(ShadowLibraryVersion env var) and against this commit, checks from the\n\"Library under test\" line that each side ran the intended build, and\ncompares the two with compare.py. Latency (20 %) and allocation (50 %)\nare both gated, thresholds configurable per metric via dispatch inputs /\nSHADOW_* env. A regression must reproduce on a second fresh pair of runs;\nthen the run fails and opens (or comments on) a \"Shadow workloads\nregressed vs <version>\" issue with the markdown report.\n\nCo-authored-by: Claude Fable 5.1 <noreply@anthropic.com>",
+          "timestamp": "2026-11-07T03:27:27Z",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/cb61a04adcd046135501c5dc2f0cf21614fa67f9"
+        },
+        "date": 1794103454290,
         "tool": "customBiggerIsBetter",
         "benches": [
           {
