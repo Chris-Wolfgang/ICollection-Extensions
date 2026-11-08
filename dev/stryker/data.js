@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794103457319,
+  "lastUpdate": 1794142642332,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "Mutation score": [
@@ -129,6 +129,33 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/cb61a04adcd046135501c5dc2f0cf21614fa67f9"
         },
         "date": 1794103454290,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "Mutation score",
+            "value": 100,
+            "unit": "%"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang",
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "d5103978f50177be3bcbdfad7c25f091d746bcac",
+          "message": "fix(ci): write normalized test results with LF on Windows runners (#410)\n\nPython text mode writes CRLF on Windows, so every line of the Windows result file differed\nfrom the Linux baseline in the Cross-Platform Differential workflow (114 of 114 lines, 114 CR\nbytes against 0) although the two result sets are identical once the CRs are stripped.\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-08T02:26:04Z",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/d5103978f50177be3bcbdfad7c25f091d746bcac"
+        },
+        "date": 1794142637503,
         "tool": "customBiggerIsBetter",
         "benches": [
           {
