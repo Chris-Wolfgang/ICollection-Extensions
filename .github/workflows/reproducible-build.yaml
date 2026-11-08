@@ -200,6 +200,8 @@ jobs:
             else
               echo "Entries whose content differs between the two runners:"
               echo ""
-              echo "$differing" | sed 's/^/- /'
+              while IFS= read -r entry; do
+                echo "- $entry"
+              done <<< "$differing"
             fi
           } | tee -a "$GITHUB_STEP_SUMMARY"
