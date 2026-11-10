@@ -1,9 +1,13 @@
 name: "Reproducible Build Verification"
 
 # Builds and packs the same commit on ubuntu-latest and windows-latest and requires every shipped
-# assembly, its .pdb, and the .nupkg / .snupkg to be byte-identical across the two runners (#178).
-# The packages are packed with SOURCE_DATE_EPOCH set to the commit time, which NuGet uses as the
-# zip entry timestamp (DeterministicTimestamp); without it each pack stamps the current time.
+# assembly and its .pdb to be byte-identical across the two runners (#178). The .nupkg / .snupkg
+# are compared entry by entry and the result is reported in the job summary, not gated: the zip
+# container carries pack-time stamps and platform attributes, and NuGet and the compiler write a few
+# entries with the machine newline. The packages are packed with SOURCE_DATE_EPOCH set to the commit
+# time, which NuGet uses as the zip entry timestamp (DeterministicTimestamp).
+# Interim: the fleet standard replaces this file with one canonical copy from repo-template (a
+# same-OS double-build gate plus this cross-OS report); take that copy when it lands.
 # Directory.Build.props
 # sets ContinuousIntegrationBuild under CI (path-mapped, deterministic output) and SourceLink
 # embeds the same GitHub URL on both, so any difference is a real reproducibility break.
@@ -87,15 +91,41 @@ jobs:
             }
           }
 
-          # The packages: a difference here with matching assemblies points at packing
-          # (file order, timestamps, nuspec metadata) rather than at the compiler.
+          # The packages are compared entry by entry, never as zip files: the container carries
+          # pack-time stamps and platform attributes (fleet standard, reproducible-builds.md), so a
+          # whole-file hash differs between operating systems with identical content. `entries` lists
+          # every entry's name and content hash, so a mismatch shows exactly which entry differs.
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          function Get-PackageEntries([string] $path) {
+            $zip = [System.IO.Compression.ZipFile]::OpenRead($path)
+            try {
+              $names = [string[]] $zip.Entries.FullName
+              [System.Array]::Sort($names, [System.StringComparer]::Ordinal)
+              foreach ($name in $names) {
+                $stream = $zip.GetEntry($name).Open()
+                try {
+                  $sha = [System.Security.Cryptography.SHA256]::Create()
+                  $hash = [System.BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '')
+                } finally {
+                  $stream.Dispose()
+                }
+                "$name`t$hash"
+              }
+            } finally {
+              $zip.Dispose()
+            }
+          }
+
           $packages = Get-ChildItem -Path 'packages' -File -Include '*.nupkg', '*.snupkg' -Recurse
           $hashes = @($hashes) + @(foreach ($pkg in $packages) {
+            $entries = @(Get-PackageEntries $pkg.FullName)
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes(($entries -join "`n"))
             [pscustomobject]@{
               packageId = ($pkg.Name -replace '\.\d+\.\d+\.\d+.*$', '')
               tfm  = 'package'
               file = $pkg.Name
-              sha256 = (Get-FileHash -Path $pkg.FullName -Algorithm SHA256).Hash
+              sha256 = [System.BitConverter]::ToString([System.Security.Cryptography.SHA256]::Create().ComputeHash($bytes)).Replace('-', '')
+              entries = $entries
             }
           })
           if (-not $packages) {
@@ -139,13 +169,39 @@ jobs:
           fi
 
           echo "Comparing $ubuntu against $windows"
-          if diff <(jq -S 'sort_by(.packageId, .tfm, .file)' "$ubuntu") <(jq -S 'sort_by(.packageId, .tfm, .file)' "$windows"); then
-            echo "✅ Byte-identical assemblies, symbols and packages across ubuntu-latest and windows-latest."
-          else
-            # If this fails, compare the per-TFM .pdb documents and referenced-assembly records
-            # first. In sibling repos the inputs that differed between Linux and Windows were a
-            # generated source written with a different newline and a different .NET Framework
-            # reference assembly (IEnumerable-Extensions #533).
-            echo "::error::Assembly, symbol or package hashes diverge between ubuntu-latest and windows-latest — build is not reproducible across runners."
+
+          # GATE: every shipped assembly and its .pdb, per TFM, must be byte-identical across the
+          # two runners. If this fails, compare the per-TFM .pdb documents and referenced-assembly
+          # records first. In sibling repos the inputs that differed between Linux and Windows were a
+          # generated source written with a different newline and a different .NET Framework
+          # reference assembly (IEnumerable-Extensions #533).
+          asm() { jq -S '[.[] | select(.tfm != "package") | {packageId, tfm, file, sha256}] | sort_by(.packageId, .tfm, .file)' "$1"; }
+          if ! diff <(asm "$ubuntu") <(asm "$windows"); then
+            echo "::error::Assembly or symbol hashes diverge between ubuntu-latest and windows-latest — build is not reproducible across runners."
             exit 1
           fi
+          echo "✅ Byte-identical assemblies and symbols across ubuntu-latest and windows-latest."
+
+          # REPORT: the packages. Cross-OS identity of the package entries is reported, never gated
+          # (fleet reproducible-builds standard): NuGet writes the .nuspec, [Content_Types].xml,
+          # _rels/.rels and the .psmdcp part, and the compiler writes the XML documentation, with
+          # the build machine's newline, so those entries differ between operating systems with
+          # identical content. Entries that differ are listed so a real packaging change still shows.
+          differing=$(jq -nr --slurpfile u "$ubuntu" --slurpfile w "$windows" '
+            def entries: reduce (.[] | select(.tfm == "package") | .file as $p | .entries[] | split("\t")
+                                  | {key: "\($p) :: \(.[0])", value: .[1]}) as $e ({}; .[$e.key] = $e.value);
+            ($u[0] | entries) as $a | ($w[0] | entries) as $b
+            | (($a | keys) + ($b | keys) | unique)[] | select($a[.] != $b[.])')
+          {
+            echo "### Package entries, ubuntu-latest vs windows-latest (reported, not gated)"
+            echo ""
+            if [ -z "$differing" ]; then
+              echo "All package entries match."
+            else
+              echo "Entries whose content differs between the two runners:"
+              echo ""
+              while IFS= read -r entry; do
+                echo "- $entry"
+              done <<< "$differing"
+            fi
+          } | tee -a "$GITHUB_STEP_SUMMARY"
