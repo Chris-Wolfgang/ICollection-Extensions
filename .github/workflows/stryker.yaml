@@ -309,6 +309,18 @@ jobs:
             printf '%s\n' "$survivors"
           } >> "$GITHUB_STEP_SUMMARY"
 
+          # No survivors: there is nothing to kill, so do not open an issue for it, and close the
+          # rolling one if an earlier run left it open.
+          if [ "$count" -eq 0 ]; then
+            open_issue=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "kind:mutation-survives" \
+                           --state open --json number --jq '.[0].number' 2>/dev/null || true)
+            if [ -n "$open_issue" ]; then
+              gh issue close "$open_issue" --repo "$GITHUB_REPOSITORY" \
+                --comment "No surviving mutants in run $GITHUB_RUN_ID (lowest score ${score} %); closing the rolling issue." || true
+            fi
+            exit 0
+          fi
+
           gh label create "kind:mutation-survives" --repo "$GITHUB_REPOSITORY" \
             --color BFD4F2 --description "A mutant survived - a test gap to close" 2>/dev/null || true
           title="Mutation survivors (${count}) - kill these to raise the score"
