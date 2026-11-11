@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794142642332,
+  "lastUpdate": 1794410007038,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "Mutation score": [
@@ -160,6 +160,33 @@ window.BENCHMARK_DATA = {
         "benches": [
           {
             "name": "Mutation score",
+            "value": 100,
+            "unit": "%"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]",
+            "email": "49699333+dependabot[bot]@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "3c75183c7cda42515d712ef804d33b30b95d3bff",
+          "message": "Bump the dotnet-dependencies group with 2 updates (#425)\n\nBumps dotnet-reportgenerator-globaltool from 5.5.12 to 5.6.0\nBumps Meziantou.Analyzer from 3.0.322 to 3.0.324\n\n---\nupdated-dependencies:\n- dependency-name: dotnet-reportgenerator-globaltool\n  dependency-version: 5.6.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n  dependency-group: dotnet-dependencies\n- dependency-name: Meziantou.Analyzer\n  dependency-version: 3.0.324\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n  dependency-group: dotnet-dependencies\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>\nCo-authored-by: Chris Wolfgang <210299580+Chris-Wolfgang@users.noreply.github.com>",
+          "timestamp": "2026-11-11T13:54:01Z",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/3c75183c7cda42515d712ef804d33b30b95d3bff"
+        },
+        "date": 1794410004035,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "Mutation score (tests/Wolfgang.Extensions.ICollection.Tests.Unit)",
             "value": 100,
             "unit": "%"
           }
