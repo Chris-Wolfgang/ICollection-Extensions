@@ -854,7 +854,7 @@ public class ICollectionExtensionsTests
     {
         ICollection<int> source = null!;
         var ex = Assert.Throws<ArgumentNullException>(
-            () => source.AddIfNotContains((IEnumerable<int>)null!));
+            () => source.AddIfNotContains(null!));
         Assert.Equal("source", ex.ParamName);
     }
 
