@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -63,7 +64,7 @@ public sealed class ConcurrencyStressTests
         for (var round = 0; round < StressIterations; round++)
         {
             var shared = new HashSet<int>();
-            var gate = new object();
+            var gate = new Lock();
 
             var addedPerWorker = await Task.WhenAll
             (
@@ -98,7 +99,7 @@ public sealed class ConcurrencyStressTests
         for (var round = 0; round < StressIterations; round++)
         {
             var shared = new List<int>();
-            var gate = new object();
+            var gate = new Lock();
 
             await Task.WhenAll
             (
