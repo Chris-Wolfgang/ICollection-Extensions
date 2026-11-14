@@ -101,6 +101,11 @@ Each release publishes two supply-chain artifacts that let a consumer check what
 
   A non-zero exit means the file was not produced by that workflow in this repository.
   Only releases cut after the attestation step was added carry one: `gh attestation verify` finds no attestation for 0.3.1 (checked 2026-10-20), which predates it.
+- **Reproducible-build manifest.** `reproducible-build-manifest.json`, attached to each GitHub Release, records the SHA-256 of every shipped assembly, symbol file and package plus the SDK, runner image and commit (see [docs/REPRODUCIBLE-BUILD.md](docs/REPRODUCIBLE-BUILD.md)). Releases cut after #431 merged attest it alongside the `.nupkg`, so the expected hashes can be checked the same way:
+
+  ```bash
+  gh attestation verify reproducible-build-manifest.json --repo Chris-Wolfgang/ICollection-Extensions --signer-workflow Chris-Wolfgang/ICollection-Extensions/.github/workflows/release.yaml
+  ```
 - **SBOM.** A CycloneDX software bill of materials, `Wolfgang.Extensions.ICollection.bom.json`, is attached to each GitHub Release next to the `.nupkg`. It lists the package's dependency graph. It is published alongside the package but is not itself covered by the attestation, so treat it as an inventory, not as proof.
 
 Package *signing* (`nuget verify -Signatures`) is not available yet: it needs a code-signing certificate and is tracked in #216. Until then the attestation above is the way to verify provenance.

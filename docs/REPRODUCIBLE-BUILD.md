@@ -107,7 +107,9 @@ the entry comparison in step 4 for those.
    ```
 
 5. Independently of the rebuild, confirm provenance with the attestation described in
-   [SECURITY.md](../SECURITY.md#verifying-a-release).
+   [SECURITY.md](../SECURITY.md#verifying-a-release). Releases cut after #431 merged also attest
+   `reproducible-build-manifest.json` itself, so `gh attestation verify reproducible-build-manifest.json`
+   proves the hashes you compared against came from the release workflow.
 
 ## If something differs
 
