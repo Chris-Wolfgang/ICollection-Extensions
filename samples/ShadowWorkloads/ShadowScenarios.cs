@@ -89,7 +89,8 @@ public class ShadowScenarios
 
     /// <summary>
     /// Shopping cart: load lines with <c>AddRange</c>, prune expired ones with
-    /// <c>RemoveWhere</c>, then re-price by replacing the contents with <c>ReplaceAll</c>.
+    /// <c>RemoveWhere</c>, re-price by replacing the contents with <c>ReplaceAll</c>, then count
+    /// the distinct products left in the cart.
     /// </summary>
     [Benchmark]
     public int Scenario_CartLoadPruneAndReprice()
@@ -98,7 +99,7 @@ public class ShadowScenarios
         cart.AddRange(_cartLines);
         var pruned = cart.RemoveWhere(line => line.Expired);
         cart.ReplaceAll(cart.Select(line => line with { Quantity = line.Quantity * 2 }).ToList());
-        return pruned + cart.Count;
+        return pruned + cart.Select(line => line.ProductId).Distinct().Count();
     }
 
 
