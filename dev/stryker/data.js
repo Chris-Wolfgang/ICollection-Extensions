@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794410007038,
+  "lastUpdate": 1794749965477,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "Mutation score": [
@@ -183,6 +183,33 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/3c75183c7cda42515d712ef804d33b30b95d3bff"
         },
         "date": 1794410004035,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "Mutation score (tests/Wolfgang.Extensions.ICollection.Tests.Unit)",
+            "value": 100,
+            "unit": "%"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang",
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "69a60f64035406c908d67461a8a5320f8664e207",
+          "message": "docs(security): record the first Scorecard baseline (7/10) (#433)\n\nThe Scorecard section said no run had published yet. The API now reports 7\nfor main @ abf9f9a (2026-11-12). Record it with the per-check gap; keep the\n7.5 floor as the target instead of lowering it to the baseline.\n\nCloses #184\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-14T18:37:34Z",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/69a60f64035406c908d67461a8a5320f8664e207"
+        },
+        "date": 1794749961456,
         "tool": "customBiggerIsBetter",
         "benches": [
           {
