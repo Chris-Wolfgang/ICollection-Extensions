@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794749965477,
+  "lastUpdate": 1795356958640,
   "repoUrl": "https://github.com/Chris-Wolfgang/ICollection-Extensions",
   "entries": {
     "Mutation score": [
@@ -210,6 +210,33 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/69a60f64035406c908d67461a8a5320f8664e207"
         },
         "date": 1794749961456,
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "name": "Mutation score (tests/Wolfgang.Extensions.ICollection.Tests.Unit)",
+            "value": 100,
+            "unit": "%"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Chris Wolfgang",
+            "username": "Chris-Wolfgang",
+            "email": "210299580+Chris-Wolfgang@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "461150475520fa6ab56822ab88a95a0082ea9384",
+          "message": "docs(readme): state the five-leg test matrix (#439)\n\nAdds the repo-template README test-matrix paragraph: five legs (Linux\nx64/ARM64, Windows x64/ARM64, macOS ARM64) and the per-leg TFM rule.\n\nRefs #416\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-20T18:05:08Z",
+          "url": "https://github.com/Chris-Wolfgang/ICollection-Extensions/commit/461150475520fa6ab56822ab88a95a0082ea9384"
+        },
+        "date": 1795356955047,
         "tool": "customBiggerIsBetter",
         "benches": [
           {
