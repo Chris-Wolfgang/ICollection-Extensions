@@ -61,10 +61,10 @@ dotnet add package Wolfgang.Extensions.ICollection
 - ✅ **9 extension methods** — `AddRange`, `AddRangeIf`, `RemoveRange`, `RemoveWhere`, `ReplaceAll`, `AddIfNotContains` (single + bulk), `IsEmpty`, `IsNotEmpty`
 - ✅ **Fast paths where it matters** — `List<T>` capacity pre-allocation for `AddRange`; `HashSet<T>.RemoveWhere` for `RemoveWhere`; `ISet<T>.Add` for `AddIfNotContains` (single lookup vs. `Contains` + `Add`)
 - ✅ **Self-aliasing is safe** — `list.AddRange(list)`, `list.ReplaceAll(list)`, `list.RemoveRange(list)`, and `list.AddRangeIf(list, predicate)` all guard against the mutate-during-enumerate contract
-- ✅ **Multi-framework support** — `netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`
+- ✅ **Multi-framework support** — `netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`, `net11.0`
 - ✅ **Zero runtime dependencies** — Just the .NET BCL
 - ✅ **Well documented** — Comprehensive XML documentation, examples, and CHANGELOG
-- ✅ **Unit tested** — the suite runs on 13 test TFMs (.NET Framework 4.6.2 through .NET 10); CI enforces 90% line coverage
+- ✅ **Unit tested** — the suite runs on 14 test TFMs (.NET Framework 4.6.2 through .NET 11); CI enforces 90% line coverage
 
 ### License
 

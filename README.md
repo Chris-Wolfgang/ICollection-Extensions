@@ -125,7 +125,7 @@ Self-aliasing is safe by construction: `list.AddRange(list)` snapshots the sourc
 This library targets:
 
 - **.NET Standard:** 2.0, 2.1
-- **.NET:** 8.0, 9.0, 10.0
+- **.NET:** 8.0, 9.0, 10.0, 11.0
 
 See the [NuGet package page](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/) for the authoritative per-TFM compatibility matrix.
 
@@ -159,7 +159,7 @@ This project enforces **strict code quality standards** through **8 analyzer rul
 ## 🛠️ Building from Source
 
 ### Prerequisites
-- [.NET 10.0 SDK](https://dotnet.microsoft.com/download) — required for the modern build / test / pack flow used by CI
+- [.NET 11.0 SDK](https://dotnet.microsoft.com/download) — required for the modern build / test / pack flow used by CI
 - Optional: [PowerShell Core](https://github.com/PowerShell/PowerShell) for formatting scripts
 
 ### Build Steps

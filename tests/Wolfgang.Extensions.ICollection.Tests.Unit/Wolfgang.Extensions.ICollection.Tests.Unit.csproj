@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net462;net47;net471;net472;net48;net481;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
+        <TargetFrameworks>net462;net47;net471;net472;net48;net481;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0;net9.0;net10.0;net11.0</TargetFrameworks>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
@@ -76,7 +76,7 @@
 
 
 	<!-- .NET 8.0 and later -->
-	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'net9.0' Or '$(TargetFramework)' == 'net10.0'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'net9.0' Or '$(TargetFramework)' == 'net10.0' Or '$(TargetFramework)' == 'net11.0'">
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
 			<PrivateAssets>all</PrivateAssets>

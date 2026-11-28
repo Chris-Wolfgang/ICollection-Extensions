@@ -34,12 +34,12 @@
 - Test names follow `MethodUnderTest_when_condition_expected_result`
 
 ## Test Conventions
-- xunit 2.9.3 across every TFM. NEVER bump the `xunit` package to v3 — incompatible with our xunit v2 surface. That rule is about `xunit` itself, not the VS test adapter: `xunit.runner.visualstudio` is split by TFM slot — `3.0.1` (uncapped) on `net8.0`/`net9.0`/`net10.0` (runner 3.x runs xunit v2 tests), `[2.8.2]` on `net462`–`net481`, `net6.0` and `net7.0`, and `[2.4.5]` on `netcoreapp3.1` and `net5.0` (2.8.2 has no discovery adapter there). The exact pins on the older slots stop Dependabot moving them to 3.x, which drops those frameworks.
+- xunit 2.9.3 across every TFM. NEVER bump the `xunit` package to v3 — incompatible with our xunit v2 surface. That rule is about `xunit` itself, not the VS test adapter: `xunit.runner.visualstudio` is split by TFM slot — `3.0.1` (uncapped) on `net8.0`/`net9.0`/`net10.0`/`net11.0` (runner 3.x runs xunit v2 tests), `[2.8.2]` on `net462`–`net481`, `net6.0` and `net7.0`, and `[2.4.5]` on `netcoreapp3.1` and `net5.0` (2.8.2 has no discovery adapter there). The exact pins on the older slots stop Dependabot moving them to 3.x, which drops those frameworks.
 - One assertion per logical case; prefer `[Theory]` + `MemberData` when the same shape repeats across collection types
 
 ## Target Frameworks
-- **src:** netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0
-- **tests:** the full multi-TFM matrix from net462 through net10.0
+- **src:** netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0, net11.0
+- **tests:** the full multi-TFM matrix from net462 through net11.0
 
 ## Related repos
 - Sibling extension libraries in the Wolfgang.Extensions.* family: IEnumerable-Extensions, IAsyncEnumerable-Extensions, IComparable-Extensions, IEquatable-Extensions, DateTime-Extensions, String-Extensions

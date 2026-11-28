@@ -44,7 +44,8 @@ Wolfgang.Extensions.ICollection supports a broad set of modern .NET TFMs:
 - **`.NET Standard 2.1`** — picks up the BCL improvements available since 2019
 - **`.NET 8.0`** — LTS
 - **`.NET 9.0`** — STS; Microsoft support ended in May 2026 (the target is still shipped, and `net8.0` assets would serve it anyway)
-- **`.NET 10.0`** — LTS, the latest release
+- **`.NET 10.0`** — LTS
+- **`.NET 11.0`** — STS, the latest release
 
 ## What's Included
 
