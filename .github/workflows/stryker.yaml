@@ -147,7 +147,7 @@ jobs:
         # .NET 10.0). Stryker has to be able to build whichever TFM each test
         # project targets; pinning to a subset would silently fail repos that
         # target older runtimes.
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68  # v6.0.0
+        uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73  # v6.1.0
         with:
           dotnet-version: |
             3.1.x
@@ -308,6 +308,18 @@ jobs:
             echo ""
             printf '%s\n' "$survivors"
           } >> "$GITHUB_STEP_SUMMARY"
+
+          # No survivors: there is nothing to kill, so do not open an issue for it, and close the
+          # rolling one if an earlier run left it open.
+          if [ "$count" -eq 0 ]; then
+            open_issue=$(gh issue list --repo "$GITHUB_REPOSITORY" --label "kind:mutation-survives" \
+                           --state open --json number --jq '.[0].number' 2>/dev/null || true)
+            if [ -n "$open_issue" ]; then
+              gh issue close "$open_issue" --repo "$GITHUB_REPOSITORY" \
+                --comment "No surviving mutants in run $GITHUB_RUN_ID (lowest score ${score} %); closing the rolling issue." || true
+            fi
+            exit 0
+          fi
 
           gh label create "kind:mutation-survives" --repo "$GITHUB_REPOSITORY" \
             --color BFD4F2 --description "A mutant survived - a test gap to close" 2>/dev/null || true

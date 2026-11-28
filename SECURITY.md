@@ -74,10 +74,23 @@ dangerous-workflow patterns, vulnerability response time, etc.). Results publish
 [Scorecard viewer](https://scorecard.dev/viewer/?uri=github.com/Chris-Wolfgang/ICollection-Extensions)
 and the badge in `README.md`, and upload as SARIF to this repo's Security tab alongside CodeQL alerts.
 
-**Score floor: 7.5.** The initial baseline score is whatever the first published run reports; no run
-has published yet to snapshot. If a later run drops the score below 7.5, note it in `CHANGELOG.md`
-under `### Security` and open a maintenance issue for the regressed check; don't let it sit
-unaddressed.
+**Score floor: 7.5** (the target). If a run drops the score below the floor, or below the baseline
+while the baseline is still under it, note it in `CHANGELOG.md` under `### Security` and open a
+maintenance issue for the regressed check; don't let it sit unaddressed.
+
+**Baseline: 7 / 10**, the first published score (run of 2026-11-12 on `main` @ `abf9f9a`, read from
+`api.scorecard.dev` on 2026-11-14). It is below the 7.5 target; the floor stays at 7.5 rather than
+being lowered to match, and the gap is the checks below. Every other check scored 10.
+
+| Check | Score | Status |
+|---|---|---|
+| Branch-Protection | 4 | Accepted for now: `main` does not require approvers or code-owner review (ruleset settings; alert tracked in #248, `blocked`). |
+| Pinned-Dependencies | 7 | Open: actions are SHA-pinned; the findings are `dotnet restore` / NuGet steps in workflows, because the projects use neither Central Package Management nor lock files. |
+| Fuzzing | 0 | Accepted: Scorecard reports "no fuzzer integrations found"; it does not detect the CsCheck property suite in `tests/Wolfgang.Extensions.ICollection.Tests.Fuzz` or `fuzz.yaml` (#246). |
+| Signed-Releases | 0 | Expected to rise: the scored releases (v0.2.0-v0.3.1) predate the SLSA provenance step in `release.yaml`; package signing waits on a code-signing certificate (#216, `blocked`). |
+| Code-Review | 0 | Accepted: single-maintainer repository; 0 of the last 26 changesets had an approving review. |
+| Contributors | 0 | Accepted: single-maintainer repository (no contributing organizations). |
+| CII-Best-Practices | 0 | Open: no OpenSSF Best Practices badge has been applied for. |
 
 ## Release path & compromise scope
 
@@ -101,6 +114,11 @@ Each release publishes two supply-chain artifacts that let a consumer check what
 
   A non-zero exit means the file was not produced by that workflow in this repository.
   Only releases cut after the attestation step was added carry one: `gh attestation verify` finds no attestation for 0.3.1 (checked 2026-10-20), which predates it.
+- **Reproducible-build manifest.** `reproducible-build-manifest.json`, attached to each GitHub Release, records the SHA-256 of every shipped assembly, symbol file and package plus the SDK, runner image and commit (see [docs/REPRODUCIBLE-BUILD.md](docs/REPRODUCIBLE-BUILD.md)). Releases cut after #431 merged attest it alongside the `.nupkg`, so the expected hashes can be checked the same way:
+
+  ```bash
+  gh attestation verify reproducible-build-manifest.json --repo Chris-Wolfgang/ICollection-Extensions --signer-workflow Chris-Wolfgang/ICollection-Extensions/.github/workflows/release.yaml
+  ```
 - **SBOM.** A CycloneDX software bill of materials, `Wolfgang.Extensions.ICollection.bom.json`, is attached to each GitHub Release next to the `.nupkg`. It lists the package's dependency graph. It is published alongside the package but is not itself covered by the attestation, so treat it as an inventory, not as proof.
 
 Package *signing* (`nuget verify -Signatures`) is not available yet: it needs a code-signing certificate and is tracked in #216. Until then the attestation above is the way to verify provenance.

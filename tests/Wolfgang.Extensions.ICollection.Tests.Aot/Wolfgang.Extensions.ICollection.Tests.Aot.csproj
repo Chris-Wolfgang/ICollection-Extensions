@@ -31,11 +31,11 @@
 		<!-- The AOT (source-generated) edition of xUnit.net v3: test discovery, theory data and attribute
 		     configuration are resolved at build time, so no reflection is needed at run time. The plain
 		     `xunit.v3` package is reflection-based and cannot run under Native AOT. Requires net9.0+ and C#. -->
-		<PackageReference Include="xunit.v3.aot" Version="4.0.2" />
+		<PackageReference Include="xunit.v3.aot" Version="4.0.3" />
 		<!-- The SDK picks the ILCompiler that matches the installed SDK (10.0.11), which carries
 		     GHSA-p3jp-9v83-76w9 (Brotli decoder out-of-bounds write, fixed in 10.0.14) and fails the
 		     warnings-as-errors build with NU1903. An explicit reference overrides the implicit one. -->
-		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="10.0.14" />
+		<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="11.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

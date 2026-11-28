@@ -129,6 +129,8 @@ This library targets:
 
 See the [NuGet package page](https://www.nuget.org/packages/Wolfgang.Extensions.ICollection/) for the authoritative per-TFM compatibility matrix.
 
+**Test matrix.** Every pull request runs the test suite on five legs and all five must pass: Linux x64, Linux ARM64, Windows x64, Windows ARM64 and macOS ARM64. Windows x64 runs every target framework (the only leg with .NET Framework); Linux x64 runs .NET Core 3.1 and .NET 5.0 and later; the three ARM64 legs run .NET 6.0 and later.
+
 ## Native AOT
 
 This library is trim- and Native AOT-compatible. **.NET 10 is the lowest version on which Native

@@ -7,9 +7,12 @@
 		<PublishAot>true</PublishAot>
 		<PublishTrimmed>true</PublishTrimmed>
 		<IsPackable>false</IsPackable>
+		<IsTestProject>false</IsTestProject>
 		<!-- A throwaway consumer for the AOT/trim smoke (#175), not a test project: it is
 		     published and run by .github/workflows/aot-smoke.yaml, and the PR test stages skip
-		     it because it has no IsTestProject. Not shipped, so it opts out of the
+		     it because it sets IsTestProject=false. The opt-out is explicit because the ARM64
+		     stages fail on a tests/ project with neither Microsoft.NET.Test.Sdk nor
+		     IsTestProject=false. Not shipped, so it opts out of the
 		     warnings-as-errors bar Directory.Build.props applies in Release; trim/AOT warnings
 		     from the LIBRARY still fail the library's own build (IsAotCompatible). -->
 		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
